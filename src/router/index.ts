@@ -36,6 +36,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import(/* webpackChunkName: "about" */ '../views/representative.vue'),
         meta: { title: "代表信息" },
       },
+      {
+        path: '/npcDetail',
+        name: 'NpcDetail',
+        component: () => import(/* webpackChunkName: "about" */ '../views/npcDetail.vue'),
+        meta: { title: "代表信息" },
+      },
   
 ]
 
