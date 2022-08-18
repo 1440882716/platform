@@ -1,0 +1,99 @@
+<template>
+  <div class="header-box flex-r flex-b">
+    <div class="flex-r">
+      <img class="gh-icon" src="../assets/img/gh-icon.png" alt="" />
+      <div class="fff system-title">双流区人大代表之家智慧平台</div>
+    </div>
+    <div style="margin-right: 148px; margin-top: 10px" class="font24">
+      <span class="fff" style="margin-right: 16px">{{ date }}</span>
+      <span class="fff" style="margin-right: 27px">{{ time }}</span>
+      <span class="fff">{{ weekday }}</span>
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import { defineComponent, ref, onMounted } from "vue"
+
+export default defineComponent({
+  setup() {
+    const formatDate = () => {
+      var t
+      clearTimeout(t)
+      // 格式化日期，获取今天的日期
+      const Dates = new Date(new Date().getTime())
+      const year: number = Dates.getFullYear()
+      const month: any =
+        Dates.getMonth() + 1 < 10
+          ? "0" + (Dates.getMonth() + 1)
+          : Dates.getMonth() + 1
+      const day: any =
+        Dates.getDate() < 10 ? "0" + Dates.getDate() : Dates.getDate()
+      const h: number = Dates.getHours()
+      const m: number = Dates.getMinutes()
+      const s: number = Dates.getSeconds()
+      switch (Dates.getDay()) {
+        case 1:
+          weekday.value = "星期一"
+          break
+        case 2:
+          weekday.value = "星期二"
+          break
+        case 3:
+          weekday.value = "星期三"
+          break
+        case 4:
+          weekday.value = "星期四"
+          break
+        case 5:
+          weekday.value = "星期五"
+          break
+        case 6:
+          weekday.value = "星期六"
+          break
+        case 7:
+          weekday.value = "星期日"
+          break
+      }
+      date.value = year + "年" + month + "月" + day + "日"
+      time.value = h + ":" + m + ":" + s
+      t = setTimeout(formatDate, 1000) //设置定时器，循环运行
+    }
+    const date = ref() // 年月日
+    const time = ref() // 时分秒
+    const weekday = ref() // 时分秒
+    onMounted(() => {
+      formatDate()
+    })
+    return {
+      date,
+      time,
+      weekday,
+      formatDate,
+    }
+  },
+})
+</script>
+<style scoped>
+@import "../assets/glob.css";
+.header-box {
+  width: 100%;
+  height: 100px;
+  /* background-color: burlywood; */
+  background-image: url(../assets/img/header-title.png);
+  text-align: left;
+}
+.gh-icon {
+  width: 63px;
+  height: 66px;
+  margin-left: 53px;
+  margin-top: 17px;
+}
+.system-title {
+  width: auto;
+  height: 100px;
+  line-height: 100px;
+  font-size: 38px;
+  margin-left: 20px;
+  letter-spacing: 5px;
+}
+</style>
