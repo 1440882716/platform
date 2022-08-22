@@ -23,7 +23,7 @@
         class="swiper-slide-box"
         style="height: 50%"
       >
-        <div class="result-item font24 text-left flex-c">
+        <div class="result-item font24 text-left flex-c" @click="toDetail">
           <img class="book-img" src="../assets/img/study-system.png" alt="" />
           <span class="title-color m-t-16">{{ item.title }}</span>
         </div>
@@ -70,11 +70,20 @@ export default defineComponent({
         },
       })
     }
+    const toDetail = () => {
+      router.push({
+        path: "/files",
+        query: {
+          // goodsId: id,
+        },
+      })
+    }
     return {
       ...toRefs(data),
       toHome,
       onSwiper,
       onSlideChange,
+      toDetail,
       modules: [Navigation, Pagination, Autoplay, Grid],
     }
   },

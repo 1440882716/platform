@@ -155,6 +155,7 @@ input:focus{
   .m-r-20{
     margin-right: 20px;
   }
+  
   .m-l-20{
     margin-left: 20px;
   }
@@ -202,6 +203,9 @@ input:focus{
   }
   .flex-b{
     justify-content: space-between;
+  }
+  .flex-start{
+    justify-content: flex-start;
   }
   .flex-end{
     justify-content: flex-end;

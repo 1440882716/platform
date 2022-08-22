@@ -54,6 +54,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import(/* webpackChunkName: "about" */ '../views/dutiesDetail.vue'),
         meta: { title: "履职详情" },
       },
+      {
+        path: '/files',
+        name: 'files',
+        component: () => import(/* webpackChunkName: "about" */ '../views/files.vue'),
+        meta: { title: "文件" },
+      },
   
 ]
 
