@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import { defineComponent, ref, reactive, toRefs, onMounted } from "vue"
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 // import HelloWorld from "./components/HelloWorld.vue"
+onMounted(() => {
+  document.body.style.setProperty("--el-color-primary", "#F31A1A")
+  document.body.style.setProperty("--el-font-size-base", "24px")
+})
 </script>
 
 <template>

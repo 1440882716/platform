@@ -53,6 +53,9 @@ input:focus{
   .font32 {
     font-size: 32px;
   }
+  .font36 {
+    font-size: 36px;
+  }
   .font48 {
     font-size: 48px;
   }
@@ -71,6 +74,13 @@ input:focus{
   /* ===========color */
   .title-red{
     color: #AF0A0A;
+  }
+  .tabbar-red{
+    color: #F31A1A;
+    border-bottom: 3px solid #F31A1A;
+  }
+  .tab-red{
+    color: #F31A1A;
   }
   .title-color{
     color: #333333 ;
@@ -112,6 +122,9 @@ input:focus{
   .m-t-20{
     margin-top: 20px;
   }
+  .m-t-24{
+    margin-top: 24px;
+  }
   .m-t-28{
     margin-top: 28px;
   }
@@ -138,6 +151,9 @@ input:focus{
   }
   .m-r-17{
     margin-right: 17px;
+  }
+  .m-r-20{
+    margin-right: 20px;
   }
   .m-l-20{
     margin-left: 20px;

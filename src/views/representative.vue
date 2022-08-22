@@ -5,11 +5,11 @@
       <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
       <p class="font32">省人大代表</p>
     </div>
-    <div class="active-item text-center pointer">
+    <div class="active-item text-center pointer" @click="toDetail">
       <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
       <p class="font32">市人大代表</p>
     </div>
-    <div class="active-item text-center pointer">
+    <div class="active-item text-center pointer" @click="toDetail">
       <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
       <p class="font32">街道人大代表</p>
     </div>
@@ -30,7 +30,7 @@ export default defineComponent({
     const router = useRouter()
     const toDetail = () => {
       router.push({
-        path: "/result",
+        path: "/npcInfo",
         query: {
           // goodsId: id,
         },

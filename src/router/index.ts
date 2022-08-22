@@ -37,10 +37,22 @@ const routes: Array<RouteRecordRaw> = [
         meta: { title: "代表信息" },
       },
       {
-        path: '/npcDetail',
-        name: 'NpcDetail',
-        component: () => import(/* webpackChunkName: "about" */ '../views/npcDetail.vue'),
+        path: '/npcInfo',
+        name: 'npcInfo',
+        component: () => import(/* webpackChunkName: "about" */ '../views/npcInfo.vue'),
         meta: { title: "代表信息" },
+      },
+      {
+        path: '/npcDetail',
+        name: 'npcDetail',
+        component: () => import(/* webpackChunkName: "about" */ '../views/npcDetail.vue'),
+        meta: { title: "代表详情" },
+      },
+      {
+        path: '/dutiesDetail',
+        name: 'dutiesDetail',
+        component: () => import(/* webpackChunkName: "about" */ '../views/dutiesDetail.vue'),
+        meta: { title: "履职详情" },
       },
   
 ]
