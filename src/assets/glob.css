@@ -119,6 +119,9 @@ input:focus{
   .m-t-16{
     margin-top: 16px;
   }
+  .m-t-18{
+    margin-top: 18px;
+  }
   .m-t-20{
     margin-top: 20px;
   }
@@ -131,8 +134,17 @@ input:focus{
   .m-t-30{
     margin-top: 30px;
   }
+  .m-t-36{
+    margin-top: 36px;
+  }
   .m-t-34{
     margin-top: 34px;
+  }
+  .m-t-44{
+    margin-top: 44px;
+  }
+  .m-t-56{
+    margin-top: 56px;
   }
   .m-b-10{
     margin-bottom: 10px;
@@ -162,6 +174,9 @@ input:focus{
   .m-l-26{
     margin-left: 26px;
   }
+  .m-l-60{
+    margin-left: 60px;
+  }
   .m-l-120px{
     margin-left: 120px;
   }
@@ -173,7 +188,10 @@ input:focus{
     padding-left: 24px;
     padding-right: 24px;
   }
-  /* ========文字方向 */
+  /* ========文字方向 行高*/
+  .line-height36{
+    line-height: 36px;
+  }
   .text-left{
     text-align: left;
   }

@@ -50,7 +50,7 @@
           alt=""
         />
       </swiper-slide>
-      <swiper-slide>
+      <swiper-slide @click="toPage(5)">
         <img
           style="width: 600px; height: 300px"
           src="../assets/img/test2.png"
@@ -145,6 +145,13 @@ export default defineComponent({
       } else if (num == 4) {
         router.push({
           path: "/representative",
+          query: {
+            // goodsId: id,
+          },
+        })
+      } else if (num == 5) {
+        router.push({
+          path: "/infomation",
           query: {
             // goodsId: id,
           },

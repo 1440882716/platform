@@ -60,6 +60,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import(/* webpackChunkName: "about" */ '../views/files.vue'),
         meta: { title: "文件" },
       },
+      {
+        path: '/infomation',
+        name: 'infomation',
+        component: () => import(/* webpackChunkName: "about" */ '../views/infomation.vue'),
+        meta: { title: "基本信息" },
+      },
   
 ]
 
