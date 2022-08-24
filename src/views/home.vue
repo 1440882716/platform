@@ -2,11 +2,11 @@
   <Header></Header>
   <div style="margin-top: 252px">
     <swiper
-      class="swiper-box"
+      class="swiper-box pointer"
       style="width: 1688px; height: 650px"
       :modules="modules"
       :space-between="50"
-      :slidesPerView="3"
+      :slidesPerView="5"
       :coverflowEffect="{
         rotate: 30,
         stretch: 10,
@@ -14,7 +14,7 @@
         modifier: 2,
         slideShadows: true,
       }"
-      :autoplay="autoplayOptions"
+      autoplay="false"
       :navigation="{
         nextEl: '.swiper-button-next', //前进后退按钮
         prevEl: '.swiper-button-prev',
@@ -23,52 +23,81 @@
       @slideChange="onSlideChange"
     >
       <swiper-slide @click="toPage(1)">
-        <img
-          style="width: 600px; height: 300px"
-          src="../assets/img/test1.png"
-          alt=""
-        />
+        <div class="slide-box">
+          <div class="text-center">
+            <img
+              class="tab-item"
+              src="../assets/img/icon_成果展示.png"
+              alt=""
+            />
+            <p class="font28 fff">成果展示</p>
+          </div>
+        </div>
       </swiper-slide>
       <swiper-slide @click="toPage(2)">
-        <img
-          style="width: 600px; height: 300px"
-          src="../assets/img/test2.png"
-          alt=""
-        />
+        <div class="slide-box">
+          <div class="text-center">
+            <img
+              class="tab-item"
+              src="../assets/img/icon_工作制度.png"
+              alt=""
+            />
+            <p class="font28 fff">工作制度</p>
+          </div>
+        </div>
       </swiper-slide>
       <swiper-slide @click="toPage(3)">
-        <img
-          style="width: 600px; height: 300px"
-          src="../assets/img/test3.png"
-          alt=""
-        />
+        <div class="slide-box">
+          <div class="text-center">
+            <img class="tab-item" src="../assets/img/flag-icon.png" alt="" />
+            <p class="font28 fff">活动情况</p>
+          </div>
+        </div>
       </swiper-slide>
       <swiper-slide @click="toPage(4)">
-        <img
-          style="width: 600px; height: 300px"
-          src="../assets/img/test1.png"
-          alt=""
-        />
+        <div class="slide-box">
+          <div class="text-center">
+            <img
+              class="tab-item"
+              src="../assets/img/icon_代表信息.png"
+              alt=""
+            />
+            <p class="font28 fff">代表信息</p>
+          </div>
+        </div>
       </swiper-slide>
       <swiper-slide @click="toPage(5)">
-        <img
-          style="width: 600px; height: 300px"
-          src="../assets/img/test2.png"
-          alt=""
-        />
+        <div class="slide-box">
+          <div class="text-center">
+            <img
+              class="tab-item"
+              src="../assets/img/icon_基本信息.png"
+              alt=""
+            />
+            <p class="font28 fff">基本信息</p>
+          </div>
+        </div>
       </swiper-slide>
       <swiper-slide>
-        <img
-          style="width: 600px; height: 300px"
-          src="../assets/img/test3.png"
-          alt=""
-        />
+        <div class="slide-box">
+          <div class="text-center">
+            <img
+              class="tab-item"
+              src="../assets/img/icon_工作计划.png"
+              alt=""
+            />
+            <p class="font28 fff">工作计划</p>
+          </div>
+        </div>
       </swiper-slide>
-      <!-- <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div> -->
     </swiper>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev" style="color: #ffffff"></div>
+    <div class="swiper-button-next" style="color: #ffffff"></div>
+    <!-- <el-carousel :interval="4000" type="card" height="200px">
+      <el-carousel-item v-for="item in 6" :key="item">
+        <h3 text="2xl" justify="center">{{ item }}</h3>
+      </el-carousel-item>
+    </el-carousel> -->
   </div>
 </template>
 <script lang="ts">
@@ -107,15 +136,20 @@ export default defineComponent({
     // });
     //自动轮播的配置
     const autoplayOptions = {
-      //   delay: 2000,
-      disableOnInteraction: false,
-      loop: true,
-      pauseOnMouseEnter: true,
-      reverseDirection: true,
+      // delay: 2000,
+      // disableOnInteraction: false,
+      // loop: true,
+      // pauseOnMouseEnter: true,
+      // reverseDirection: true,
     }
 
     const onSwiper = (swiper: any) => {
-      // console.log(swiper);
+      console.log(swiper)
+      console.log(swiper.slides.length)
+      for (var i = 0; i < swiper.slides.length; i++) {
+        // debugger
+        // console.log(i)
+      }
     }
     const onSlideChange = () => {
       // console.log('slide change');
@@ -176,8 +210,48 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+@import "../assets/glob.css";
 .swiper-box {
   /* width: 1688px;
   height: 650px; */
+}
+.slide-box {
+  /* padding-top: 40px; */
+  width: 329px;
+  height: 306px;
+  background: url(../assets/img/active-bg.png) center center no-repeat;
+}
+.icon-box {
+  width: 108px;
+  height: 108px;
+  /* margin-top: 40px; */
+}
+.tab-item {
+  margin-top: 40px;
+}
+.swiper-button-prev {
+  width: 68px;
+  height: 136px;
+  background-image: url(../assets/img/left-btn.png);
+}
+.swiper-button-next {
+  width: 68px;
+  height: 136px;
+  background-image: url(../assets/img/right-btn.png);
+}
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
 }
 </style>

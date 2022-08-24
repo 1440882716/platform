@@ -70,6 +70,11 @@
         </div>
       </div>
       <div>
+        <!-- <el-image
+          style="width: 401px; height: 525px"
+          src="../assets/map/双华社区.svg"
+          fit="fit"
+        /> -->
         <img class="map-item" src="../assets/map/双华社区.svg" alt="" />
       </div>
     </div>
