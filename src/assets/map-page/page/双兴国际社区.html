@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: url("../img/map-pop2.png") no-repeat center/cover;
+			overflow: hidden;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.box {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.box img {
+			position: absolute;
+			object-fit: contain;
+		}
+
+		.box p {
+			position: absolute;
+			object-fit: contain;
+			font-family: '华文行楷';
+			font-size: 28px;
+			margin-top:20%
+			line-height: 120%;
+			color: #f00;
+		}
+
+		.box .introduction {
+			/*visibility: hidden;*/
+			position: absolute;
+			width: 60%;
+			font-family: '华文行楷';
+			font-size: 34px;
+			line-height: 120%;
+			color: #f00;
+			right: -50%;
+			top: 50%;
+			text-align: justify;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<p class="introduction">
+			<span style="display: block; text-indent: 2em;">
+				双流区黄甲街道双兴国际社区南靠综合保税区，北接西航港开发区，西临航空动力小镇，东近怡心湖，产业社区优势明显。双兴社区分为一、二社区，总占地362亩，入驻企业26家。社区共有宿舍楼16栋，入住员工19194人，员工平均年龄23岁。社区着眼配套服务西开区由工业区向功能区转型升级，坚持“以办大学的理念办社区”，营造开放共享的国际社区新场景，让入住员工“白天企业工作有劲头、晚上社区生活有想头、未来人生规划有盼头”。
+			</span>
+		</p>
+</body>
+<script src="../js/jquery-1.12.4.min.js"></script>
+<script>
+	$(document)
+		.ready(function () {
+				var wValue = $(".box")
+					.width() / 2;
+				var hValue = $(".box")
+					.height() / 2;
+				$(".introduction").animate({
+							left: "20%",
+							top: "25%",
+						});
+});
+</script>
+
+</html>

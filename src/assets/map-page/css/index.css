@@ -1,0 +1,317 @@
+﻿/*reset*/
+body,
+p,
+ul,
+li,
+h1,
+dl,
+dd,
+h2,
+input {
+	margin: 0;
+	padding: 0;
+}
+
+li {
+	list-style: none;
+}
+
+img {
+	display: block;
+}
+
+a {
+	text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: normal;
+}
+
+body {
+	background-color: white;
+}
+
+input {
+	outline: none;
+	border: hidden;
+}
+/* ============================部分样式 */
+.flex-r{
+    display: flex;
+    flex-direction: row;
+  }
+  .flex-c{
+    display: flex;
+    flex-direction: column;
+  }
+  .flex-a{
+    justify-content: space-around;
+  }
+  .flex-b{
+    justify-content: space-between;
+  }
+  .flex-start{
+    justify-content: flex-start;
+  }
+  .flex-end{
+    justify-content: flex-end;
+  }
+  /* ===============================字体 */
+  .font18{
+	font-size: 18px;
+  }
+  .font24{
+	font-size: 24px;
+  }
+  /* ===============================字体颜色 */
+  .deep-gray{
+    color: #666666 ;
+  }
+  /* ===============================间距 */
+  .m-t-16{
+    margin-top: 16px;
+  }
+  .m-t-24{
+    margin-top: 24px;
+  }
+  .m-t-34{
+    margin-top: 34px;
+  }
+  .m-t-36{
+    margin-top: 36px;
+  }
+
+.clearfix:after {
+	/*伪元素是行内元素 正常浏览器清除浮动方法*/
+	content: "";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.clearfix {
+	*zoom: 1;
+	/*ie6清除浮动的方式 *号只有IE6-IE7执行，其他浏览器不执行*/
+}
+
+/*content*/
+body {
+	/* background-image: url(../img/background.png); */
+	background-image: url(../img/main-bg.png);
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	box-sizing: border-box;
+}
+
+#icons {
+	/* margin:50px 0px 0px 100px; */
+	position: absolute;
+	left: 100px;
+	top: 20px;
+}
+
+#icons img {
+	width: 80px;
+	float: left;
+	margin-left: 50px;
+}
+
+#title {
+	font-family: 华文行楷;
+	margin-left: 30%;
+	font-size: 60px;
+	font-weight: bold;
+	color: #ff0000;
+	margin-top: 30px;
+	letter-spacing: 1.25rem;
+	text-shadow: 1px 0px #FFFFFF, -1px -1px 0px #FFFFFF, 2px 2px 0px #FFFFFF, -2px -2px 0px #FFFFFF, 3px 3px 0px #FFFFFF, -3px -3px 0px #FFFFFF;
+}
+
+/*文本介绍部分的样式*/
+#text_content {
+	max-width: 1600px;
+	margin: 0 auto;
+	/* margin: 50px auto; */
+	padding: 30px 30px;
+	/* background-color: rgba(255,255,255,0.2);
+	border-radius: 15px;
+	box-sizing: border-box;
+	box-shadow: 0 0 0 1px hsla(240,0%,100%,.5) inset,
+            0 .5em 1em rgba(0, 0, 0, 0.4); */
+}
+
+.left_content {
+	max-width: 1100px;
+	height: 700px;
+	padding: 32px;
+	float: left;
+	background-color: #fff;
+	border-radius: 16px;
+	overflow-y:auto;
+}
+
+.left_content p {
+	text-indent: 2rem;
+	line-height: 35px;
+	text-align: justify;
+	/* font-weight: bold; */
+	/* font-family: 华文行楷; */
+	/* font-size: 20px; */
+}
+.title-img {
+	width: 336px;
+	height: 48px;
+	line-height: 54px;
+	background: url(../img/info-icon.png) center center no-repeat;
+	text-align: center;
+	font-size: 20px;
+	color: #fff;
+  }
+  .npc-content{
+	flex-wrap: wrap;
+  }
+  .centent-box {
+	width: 48%;
+  }
+  .text-left{
+	text-align: left;
+  }
+  .npc-img {
+	width: 124px;
+	height: 154px;
+	border-radius: 8px;
+	margin-right: 20px;
+  }
+  .title-color{
+    color: #333333 ;
+  }
+  .title-box {
+	width: 72px;
+	height: 27px;
+  }
+  .position {
+	width: calc(100% - 86px);
+  }
+/*地图部分的样式*/
+.right_content {
+	float: left;
+	padding-left: 90px;
+}
+
+.imgTab {
+	padding: 20px 0px;
+}
+
+.imgTab img {
+	width: 450px;
+	padding: 50px;
+}
+
+.right_content p {
+	text-align: center;
+	/* font-family: 华文行楷; */
+	font-size: 20px;
+	font-weight: bold;
+	position: relative;
+}
+
+.btn {
+	width: 170px;
+	height: 48px;
+	color: #fff;
+	font-size: 18px;
+	/* font-family: 华文行楷; */
+	border-radius: 5px;
+	text-align: center;
+	line-height: 48px;
+	background: -webkit-linear-gradient(left, #ff2929, #ff824b) no-repeat;
+	/*背景渐变色*/
+	border: none;
+	outline: none;
+}
+
+.btn_fixed {
+	position: absolute;
+	right: 5%;
+	top: 20%;
+}
+
+.btn:active {
+	background: -webkit-linear-gradient(left, #ff824b, #ff2929) no-repeat;
+	/*激活状态*/
+}
+
+.btn:hover {
+	cursor: pointer;
+}
+
+.map {
+	width: 560px;
+}
+
+/*背景层*/
+#popLayer {
+	display: none;
+	background-color: #000;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 10;
+	-moz-opacity: 0.8;
+	opacity: .80;
+	filter: alpha(opacity=80);
+	/* 只支持IE6、7、8、9 */
+}
+
+/*弹出层*/
+#popBox {
+	display: none;
+	background-color: #FFFFFF;
+	z-index: 11;
+	width: 400px;
+	height: 400px;
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	margin: auto;
+	border-radius: 5px;
+}
+
+#popBox .close {
+	text-align: right;
+	margin-right: 5px;
+	/* background-color: #F8F8F8; */
+}
+
+/*关闭按钮*/
+#popBox .close a {
+	text-decoration: none;
+	color: #2D2C3B;
+}
+
+.note {
+	animation: change 1.25s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes change {
+	from {
+		width: 27px;
+		height: 27px;
+		opacity: 0;
+	}
+
+	to {
+		width: 27px;
+		height: 27px;
+		opacity: 0.9;
+	}
+}

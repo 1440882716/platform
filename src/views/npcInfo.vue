@@ -16,13 +16,27 @@
   <!-- 第一版 -->
   <div class="box" v-if="activeName == '1'">
     <div class="box1">
-      <div class="one"><img src="../assets/img/npc.png" /></div>
-      <div class="two"><img src="../assets/img/npc.png" /></div>
-      <div class="three"><img src="../assets/img/npc.png" /></div>
-      <div class="four"><img src="../assets/img/npc.png" /></div>
-      <div class="five"><img src="../assets/img/npc.png" /></div>
-      <div class="six"><img src="../assets/img/npc.png" /></div>
-      <div class="seven"><img src="../assets/img/npc.png" /></div>
+      <div class="one" @click="toDetail">
+        <img src="../assets/img/npc.png" />
+      </div>
+      <div class="two" @click="toDetail">
+        <img src="../assets/img/npc.png" />
+      </div>
+      <div class="three" @click="toDetail">
+        <img src="../assets/img/npc.png" />
+      </div>
+      <div class="four" @click="toDetail">
+        <img src="../assets/img/npc.png" />
+      </div>
+      <div class="five" @click="toDetail">
+        <img src="../assets/img/npc.png" />
+      </div>
+      <div class="six" @click="toDetail">
+        <img src="../assets/img/npc.png" />
+      </div>
+      <div class="seven" @click="toDetail">
+        <img src="../assets/img/npc.png" />
+      </div>
     </div>
   </div>
   <!-- 第二版 -->

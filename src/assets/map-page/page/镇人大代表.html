@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>县代表</title>
+
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 华文行楷;
+        }
+
+        .pic {
+            width: 180px;
+            height: 130px;
+            margin: 125px auto 0;
+            position: relative;
+            /*transform 旋转元素*/
+            transform-style: preserve-3d;
+            transform: perspective(900px) rotateX(-10deg) rotateY(0deg);
+        }
+
+        body,html {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background: url("../img/background.png") no-repeat center/cover;
+            background-size: 100% 100%;
+        }
+
+        .pic img {
+            position: absolute;
+            z-index: 2;
+            top: 10%;
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            /*box-shadow: 0px 0px 10px #fff;*/
+            /*倒影的设置*/
+            /*-webkit-box-reflect: below 20px -webkit-linear-gradient(top, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, .4) 100%);*/
+        }
+
+        .pic pre {
+            width: 800px;
+            height: 800px;
+            font-size: 40px;
+            /*background: -webkit-radial-gradient(center center, 600px 600px, rgba(255, 255, 255, .5), rgba(0, 0, 0, 0));*/
+            position: absolute;
+            top: 10%;
+            /*margin-top: -600px;*/
+            /*margin-left: -200px;*/
+            /*border-radius: 600px;*/
+            /*transform-style: preserve-3d;*/
+            /*transform: perspective(100px) rotateX(-10deg) rotateY(0deg);*/
+        }
+        .back,.home{
+            width: 4.3%;
+            height: 8.3%;
+            /*background: red;*/
+            position: absolute;
+            top:2%;
+            left:10%;
+        }
+        .back{
+            top:2%;
+            left:4%;
+        }
+        .home img,.back img{
+            width: 80px;
+            height: 80px;
+        }
+        .desc{
+            position: absolute;
+            text-align: center;
+            padding: 0 200px;
+            bottom: 150px;
+            font-size: 34px;
+        }
+    </style>
+
+</head>
+<body>
+<div id="title1"
+     style="height:9%;font-size:60px;font-weight: 800;text-align: center;color:red;padding-top: 3%;text-shadow: 3px 5px #fff;">
+    <b><strong><span>区人大代表</span></strong></b>
+</div>
+<div class="back">
+    <img src="../img/return.png"  >
+</div>
+<div class="pic">
+
+</div>
+
+<script src="../js/jquery-1.12.4.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+
+        let picNames = [
+            "周洪彬.png",
+            "尹宏波.png",
+            "晏巍.png",
+            "杨莲.png",
+            "游艳.png",
+            "童韬.png",
+            "罗勇.png",
+            "陈天意.png",
+        ];
+        let imgsDom = document.querySelector('div.pic');
+        let imgs = [];
+        for (let i = 0; i < picNames.length; ++i) {
+            let imgDom = document.createElement('img');
+            imgDom.src = "../img/members/" + picNames[i];
+            imgDom.alt = picNames[i].split('.')[0];
+            imgsDom.append(imgDom);
+        }
+
+
+        var imgL = $(".pic img").size();
+        var deg = 360 / imgL;
+        var roY = 0, roX = -10;
+        var xN = 0, yN = 0;
+        var play = null;
+
+        $(".pic img").each(function (i) {
+            $(this).css({
+                <!--translateZ 定义2d旋转沿着z轴-->
+                "transform": "rotateY(" + i * deg + "deg) translateZ(530px)"
+            });
+            <!--防止图片被拖拽-->
+            $(this).attr('ondragstart', 'return false');
+        });
+        // $(".pic p").each(function (i) {
+        //     $(this).css({
+        //         <!--translateZ 定义2d旋转沿着z轴-->
+        //         "transform": "rotateY(" + i * deg + "deg) translateZ(0)"
+        //     });
+        //     <!--防止图片被拖拽-->
+        //     $(this).attr('ondragstart', 'return false');
+        // });
+        $(document).mousedown(function (ev) {
+            var x_ = ev.clientX;
+            var y_ = ev.clientY;
+            clearInterval(play);
+            console.log('我按下了');
+            $(this).bind('mousemove', function (ev) {
+                /*获取当前鼠标的坐标*/
+                var x = ev.clientX;
+                var y = ev.clientY;
+                /*两次坐标之间的距离*/
+                xN = x - x_;
+                yN = y - y_;
+
+                roY += xN * 0.05;
+                roX -= yN * 0.02;
+                console.log('移动');
+                //$('body').append('<div style="width:5px;height:5px;position:absolute;top:'+y+'px;left:'+x+'px;background-color:red"></div>');
+
+                $('.pic').css({
+                    transform: 'perspective(900px) rotateX(' + roX + 'deg) rotateY(' + roY + 'deg)'
+                });
+                /*之前的鼠标坐标*/
+                x_ = ev.clientX;
+                y_ = ev.clientY;
+
+            });
+        }).mouseup(function () {
+            $(this).unbind('mousemove');
+            var play = setInterval(function () {
+
+                xN *= 0.95;
+                yN *= 0.95
+                if (Math.abs(xN) < 1 && Math.abs(yN) < 1) {
+                    clearInterval(play);
+                }
+                roY += xN * 0.05;
+                roX -= yN * 0.02;
+                $('.pic').css({
+                    transform: 'perspective(900px) rotateX(' + roX + 'deg) rotateY(' + roY + 'deg)'
+                });
+
+            }, 3);
+
+        });
+        $(document).on('touchstart',function (event) {
+            var ev = event.originalEvent.touches[0];
+            var x_ = ev.clientX;
+            var y_ = ev.clientY;
+            clearInterval(play);
+            console.log('我按下了');
+            $(this).on('touchmove', function (event) {
+                ev = event.originalEvent.touches[0];
+                /*获取当前鼠标的坐标*/
+                var x = ev.clientX;
+                var y = ev.clientY;
+                /*两次坐标之间的距离*/
+                xN = x - x_;
+                yN = y - y_;
+                roY += xN * 0.05;
+                roX -= yN * 0.02;
+                console.log('移动');
+                //$('body').append('<div style="width:5px;height:5px;position:absolute;top:'+y+'px;left:'+x+'px;background-color:red"></div>');
+                $('.pic').css({
+                    transform: 'perspective(900px) rotateX(' + roX + 'deg) rotateY(' + roY + 'deg)'
+                });
+                /*之前的鼠标坐标*/
+                x_ = ev.clientX;
+                y_ = ev.clientY;
+            });
+        }).on('touchend',function () {
+            console.log('不移动');
+            $(this).unbind('touchmove');
+            var play = setInterval(function () {
+                xN *= 0.95;
+                yN *= 0.95
+                if (Math.abs(xN) < 1 && Math.abs(yN) < 1) {
+                    clearInterval(play);
+                }
+                roY += xN * 0.05;
+                roX -= yN * 0.02;
+                $('.pic').css({
+                    transform: 'perspective(900px) rotateX(' + roX + 'deg) rotateY(' + roY + 'deg)'
+                });
+            }, 3);
+        });
+
+    });
+    $(".back").click(function () {
+        interObj.GetRootDirInfo().then(function (info) {
+            baseInfo = JSON.parse(info);//resource的目录信息
+            //location.href = baseInfo.dir.FullName.replace(baseInfo.dir.MatchName,'HTM@homePage')+'\\index.html?dirName=returnFromDir';
+            location.href = baseInfo.dir.FullName.replace(baseInfo.dir.MatchName, 'entry') +
+                '\\entry.html?dirName=returnFromDir';
+        });
+    });
+</script>
+</body>
+</html>

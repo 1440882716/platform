@@ -26,7 +26,7 @@
 import { defineComponent, ref, nextTick, onMounted } from "vue"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
-import turn from "../utils/turn.js"
+// import turn from "../utils/turn.js"
 // import turn = require("../utils/turn.js")
 const $ = require("jquery")
 export default defineComponent({

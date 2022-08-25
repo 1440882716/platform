@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: url("../img/map-pop2.png") no-repeat center/cover;
+			overflow: hidden;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.box {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.box img {
+			position: absolute;
+			object-fit: contain;
+		}
+
+		.box p {
+			position: absolute;
+			object-fit: contain;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+		}
+
+		.box .map {
+			height: 0;
+			width: 0;
+		}
+
+		.box .npc1 {
+			top: -30px;
+			background: url("../img/npc1.svg") no-repeat 10px 50px;
+			text-align: center;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+
+		.box .npc2 {
+			bottom: -30px;
+			background: url("../img/npc2.svg") no-repeat -5px 0px;
+			text-align: center;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .npc3 {
+			bottom: -30px;
+			background: url("../img/down.svg") no-repeat 10px 0px;
+			text-align: right;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .voter {
+			top: -30px;
+			background: url("../img/up.svg") no-repeat -120px 50px;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+
+		.box .introduction {
+			/*visibility: hidden;*/
+			position: absolute;
+			width: 45%;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+			right: -50%;
+			top: -20%;
+			text-align: justify;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<img class="map" src="../img/云青寺.svg">
+		<!-- <p class="npc1">乡级人大代表 46 名</p>
+		<p class="voter">人口 2683 人</p> -->
+		<p class="introduction">
+			<span style="display: block; text-indent: 2em;">
+				青云寺社区位于双流区南部，黄甲街道东南，北邻怡心街道，南接永安镇，西连胜利镇，毗邻生物产业新城、空港内陆自贸区，辖区内有电子信息产业园、感知物联网产业园、物联传感科技园、电子科技大学科技园、电子科大国家大学科技园，是产业园区发展规划重点区域。辖区有一个约300亩的小场镇。全社区幅员面积约15.3平方公里，辖9个农业生产小组，18个农业合作社。社区原有面积7.1平方公里，2019年12月区划调整由原公兴街道划归黄甲街道，辖区面积增加至15.3平方公里。2020年5月完成体制机制改革，由原来的村调整为社区。
+			</span>
+			<span style="display: block; text-indent: 2em;">
+				青云寺社区因寺得名,是原其江村和果园村于2004年合并而成。建国以前，辖区还有天台寺，一座尼姑庵、一座和尚庙，与之遥相呼应。它们的地址大约在青云寺社区2社（原公兴乡其江大队6社），都是典型的四合院形制寺庙。随着时代的变迁，工业发展进程加快，青云寺原址建起了厂房，原来的天台寺则变成了空地。
+			</span>
+		</p>
+</body>
+<script src="../js/jquery-1.12.4.min.js"></script>
+<script>
+	$(document)
+		.ready(function () {
+				var wValue = $(".box")
+					.width() / 2;
+				var hValue = $(".box")
+					.height() / 2;
+				$(".map")
+					.css("left", wValue);
+				$(".map")
+					.css("top", hValue);
+				$(".map")
+					.animate({
+						width: "35%",
+						height: "50%",
+						left: "8%",
+						top: "25%",
+					}, 500, function () {
+						$(".introduction").animate({
+							left: "50%",
+							top: "10%",
+						});
+						$(".voter")
+							.animate({
+								width: "20%",
+								height: "20%",
+								top: "12%",
+								left: "11%",
+							});
+						$(".npc1")
+							.animate({
+								width: "20%",
+								height: "20%",
+								top: "10%",
+								left: "25%",
+							}, 500, function () {
+								$(".npc2")
+									.animate({
+										width: "20%",
+										height: "20%",
+										top: "75%",
+										left: "5%",
+									});
+								$(".npc3")
+									.animate({
+										width: "20%",
+										height: "20%",
+										top: "75%",
+										left: "30%",
+									},
+								);
+							});
+					});
+				});
+</script>
+
+</html>

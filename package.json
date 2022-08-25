@@ -37,6 +37,7 @@
     "vue"
   ],
   "dependencies": {
+    "axios": "^0.27.2",
     "element-plus": "^2.2.13",
     "jquery": "^3.6.0",
     "swiper": "^8.3.2",

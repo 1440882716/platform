@@ -78,7 +78,7 @@
           </div>
         </div>
       </swiper-slide>
-      <swiper-slide>
+      <swiper-slide @click="toPage(6)">
         <div class="slide-box">
           <div class="text-center">
             <img
@@ -186,6 +186,13 @@ export default defineComponent({
       } else if (num == 5) {
         router.push({
           path: "/infomation",
+          query: {
+            // goodsId: id,
+          },
+        })
+      } else if (num == 6) {
+        router.push({
+          path: "/",
           query: {
             // goodsId: id,
           },
