@@ -82,6 +82,9 @@ input:focus{
   .tab-red{
     color: #F31A1A;
   }
+  .login-text{
+    color: #F31C1B;
+  }
   .title-color{
     color: #333333 ;
   }

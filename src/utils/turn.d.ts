@@ -1,2 +1,2 @@
-// declare module "@/utils/turn.js"
-declare module "./turn.js"
+export declare const turn: any
+// declare module '@/utils/turn.js'

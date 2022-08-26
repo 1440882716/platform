@@ -13,9 +13,21 @@
             srcset=""
           /> -->
           <!-- <image class="" src="../assets/img/test1.png" > -->
-          <img src="../assets/img/test1.png" alt="" />
-          <img src="../assets/img/test2.png" alt="" />
-          <img src="../assets/img/test3.png" alt="" />
+          <img
+            style="width: 450px; height: 300px"
+            src="../assets/img/test1.png"
+            alt=""
+          />
+          <img
+            style="width: 450px; height: 300px"
+            src="../assets/img/test2.png"
+            alt=""
+          />
+          <img
+            style="width: 450px; height: 300px"
+            src="../assets/img/test3.png"
+            alt=""
+          />
         </div>
       </div>
     </div>
@@ -26,8 +38,7 @@
 import { defineComponent, ref, nextTick, onMounted } from "vue"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
-// import turn from "../utils/turn.js"
-// import turn = require("../utils/turn.js")
+import turn from "../utils/turn.js"
 const $ = require("jquery")
 export default defineComponent({
   components: {
@@ -41,12 +52,12 @@ export default defineComponent({
     const imgList = ref([{ url: "./assets/fsc/turn-img/1.jpg" }])
     const onTurn = () => {
       nextTick(() => {
-        console.log($("#flipbook"))
+        // console.log($)
         console.log(turn)
         $("#flipbook").turn({
           autoCenter: true,
           height: 646, //高度
-          width: 996, //宽度
+          width: 900, //宽度
           display: "double", //单页显示/双页显示  single/double
           elevation: 50,
           duration: 500, //翻页速度(毫秒), 默认600ms
@@ -63,7 +74,7 @@ export default defineComponent({
               // 翻页前触发
             },
             turned: function (e: any, page: number) {
-              console.log(e, page)
+              // console.log(e, page)
               currentPage.value = page
               // 翻页后触发
             },
@@ -89,6 +100,9 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+#flipbook {
+  margin: 0 auto;
+}
 .turn-banner {
   width: 60vw;
   height: 30vh;

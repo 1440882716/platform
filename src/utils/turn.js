@@ -6,8 +6,8 @@
  * Copyright (C) 2012 Emmanuel Garcia
  * All rights reserved
  **/
-import jQuery from "jquery";
-function turn($) {
+import jQuery from 'jquery'
+export default (function ($) {
 
   'use strict';
 
@@ -3361,7 +3361,4 @@ function turn($) {
   $.cssTransitionEnd = getTransitionEnd;
   $.findPos = findPos;
 
-}
-
-const tmp = turn(jQuery)
-export default tmp
+})(jQuery);
