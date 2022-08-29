@@ -7,6 +7,7 @@ import {request} from './index'
 export function login(data:loginData) {
     return request({
       url: '/auth/thirdLogin',//此处为自己请求地址
-      method: 'POST'
+      method: 'POST',
+      data: data
     })
   }

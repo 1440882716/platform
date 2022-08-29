@@ -101,7 +101,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import Header from "../components/header.vue"
 import {
@@ -127,13 +127,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter()
-    //     const swiper = new Swiper('.swiper', {
-    //   effect: 'coverflow',
-    //   coverflowEffect: {
-    //     rotate: 30,
-    //     slideShadows: false,
-    //   },
-    // });
+    const tokenStr = ref()
     //自动轮播的配置
     const autoplayOptions = {
       // delay: 2000,
@@ -144,8 +138,8 @@ export default defineComponent({
     }
 
     const onSwiper = (swiper: any) => {
-      console.log(swiper)
-      console.log(swiper.slides.length)
+      // console.log(swiper)
+      // console.log(swiper.slides.length)
       for (var i = 0; i < swiper.slides.length; i++) {
         // debugger
         // console.log(i)
@@ -199,7 +193,39 @@ export default defineComponent({
         })
       }
     }
+    const ipcRenderer = require("electron").ipcRenderer
+    onMounted(() => {
+      let token = localStorage.getItem("token")
+      tokenStr.value = token
+      // console.log(tokenStr.value)
+      var ws = new WebSocket(
+        "ws://192.168.1.116:9527/api/manager/display/websocket?version=1.06&Authorization=" +
+          tokenStr.value
+      )
+      // console.log(ws)
+
+      ws.onerror = function () {
+        console.log("error")
+      }
+      ws.onopen = function () {
+        console.log("连接成功...")
+      }
+      ws.onmessage = function (e) {
+        console.log(e.data)
+        let files = JSON.parse(e.data)
+        console.log(files)
+        // return
+        // 监听主进程过来的消息
+        ipcRenderer.on("main-process-message", (_event, ...args) => {
+          console.log("接收主进程过来的消息===", ...args)
+        })
+        // 向主进程发送消息
+        ipcRenderer.send("save-data", "我是渲染进程的消息")
+        // ipcRenderer.send("save-data", e.data)
+      }
+    })
     return {
+      tokenStr,
       autoplayOptions,
       onSwiper,
       onSlideChange,

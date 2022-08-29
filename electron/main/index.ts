@@ -36,8 +36,7 @@ const indexHtml = join(ROOT_PATH.dist, 'index.html')
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
-    width:1000,
-    height:500,
+    fullscreen: true,
     icon: join(ROOT_PATH.public, 'favicon.ico'),
     webPreferences: {
       preload,
@@ -100,6 +99,13 @@ ipcMain.handle('open-win', (event, arg) => {
       preload,
     },
   })
+
+// 主进程监听渲染进程的消息
+ipcMain.on("save-data",(event,arg)=>{
+  if(arg == "我是渲染进程的消息"){
+    event.sender.send('main-process-message', "通信成功");
+  }
+})
 
   if (app.isPackaged) {
     childWindow.loadFile(indexHtml, { hash: arg })

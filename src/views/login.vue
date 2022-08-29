@@ -18,7 +18,7 @@
           v-model="account.password"
           class="login-item m-t-20"
           placeholder="输入密码"
-          type="text"
+          type="password"
         />
         <div class="btn-box font16 fff" @click="toHome">登录</div>
       </div>
@@ -40,15 +40,17 @@ export default defineComponent({
       password: "",
     })
     const toHome = () => {
-      // login(account.value).then((res) => {
-      //   console.log(res)
-      // })
-      // return
-      router.push({
-        path: "/home",
-        query: {
-          // goodsId: id,
-        },
+      login(account.value).then((res: any) => {
+        console.log(res)
+        if (res.status == "OK") {
+          localStorage.setItem("token", res.data.token)
+          router.push({
+            path: "/home",
+            query: {
+              // goodsId: id,
+            },
+          })
+        }
       })
     }
     return {
