@@ -1,7 +1,8 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { app, BrowserWindow, shell, ipcMain,session  } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
-
+import fs from 'fs'
+import path from 'path'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -46,6 +47,7 @@ async function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
+    
   })
 
   if (app.isPackaged) {
@@ -65,6 +67,89 @@ async function createWindow() {
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https:')) shell.openExternal(url)
     return { action: 'deny' }
+  })
+
+
+
+
+  // 主进程与渲染进程通信
+  ipcMain.on("save-data",(event,arg)=>{
+
+      // 接受渲染进程的数据并存导本地
+      fs.writeFile(path.join(__dirname, "../renderer/data.json"),arg, "utf8",(err)=>{
+        if(err){
+           event.sender.send('main-process-message', "写入失败"+err);
+        }else {
+          event.sender.send('main-process-message', "写入成功");
+          // 读取本地文件发给渲染进程
+          fs.readFile(path.join(__dirname, "../renderer/data.json"), "utf8",(error,data)=>{
+            if(error){
+               event.sender.send('read-file', "读取失败");
+            }else {
+              event.sender.send('read-file', data);
+              
+            }
+          })
+        }
+      })
+    
+  })
+
+
+  // ipcMain.on('download', (evt, args) => {
+    // win.webContents.downloadURL("http://106.13.196.72:9000/npc/file/display/c9fd7a730230a7190f68311276bd0b37_1661248552327.jpeg")
+    // downloadObj.downloadPath = args.downloadPath
+    // downloadObj.fileName = args.fileName
+    // let ext = path.extname(downloadObj.fileName)
+    // let filters = [{ name: '全部文件', extensions: ['*'] }]
+    // if (ext && ext !== '.') {
+    //   filters.unshift({
+    //     name: '',
+    //     extensions: [ext.match(/[a-zA-Z]+$/)[0]]
+    //   })
+    // }
+    // // 弹出另存为弹框，用于获取保存路径
+    // dialog
+    //   .showSaveDialog(win, {
+    //     filters,
+    //     defaultPath: downloadObj.fileName
+    //   })
+    //   .then((result) => {
+    //     downloadObj.savedPath = result.filePath
+    //     if (downloadObj.savedPath) {
+    //       win.webContents.downloadURL(downloadObj.downloadPath) // 触发will-download事件
+    //     }
+    //   })
+    //   .catch(() => {})
+  // })
+  // 下载
+  win.webContents.downloadURL("http://106.13.196.72:9000/npc/file/display/c9fd7a730230a7190f68311276bd0b37_1661248552327.jpeg")
+  win.webContents.session.on('will-download', (event:any, item:any, webContents:any) => {
+    debugger
+    // 无需对话框提示， 直接将文件保存到路径
+    item.setSavePath('../renderer/img')
+  
+    // item.on('updated', (event, state) => {
+    //   if (state === 'interrupted') {
+    //     console.log('Download is interrupted but can be resumed')
+    //   } else if (state === 'progressing') {
+    //     if (item.isPaused()) {
+    //       console.log('Download is paused')
+    //     } else {
+    //       console.log(`Received bytes: ${item.getReceivedBytes()}`)
+    //     }
+    //   }
+    // })
+    // item.once('done', (event, state) => {
+    //   if (state === 'completed') {
+    //     console.log('Download successfully')
+    //   } else {
+    //     console.log(`Download failed: ${state}`)
+    //   }
+    // })
+
+
+
   })
 }
 
@@ -100,12 +185,6 @@ ipcMain.handle('open-win', (event, arg) => {
     },
   })
 
-// 主进程监听渲染进程的消息
-ipcMain.on("save-data",(event,arg)=>{
-  if(arg == "我是渲染进程的消息"){
-    event.sender.send('main-process-message', "通信成功");
-  }
-})
 
   if (app.isPackaged) {
     childWindow.loadFile(indexHtml, { hash: arg })
