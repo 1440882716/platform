@@ -99,6 +99,7 @@
       </el-carousel-item>
     </el-carousel> -->
   </div>
+  <div @click="tomsg">测试文件下载</div>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue"
@@ -118,6 +119,7 @@ import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/scrollbar"
 import { array } from "yargs"
+import { json } from "stream/consumers"
 
 export default defineComponent({
   components: {
@@ -193,36 +195,46 @@ export default defineComponent({
         })
       }
     }
-    const ipcRenderer = require("electron").ipcRenderer
+    const tomsg = () => {
+      const ipcRenderer = require("electron").ipcRenderer
+      ipcRenderer.send("download", {
+        downloadPath: "https://unpkg.com/vue@3.0.7/dist/vue.global.js", // 下载链接（以下载vue文件为例）
+        fileName: "vue.global.js", // 下载文件名，需要包含后缀名
+      })
+    }
     onMounted(() => {
-      let token = localStorage.getItem("token")
-      tokenStr.value = token
-      // console.log(tokenStr.value)
-      var ws = new WebSocket(
-        "ws://192.168.1.116:9527/api/manager/display/websocket?version=1.06&Authorization=" +
-          tokenStr.value
-      )
-      // console.log(ws)
-
-      ws.onerror = function () {
-        console.log("error")
-      }
-      ws.onopen = function () {
-        console.log("连接成功...")
-      }
-      ws.onmessage = function (e) {
-        console.log(e.data)
-        let files = JSON.parse(e.data)
-        console.log(files)
-        // return
-        // 监听主进程过来的消息
-        ipcRenderer.on("main-process-message", (_event, ...args) => {
-          console.log("接收主进程过来的消息===", ...args)
-        })
-        // 向主进程发送消息
-        ipcRenderer.send("save-data", "我是渲染进程的消息")
-        // ipcRenderer.send("save-data", e.data)
-      }
+      // let token = localStorage.getItem("token")
+      // tokenStr.value = token
+      // var ws = new WebSocket(
+      //   "ws://192.168.1.116:9527/api/manager/display/websocket?version=1.06&Authorization=" +
+      //     tokenStr.value
+      // )
+      // ws.onerror = function () {
+      //   console.log("error")
+      // }
+      // ws.onopen = function () {
+      //   console.log("连接成功...")
+      // }
+      // ws.onmessage = function (e) {
+      //   console.log(e.data)
+      //   let files = JSON.parse(e.data)
+      //   let fileList = JSON.stringify(files.fileList)
+      //   let navList = JSON.stringify(files.nodeList)
+      //   console.log(fileList)
+      //   console.log(navList)
+      //   const ipcRenderer = require("electron").ipcRenderer
+      //   // 监听主进程过来的消息
+      //   ipcRenderer.on("main-process-message", (_event, ...args) => {
+      //     console.log("接收主进程过来的消息===", ...args)
+      //   })
+      //   ipcRenderer.on("read-file", (_event, ...args) => {
+      //     console.log("文件信息", ...args)
+      //   })
+      //   // 向主进程发送消息，保存应用的下载文件
+      //   ipcRenderer.send("down-file-list", fileList)
+      //   // 向主进程发送消息，保存应用的目录
+      //   ipcRenderer.send("save-data", navList)
+      // }
     })
     return {
       tokenStr,
@@ -230,6 +242,7 @@ export default defineComponent({
       onSwiper,
       onSlideChange,
       toPage,
+      tomsg,
       modules: [
         Navigation,
         Pagination,

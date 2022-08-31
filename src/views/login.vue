@@ -36,14 +36,56 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const account = ref({
-      username: "",
-      password: "",
+      username: "admin",
+      password: "123456",
     })
     const toHome = () => {
+      // let systemPath =
+      //   "D:\\img\\1fb4ed79a8d463f7136b8a187112017f_1661334648771.jpg"
+      // let index = systemPath.lastIndexOf("\\")
+      // let pos = systemPath.substring(0, index)
+      // console.log("文件保存的位置===", pos)
+      // return
       login(account.value).then((res: any) => {
         console.log(res)
         if (res.status == "OK") {
+          // 登录成功
           localStorage.setItem("token", res.data.token)
+          var ws = new WebSocket(
+            "ws://192.168.1.116:9527/api/manager/display/websocket?version=1.06&Authorization=" +
+              res.data.token
+          )
+          ws.onerror = function () {
+            console.log("error")
+          }
+          ws.onopen = function () {
+            console.log("连接成功...")
+          }
+          // 接收websocket推送的消息
+          ws.onmessage = function (e) {
+            console.log(e.data)
+            let files = JSON.parse(e.data)
+            let fileList = JSON.stringify(files.fileList)
+            let navList = JSON.stringify(files.nodeList)
+
+            console.log(JSON.parse(fileList))
+            console.log(JSON.parse(navList))
+
+            // return
+            const ipcRenderer = require("electron").ipcRenderer
+            // 监听主进程过来的消息
+            ipcRenderer.on("main-process-message", (_event, ...args) => {
+              console.log("接收主进程过来的消息===", ...args)
+            })
+            ipcRenderer.on("read-file", (_event, ...args) => {
+              console.log("文件信息", ...args)
+            })
+            // 向主进程发送消息，保存应用的下载文件
+            ipcRenderer.send("down-file-list", fileList)
+            // 向主进程发送消息，保存应用的目录
+            ipcRenderer.send("save-data", navList)
+          }
+          return
           router.push({
             path: "/home",
             query: {

@@ -25,9 +25,13 @@ export const ROOT_PATH = {
   dist: join(__dirname, '../..'),
   // /dist or /public
   public: join(__dirname, app.isPackaged ? '../..' : '../../../public'),
+  
 }
 
 let win: BrowserWindow | null = null
+// 下载文件的保存地址和下载的序号version
+let savePath:string
+let version:string
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js')
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin
@@ -71,18 +75,62 @@ async function createWindow() {
 
 
 
+  // 下载
+  const filesDown=(win:any,downPath:string,savePath:string)=>{
+    win.webContents.downloadURL(downPath)
+    // win.webContents.downloadURL("http://106.13.196.72:9000/npc/file/display/c9fd7a730230a7190f68311276bd0b37_1661248552327.jpeg")
+    win.webContents.session.on('will-download', (event:any, item:any, webContents:any) => {
+      // 无需对话框提示， 直接将文件保存到路径
+      item.setSavePath('D:\\khd\\bigdata\\test_files'+`\\${item.getFilename()}`);
+      // if(savePath!= "" && savePath!= undefined){
+        // item.setSavePath('D:\\khd\\bigdata\\test_files'+`\\${item.getFilename()}`);
+      // }else{
+
+      // }
+      item.on('updated', (event:any, state:any) => {
+        if (state === 'interrupted') {
+          console.log('Download is interrupted but can be resumed')
+        } else if (state === 'progressing') {
+          if (item.isPaused()) {
+            console.log('Download is paused')
+          } else {
+            console.log(`Received bytes: ${item.getReceivedBytes()}`)
+          }
+        }
+      })
+      item.once('done', (event:any, state:any) => {
+        if (state === 'completed') {
+          console.log('Download successfully')
+          // console.log("文件保存的路径===",item.getSavePath());
+          let systemPath =item.getSavePath() 
+          let index = systemPath.lastIndexOf("\\")
+          let path_url = systemPath.substring(0, index)
+          savePath = path_url
+          console.log("save path is "+savePath);
+          
+        } else {
+          console.log(`Download failed: ${state}`)
+        }
+      })
+    })
+  }
+
+
+// })
+
+
 
   // 主进程与渲染进程通信
   ipcMain.on("save-data",(event,arg)=>{
-
-      // 接受渲染进程的数据并存导本地
-      fs.writeFile(path.join(__dirname, "../renderer/data.json"),arg, "utf8",(err)=>{
+      // 接受渲染进程的数据并存到本地
+      fs.writeFile(path.join("./src/renderer/data.json"),arg, "utf8",(err)=>{
         if(err){
-           event.sender.send('main-process-message', "写入失败"+err);
+           event.sender.send('main-process-message', "目录文件写入失败"+err);
         }else {
-          event.sender.send('main-process-message', "写入成功");
+          event.sender.send('main-process-message', "目录文件写入成功");
           // 读取本地文件发给渲染进程
-          fs.readFile(path.join(__dirname, "../renderer/data.json"), "utf8",(error,data)=>{
+          // fs.readFile(path.join(__dirname, "../renderer/data.json"), "utf8",(error,data)=>{
+          fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
             if(error){
                event.sender.send('read-file', "读取失败");
             }else {
@@ -92,65 +140,36 @@ async function createWindow() {
           })
         }
       })
-    
   })
 
-
-  // ipcMain.on('download', (evt, args) => {
-    // win.webContents.downloadURL("http://106.13.196.72:9000/npc/file/display/c9fd7a730230a7190f68311276bd0b37_1661248552327.jpeg")
-    // downloadObj.downloadPath = args.downloadPath
-    // downloadObj.fileName = args.fileName
-    // let ext = path.extname(downloadObj.fileName)
-    // let filters = [{ name: '全部文件', extensions: ['*'] }]
-    // if (ext && ext !== '.') {
-    //   filters.unshift({
-    //     name: '',
-    //     extensions: [ext.match(/[a-zA-Z]+$/)[0]]
-    //   })
-    // }
-    // // 弹出另存为弹框，用于获取保存路径
-    // dialog
-    //   .showSaveDialog(win, {
-    //     filters,
-    //     defaultPath: downloadObj.fileName
-    //   })
-    //   .then((result) => {
-    //     downloadObj.savedPath = result.filePath
-    //     if (downloadObj.savedPath) {
-    //       win.webContents.downloadURL(downloadObj.downloadPath) // 触发will-download事件
-    //     }
-    //   })
-    //   .catch(() => {})
-  // })
-  // 下载
-  win.webContents.downloadURL("http://106.13.196.72:9000/npc/file/display/c9fd7a730230a7190f68311276bd0b37_1661248552327.jpeg")
-  win.webContents.session.on('will-download', (event:any, item:any, webContents:any) => {
-    debugger
-    // 无需对话框提示， 直接将文件保存到路径
-    item.setSavePath('../renderer/img')
-  
-    // item.on('updated', (event, state) => {
-    //   if (state === 'interrupted') {
-    //     console.log('Download is interrupted but can be resumed')
-    //   } else if (state === 'progressing') {
-    //     if (item.isPaused()) {
-    //       console.log('Download is paused')
-    //     } else {
-    //       console.log(`Received bytes: ${item.getReceivedBytes()}`)
-    //     }
-    //   }
-    // })
-    // item.once('done', (event, state) => {
-    //   if (state === 'completed') {
-    //     console.log('Download successfully')
-    //   } else {
-    //     console.log(`Download failed: ${state}`)
-    //   }
-    // })
+  ipcMain.on("down-file-list",(event,arg)=>{
+    // 接受渲染进程的数据并存导本地
+    fs.writeFile(path.join("./src/renderer/files.json"),arg, "utf8",(err)=>{
+      if(err){
+         event.sender.send('main-process-message', "下载文件写入失败"+err);
+      }else {
+        event.sender.send('main-process-message', "下载文件写入成功");
+        fs.readFile(path.join("./src/renderer/files.json"), "utf8",(error,data)=>{
+          if(error){
+            console.log("Reading error");
+          }else {
+            let fileList = JSON.parse(data)
+            let baseurl = "http://106.13.196.72:9000"
+            // let savePath:string
+            console.log("Reading success=========",fileList);
+            // filesDown(win,baseurl+"/npc/file/1fb4ed79a8d463f7136b8a187112017f_1661334648771.jpg",savePath)
+            for(let i=0;i<fileList.length;i++){
+              filesDown(win,baseurl+fileList[i].url,savePath)
+              version = fileList[i].version
+            } 
+          }
+        })
+      }
+    })
+})
 
 
 
-  })
 }
 
 app.whenReady().then(createWindow)
