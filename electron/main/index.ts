@@ -130,14 +130,14 @@ async function createWindow() {
           event.sender.send('main-process-message', "目录文件写入成功");
           // 读取本地文件发给渲染进程
           // fs.readFile(path.join(__dirname, "../renderer/data.json"), "utf8",(error,data)=>{
-          fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
-            if(error){
-               event.sender.send('read-file', "读取失败");
-            }else {
-              event.sender.send('read-file', data);
+          // fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+          //   if(error){
+          //      event.sender.send('read-file', "读取失败");
+          //   }else {
+          //     event.sender.send('read-file', data);
               
-            }
-          })
+          //   }
+          // })
         }
       })
   })
@@ -167,6 +167,24 @@ async function createWindow() {
       }
     })
 })
+// 首页获取目录信息
+ipcMain.on("get-nav",(event,arg)=>{
+  if(arg == "getNav"){
+    fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+      if(error){
+         event.sender.send('read-nav', "读取失败");
+      }else {
+        event.sender.send('read-nav', data);
+        
+      }
+    })
+  }else{
+    event.sender.send('read-nav', "文件读取失败");
+  }
+})
+// 获取对应children里面的内容
+
+
 
 
 
