@@ -85,7 +85,7 @@ export default defineComponent({
             // 向主进程发送消息，保存应用的目录
             ipcRenderer.send("save-data", navList)
           }
-          return
+          // return
           router.push({
             path: "/home",
             query: {

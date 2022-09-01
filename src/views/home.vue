@@ -22,12 +22,13 @@
       @swiper="onSwiper"
       @slideChange="onSlideChange"
     >
+      <!-- src="../assets/img/icon_成果展示.png" -->
       <swiper-slide @click="toPage(1)">
         <div class="slide-box">
           <div class="text-center">
+            <!-- <img class="tab-item" src="@file/logo_1661927139636.png" alt="" /> -->
             <img
-              class="tab-item"
-              src="../assets/img/icon_成果展示.png"
+              src="file:\\D:\khd\bigdata\test_files/3_1661394049126.png"
               alt=""
             />
             <p class="font28 fff">成果展示</p>

@@ -10,7 +10,9 @@
     "sourceMap": true,
     "baseUrl": "./",
     "strict": true,
-    "paths": {},
+    "paths": {
+      // "file/*": ["file/*"]
+    },
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true
   },

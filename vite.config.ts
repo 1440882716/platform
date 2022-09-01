@@ -54,6 +54,11 @@ export default defineConfig({
     host: pkg.env.VITE_DEV_SERVER_HOST,
     port: pkg.env.VITE_DEV_SERVER_PORT,
   },
+  // resolve: {
+  //   alias: {
+  //     '@file': path.resolve(__dirname,"../test_files")
+  //   }
+  // }
 })
 
 function withDebug(config: UserConfig): UserConfig {
