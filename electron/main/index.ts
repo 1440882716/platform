@@ -53,6 +53,8 @@ async function createWindow() {
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false
+
     },
     
   })
@@ -92,7 +94,7 @@ async function createWindow() {
       // }
       item.on('updated', (event:any, state:any) => {
         if (state === 'interrupted') {
-          console.log('Download is interrupted but can be resumed')
+          // console.log('Download is interrupted but can be resumed')
         } else if (state === 'progressing') {
           if (item.isPaused()) {
             console.log('Download is paused')
@@ -103,16 +105,16 @@ async function createWindow() {
       })
       item.once('done', (event:any, state:any) => {
         if (state === 'completed') {
-          console.log('Download successfully')
+          console.log('=======================================================Download successfully')
           // console.log("文件保存的路径===",item.getSavePath());
           let systemPath =item.getSavePath() 
           let index = systemPath.lastIndexOf("\\")
           let path_url = systemPath.substring(0, index)
           savePath = path_url
-          console.log("save path is "+savePath);
+          // console.log("save path is "+savePath);
           
         } else {
-          console.log(`Download failed: ${state}`)
+          console.log('Download failed=========================================='+ state)
         }
       })
     })
@@ -154,12 +156,12 @@ async function createWindow() {
         event.sender.send('main-process-message', "下载文件写入成功");
         fs.readFile(path.join("./src/renderer/files.json"), "utf8",(error,data)=>{
           if(error){
-            console.log("Reading error");
+            // console.log("Reading error");
           }else {
             let fileList = JSON.parse(data)
             let baseurl = "http://106.13.196.72:9000"
             // let savePath:string
-            console.log("Reading success=========",fileList);
+            // console.log("Reading success=========",fileList);
             // filesDown(win,baseurl+"/npc/file/1fb4ed79a8d463f7136b8a187112017f_1661334648771.jpg",savePath)
             for(let i=0;i<fileList.length;i++){
               filesDown(win,baseurl+fileList[i].url,savePath)

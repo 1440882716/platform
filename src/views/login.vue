@@ -70,28 +70,24 @@ export default defineComponent({
 
             // console.log(JSON.parse(fileList))
             // console.log(JSON.parse(navList))
-
+            router.push({
+              path: "/home",
+            })
             // return
-            const ipcRenderer = require("electron").ipcRenderer
-            // 监听主进程过来的消息
-            ipcRenderer.on("main-process-message", (_event, ...args) => {
-              // console.log("接收主进程过来的消息===", ...args)
-            })
-            ipcRenderer.on("read-file", (_event, ...args) => {
-              // console.log("文件信息", ...args)
-            })
-            // 向主进程发送消息，保存应用的下载文件
-            ipcRenderer.send("down-file-list", fileList)
-            // 向主进程发送消息，保存应用的目录
-            ipcRenderer.send("save-data", navList)
+            // const ipcRenderer = require("electron").ipcRenderer
+            // // 监听主进程过来的消息
+            // ipcRenderer.on("main-process-message", (_event, ...args) => {
+            //   // console.log("接收主进程过来的消息===", ...args)
+            // })
+            // ipcRenderer.on("read-file", (_event, ...args) => {
+            //   // console.log("文件信息", ...args)
+            // })
+            // // 向主进程发送消息，保存应用的下载文件
+            // ipcRenderer.send("down-file-list", fileList)
+            // // 向主进程发送消息，保存应用的目录
+            // ipcRenderer.send("save-data", navList)
           }
           // return
-          router.push({
-            path: "/home",
-            query: {
-              // goodsId: id,
-            },
-          })
         }
       })
     }

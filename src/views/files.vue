@@ -55,7 +55,7 @@ export default defineComponent({
         // console.log($)
         console.log(turn)
         $("#flipbook").turn({
-          autoCenter: true,
+          // autoCenter: true,
           height: 646, //高度
           width: 900, //宽度
           display: "double", //单页显示/双页显示  single/double

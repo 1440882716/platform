@@ -57,7 +57,8 @@ export default defineConfig({
   // 下载的文件 映射路径 
   resolve: {
     alias: {
-      '@file': path.resolve(__dirname,"../test_files")
+      '@file': path.resolve(__dirname,"../test_files"),
+      '@': path.resolve(__dirname, './src')
     }
   }
 })

@@ -76,7 +76,7 @@
   </el-dialog> -->
   <div>
     <iframe
-      src="src/static/map-page/index.html"
+      :src="pageUrl"
       scrolling="auto"
       frameborder="0"
       style="width: 100%; height: 900px"
@@ -86,6 +86,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue"
+import { useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 import { ElMessageBox } from "element-plus"
@@ -95,16 +96,34 @@ export default defineComponent({
     Footer,
   },
   setup() {
+    const route = useRoute()
     const dialogVisible = ref(false)
+    const pageUrl = ref()
     const toDetail = () => {}
+    // 解压zip文件
+    const zipHandle = () => {
+      var admZip = require("adm-zip")
+      var zip = new admZip("d:/test.zip")
+    }
+
     onMounted(() => {
-      let pageData = localStorage.getItem("mapData") as string
-      let page = JSON.parse(pageData).url
-      console.log(page)
+      pageUrl.value = route.query.url
+      console.log(pageUrl)
+
+      // let pageData = localStorage.getItem("mapData") as string
+      // let page = JSON.parse(pageData)
+      // let zipPath = page[0].url
+      // let path = "D:\\khd\\bigdata\\test_files"
+      // var admZip = require("adm-zip")
+      // // console.log(path + "\\" + zipPath)
+      // var zip = new admZip(path + "\\" + zipPath)
+      // zip.extractAllTo(path)
     })
     return {
       dialogVisible,
+      pageUrl,
       toDetail,
+      zipHandle,
     }
   },
 })

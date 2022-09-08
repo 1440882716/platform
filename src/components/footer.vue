@@ -19,6 +19,7 @@ export default defineComponent({
       })
     }
     const backPage = () => {
+      console.log(66666)
       router.back()
     }
     return {

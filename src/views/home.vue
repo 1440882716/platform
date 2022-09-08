@@ -4,6 +4,8 @@
     :style="{ backgroundImage: 'url(' + backgroudImg + ')' }"
   >
     <Header></Header>
+    <!-- <div @click="zipHandle" class="font24 pointer">测试解压文件</div> -->
+    <!-- <img src="../static/testpage.zip" alt=""> -->
     <div style="margin-top: 252px">
       <swiper
         class="swiper-box pointer"
@@ -18,7 +20,6 @@
           modifier: 2,
           slideShadows: true,
         }"
-        autoplay="false"
         :navigation="{
           nextEl: '.swiper-button-next', //前进后退按钮
           prevEl: '.swiper-button-prev',
@@ -29,12 +30,11 @@
         <swiper-slide v-for="item in navList" @click="nextPage(item)">
           <div class="slide-box">
             <div class="text-center">
-              <img class="tab-item" src="@file\logo_1661927139636.png" alt="" />
-              <!-- <img
+              <img
                 class="tab-item"
-                src="../assets/img/icon_基本信息.png"
+                :src="'D:/khd/bigdata/test_files/' + item.icon"
                 alt=""
-              /> -->
+              />
               <p class="font28 fff">{{ item.name }}</p>
             </div>
           </div>
@@ -65,7 +65,7 @@ import "swiper/css/scrollbar"
 import { array } from "yargs"
 import { json } from "stream/consumers"
 import { url } from "inspector"
-
+import path from "path"
 export default defineComponent({
   components: {
     Header,
@@ -74,6 +74,14 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter()
+    // /@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
+    // http://localhost:3344/@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
+    const staticUrl = "D:/khd/bigdata/test_files/"
+
+    //这里，直接获取根目录然后放上去拼接就好了
+
+    // console.log(staticUrl)
+
     const tokenStr = ref()
     const navList = ref()
     const backgroudImg = ref()
@@ -85,7 +93,6 @@ export default defineComponent({
       // pauseOnMouseEnter: true,
       // reverseDirection: true,
     }
-
     const onSwiper = (swiper: any) => {
       // console.log(swiper)
       // console.log(swiper.slides.length)
@@ -98,7 +105,6 @@ export default defineComponent({
       // console.log('slide change');
     }
     const nextPage = (info: any) => {
-      console.log("要打开的文件夹类型====", info.type)
       // return
       if (info.type == 0 && info.children.length != 0) {
         router.push({
@@ -115,18 +121,45 @@ export default defineComponent({
           },
         })
       } else if (info.type == 7 && info.children.length != 0) {
-        console.log("文件类型===", info.type)
-        // return
         localStorage.setItem("fileData", JSON.stringify(info.children))
         router.push({
           path: "/WorkSystem",
         })
+      } else if (info.type == 8 && info.children.length != 0) {
+        // 加载地图网页
+        let zipPath = info.children[0].url
+        let path = "D:\\khd\\bigdata\\test_files"
+        var admZip = require("adm-zip-iconv")
+        console.log(path + "\\" + zipPath)
+        var zip = new admZip(path + "\\" + zipPath, "GBK")
+        // 解压文件
+        zip.extractAllTo(path)
+        let pageUrl = path + "\\index.html"
+        console.log(pageUrl)
+
+        router.push({
+          path: "/infomation",
+          query: {
+            url: pageUrl,
+          },
+        })
       }
     }
-
+    // 解压文件
+    const zipHandle = () => {
+      var admZip = require("adm-zip")
+      // var zip = new admZip("@/static/testpage.zip")
+      let path = "D:\\khd\\bigdata\\test_files"
+      var zip = new admZip(path + "\\testpage.zip")
+      zip.extractAllTo(path)
+      // debugger
+      var entry = zip.getEntry("index.html")
+      // console.log("解压的文件===", entry)
+    }
     onMounted(() => {
       const ipcRenderer = require("electron").ipcRenderer
-      // 监听主进程过来的消息
+
+      // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
         console.log("获取的目录列表===", data)
         // console.log(JSON.parse(data))
@@ -138,12 +171,14 @@ export default defineComponent({
     })
     return {
       tokenStr,
+      // staticUrl,
       navList,
       backgroudImg,
       autoplayOptions,
       onSwiper,
       onSlideChange,
       nextPage,
+      zipHandle,
       modules: [
         Navigation,
         Pagination,
