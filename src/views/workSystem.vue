@@ -24,8 +24,11 @@
         style="height: 50%"
       >
         <div class="result-item font24 text-left flex-c" @click="toDetail">
-          <img class="book-img" src="../assets/img/study-system.png" alt="" />
-          <span class="title-color m-t-16">{{ item.title }}</span>
+          <div class="book-img">
+            <p class="file-name font24 tab-red">{{ item.name }}</p>
+          </div>
+          <!-- <img class="book-img" src="../assets/img/study-system.png" alt="" /> -->
+          <span class="title-color m-t-16">{{ item.name }}</span>
         </div>
       </swiper-slide>
     </swiper>
@@ -35,7 +38,7 @@
   <Footer class="footer-fixed"></Footer>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from "vue"
+import { defineComponent, reactive, toRefs, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { InitData } from "../types/workSystem"
 import Header from "../components/header.vue"
@@ -78,6 +81,11 @@ export default defineComponent({
         },
       })
     }
+    onMounted(() => {
+      let files = localStorage.getItem("fileData") as string
+      data.systemList = JSON.parse(files)
+      console.log("法律法规===", data.systemList)
+    })
     return {
       ...toRefs(data),
       toHome,
@@ -96,7 +104,8 @@ export default defineComponent({
 }
 .result-item {
   width: 207px;
-  height: 230px;
+  /* height: 230px; */
+  height: auto;
   margin: 0 auto;
   /* background-image: url(../assets/img/result-item.png); */
   padding-top: 34px;
@@ -107,6 +116,20 @@ export default defineComponent({
 .book-img {
   width: 220px;
   height: 235px;
+  background: url(../assets/img/空白封面.png);
+  background-size: 220px 235px;
+}
+.file-name {
+  width: 160px;
+  margin: 0 auto;
+  margin-top: 100px;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  word-break: break-all;
 }
 .swiper-button-prev {
   width: 68px;

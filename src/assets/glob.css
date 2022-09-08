@@ -56,6 +56,9 @@ input:focus{
   .font36 {
     font-size: 36px;
   }
+  .font38 {
+    font-size: 38px;
+  }
   .font48 {
     font-size: 48px;
   }
@@ -163,6 +166,9 @@ input:focus{
   }
   .m-l-12{
     margin-left: 12px;
+  }
+  .m-l-16{
+    margin-left: 16px;
   }
   .m-r-17{
     margin-right: 17px;

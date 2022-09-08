@@ -88,7 +88,7 @@ export default defineComponent({
       $("#flipbook").turn("page", currentPage.value) //进度条跳转到对应的页数
     }
     onMounted(() => {
-      onTurn()
+      // onTurn()
     })
     return {
       currentPage,

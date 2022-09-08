@@ -1,24 +1,37 @@
 <template>
   <Header></Header>
   <div class="flex-r fff active-box flex-b">
-    <div class="active-item text-center pointer" @click="toDetail">
+    <div
+      class="active-item text-center pointer"
+      v-for="item in showData"
+      @click="toDetail(item)"
+    >
       <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
-      <p class="font32">省人大代表</p>
+      <p class="font32 name-p">{{ item.name }}</p>
     </div>
-    <div class="active-item text-center pointer" @click="toDetail">
+    <!-- <div class="active-item text-center pointer" @click="toDetail">
       <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
       <p class="font32">市人大代表</p>
     </div>
     <div class="active-item text-center pointer" @click="toDetail">
       <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
       <p class="font32">街道人大代表</p>
+    </div> -->
+  </div>
+  <div class="footer-fixed">
+    <div class="footer-box">
+      <div class="footer-icon flex-r">
+        <img @click="toHome" src="../assets/img/home-icon.png" alt="" />
+        <img @click="backPage" src="../assets/img/back-icon.png" alt="" />
+      </div>
     </div>
   </div>
-  <Footer class="footer-fixed"></Footer>
+
+  <!-- <Footer class="footer-fixed"></Footer> -->
 </template>
 <script lang="ts">
-import { defineComponent } from "vue"
-import { useRouter } from "vue-router"
+import { defineComponent, onMounted, ref } from "vue"
+import { useRouter, useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 export default defineComponent({
@@ -28,16 +41,76 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter()
-    const toDetail = () => {
+    const route = useRoute()
+    const allData = ref()
+    const parentData = ref()
+    const showData = ref()
+    const toDetail = (info: any) => {
+      // type用来判断文件夹的类型children的长度！=0说明下级页面有内容
+      // type==0 普通文件夹
+      // type==1 人员信息文件夹
+      // type==2 人员数据
+      // type==3 网页文件  比如地图
+      // type==4 图片 （展示没有用到）
+      // type==5 文本文档
+      // type==6 视频文件
+      // type==7 文档文件夹
+      // type==8 网页文件夹
+      if (info.type == 0 && info.children.length != 0) {
+        parentData.value = showData.value
+        showData.value = info.children
+      }
+      if (info.type == 1 && info.children.length != 0) {
+        parentData.value = showData.value
+        showData.value = info.children
+        localStorage.setItem("npcinfo", JSON.stringify(info.children))
+        router.push({
+          path: "/npcInfo",
+        })
+      } else if (info.type == 7 && info.children.length != 0) {
+        parentData.value = showData.value
+        showData.value = info.children
+        localStorage.setItem("fileData", JSON.stringify(info.children))
+        router.push({
+          path: "/WorkSystem",
+        })
+      } else if (info.type == 8 && info.children.length != 0) {
+        parentData.value = showData.value
+        showData.value = info.children
+        localStorage.setItem("mapData", JSON.stringify(info.children))
+        router.push({
+          path: "/infomation",
+        })
+      }
+    }
+    onMounted(() => {
+      let name = route.query.name
+      // console.log(name)
+      const ipcRenderer = require("electron").ipcRenderer
+      ipcRenderer.send("get-data", name)
+      ipcRenderer.on("read-renda", (event, data) => {
+        // console.log("获取该页面的数据===", data)
+        allData.value = JSON.parse(data)
+        showData.value = JSON.parse(data)
+        // showObj.value.showData = JSON.parse(data)
+        // console.log("获取该页面的数据===", showData.value)
+      })
+    })
+    const toHome = () => {
       router.push({
-        path: "/npcInfo",
-        query: {
-          // goodsId: id,
-        },
+        path: "/home",
       })
     }
+    const backPage = () => {
+      // router.back()
+    }
     return {
+      allData,
+      parentData,
+      showData,
       toDetail,
+      toHome,
+      backPage,
     }
   },
 })
@@ -66,8 +139,31 @@ export default defineComponent({
 .npc-icon {
   margin-top: 50px;
 }
+
+.name-p {
+  padding-left: 30px;
+  padding-right: 20px;
+}
+/* ==================底部 */
 .footer-fixed {
+  width: 100%;
+  /* height: 100px; */
   position: fixed;
   bottom: 0;
+  /* background-color: cadetblue; */
+}
+.footer-box {
+  width: 100%;
+  height: 76px;
+  position: relative;
+  background-image: url(../assets/img/footer.png);
+}
+.footer-icon {
+  position: absolute;
+  width: 480px;
+  height: 140px;
+  top: -57px;
+  left: 50%;
+  margin-left: -240px;
 }
 </style>

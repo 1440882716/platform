@@ -60,13 +60,21 @@
       @slideChange="onSlideChange"
     >
       <swiper-slide
-        v-for="item in resultList"
+        v-for="item in dataInfo"
         class="swiper-slide-box"
         style="height: 45%"
-        @click="toDetail"
+        @click="toDetail(item)"
       >
         <div class="result-item flex-c">
-          <img class="npc-img" src="../assets/img/npc.png" alt="" />
+          <div class="npc-img flex-r">
+            <img class="npc-photo" src="../assets/img/peopel.png" alt="" />
+            <div class="flex-c m-l-16 text-left">
+              <p class="font38">{{ item.npcMember.name }}</p>
+              <p class="font20 m-t-20">{{ item.npcMember.introduction }}</p>
+              <p class="font18 m-t-56">{{ item.npcMember.mobile }}</p>
+            </div>
+          </div>
+          <!-- <img class="npc-img" src="../assets/img/npc.png" alt="" /> -->
           <!-- <span class="title-color m-t-16">{{ item.title }}</span> -->
         </div>
       </swiper-slide>
@@ -100,6 +108,7 @@ export default defineComponent({
     const router = useRouter()
     // const titleFlag = ref(1)
     const activeName = ref("1")
+    const dataInfo = ref()
     const handleClick = (tab: TabsPaneContext, event: Event) => {
       console.log(activeName.value)
     }
@@ -109,20 +118,33 @@ export default defineComponent({
     const onSlideChange = () => {
       // console.log('slide change');
     }
-    const toDetail = () => {
-      router.push({
-        path: "/npcDetail",
-        query: {
-          // goodsId: id,
-        },
-      })
+    const toDetail = (info: any) => {
+      if (
+        info.type == 2 &&
+        info.npcMember.name != "" &&
+        info.npcMember.name != undefined
+      ) {
+        localStorage.setItem("npcDetail", JSON.stringify(info.npcMember))
+        let npcdata = JSON.stringify(info.npcMember)
+        router.push({
+          path: "/npcDetail",
+          query: {
+            // npcInfo: npcdata,
+          },
+        })
+      }
     }
     onMounted(() => {
+      let npsData = localStorage.getItem("npcinfo") as string
+      dataInfo.value = JSON.parse(npsData)
+      console.log(dataInfo.value)
+
       // document.body.style.setProperty("--el-color-primary", "#F31A1A")
     })
     return {
       ...toRefs(data),
       activeName,
+      dataInfo,
       handleClick,
       onSwiper,
       onSlideChange,
@@ -159,8 +181,10 @@ export default defineComponent({
   /* background-color: cadetblue; */
 }
 .npc-img {
-  width: 380px;
-  height: 270px;
+  width: 348px;
+  height: 230px;
+  padding: 20px 16px;
+  background-color: #fff;
 }
 .swiper-button-prev {
   width: 68px;
@@ -175,6 +199,11 @@ export default defineComponent({
 .footer-fixed {
   position: fixed;
   bottom: 0;
+}
+.npc-photo {
+  width: 168px;
+  height: 230px;
+  /* margin-left: 15px; */
 }
 
 /* ==================================================================第一版3d照片墙 */

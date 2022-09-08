@@ -3,6 +3,7 @@ import { release } from 'os'
 import { join } from 'path'
 import fs from 'fs'
 import path from 'path'
+import { json } from 'node:stream/consumers'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -41,7 +42,9 @@ const indexHtml = join(ROOT_PATH.dist, 'index.html')
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
-    fullscreen: true,
+    // fullscreen: true,
+    width:1000,
+    height:800,
     icon: join(ROOT_PATH.public, 'favicon.ico'),
     webPreferences: {
       preload,
@@ -183,7 +186,47 @@ ipcMain.on("get-nav",(event,arg)=>{
   }
 })
 // 获取对应children里面的内容
+ipcMain.on("get-data",(event,arg)=> {
+  fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+    if(error){
+       event.sender.send('read-renda', "读取失败");
+    }else {
+      //取出数据处理后 返回所需数据  
+      let dataArr = JSON.parse(data)
+      for(let i=0;i<dataArr.length;i++){
+        if(arg == dataArr[i].name){
+          let dataList = JSON.stringify(dataArr[i].children)
+          event.sender.send('read-renda', dataList);
+        }
+      }
+      // for(let i=0;i<dataArr.length;i++){
+      //   if(dataArr[i].name==arg){
+      //     let dataList = JSON.stringify(dataArr[i].children)
+      //     event.sender.send('read-renda', dataList);
+      //   }
+      // }
+    }
+  })
+  // // 获取人大概况的数据
+  // if(arg == "人大概览"){
+  //   fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+  //     if(error){
+  //        event.sender.send('read-renda', "读取失败");
+  //     }else {
+  //       //取出数据处理后 返回所需数据  
+  //       let dataArr = JSON.parse(data)
+  //       for(let i=0;i<dataArr.length;i++){
+  //         if(dataArr[i].name==arg){
+  //           let dataList = JSON.stringify(dataArr[i].children)
+  //           event.sender.send('read-renda', dataList);
+  //         }
+  //       }
+  //     }
+  //   })
+  // }else if(arg == ""){
 
+  // }
+})
 
 
 

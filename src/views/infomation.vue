@@ -85,7 +85,7 @@
   <Footer style="position: fixed; bottom: 0"></Footer>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue"
+import { defineComponent, onMounted, ref } from "vue"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 import { ElMessageBox } from "element-plus"
@@ -97,6 +97,11 @@ export default defineComponent({
   setup() {
     const dialogVisible = ref(false)
     const toDetail = () => {}
+    onMounted(() => {
+      let pageData = localStorage.getItem("mapData") as string
+      let page = JSON.parse(pageData).url
+      console.log(page)
+    })
     return {
       dialogVisible,
       toDetail,

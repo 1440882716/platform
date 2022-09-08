@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <div class="title-img">
       <img src="../assets/img/title-img.png" alt="" />
     </div>
@@ -47,7 +47,7 @@ export default defineComponent({
       // console.log("文件保存的位置===", pos)
       // return
       login(account.value).then((res: any) => {
-        console.log(res)
+        // console.log(res)
         if (res.status == "OK") {
           // 登录成功
           localStorage.setItem("token", res.data.token)
@@ -56,29 +56,29 @@ export default defineComponent({
               res.data.token
           )
           ws.onerror = function () {
-            console.log("error")
+            // console.log("error")
           }
           ws.onopen = function () {
-            console.log("连接成功...")
+            // console.log("连接成功...")
           }
           // 接收websocket推送的消息
           ws.onmessage = function (e) {
-            console.log(e.data)
+            // console.log(e.data)
             let files = JSON.parse(e.data)
             let fileList = JSON.stringify(files.fileList)
             let navList = JSON.stringify(files.nodeList)
 
-            console.log(JSON.parse(fileList))
-            console.log(JSON.parse(navList))
+            // console.log(JSON.parse(fileList))
+            // console.log(JSON.parse(navList))
 
             // return
             const ipcRenderer = require("electron").ipcRenderer
             // 监听主进程过来的消息
             ipcRenderer.on("main-process-message", (_event, ...args) => {
-              console.log("接收主进程过来的消息===", ...args)
+              // console.log("接收主进程过来的消息===", ...args)
             })
             ipcRenderer.on("read-file", (_event, ...args) => {
-              console.log("文件信息", ...args)
+              // console.log("文件信息", ...args)
             })
             // 向主进程发送消息，保存应用的下载文件
             ipcRenderer.send("down-file-list", fileList)
@@ -104,6 +104,15 @@ export default defineComponent({
 </script>
 <style scoped>
 @import "../assets/glob.css";
+.page {
+  background: url(../assets/img/main-bg.png);
+  background-size: 100% 100%;
+  height: 100%;
+  position: fixed;
+  width: 100%;
+  /* width: 100%;
+  height: 1080px; */
+}
 .title-img {
   padding-top: 92px;
   /* margin-top: 92px; */

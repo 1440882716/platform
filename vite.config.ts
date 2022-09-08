@@ -54,11 +54,12 @@ export default defineConfig({
     host: pkg.env.VITE_DEV_SERVER_HOST,
     port: pkg.env.VITE_DEV_SERVER_PORT,
   },
-  // resolve: {
-  //   alias: {
-  //     '@file': path.resolve(__dirname,"../test_files")
-  //   }
-  // }
+  // 下载的文件 映射路径 
+  resolve: {
+    alias: {
+      '@file': path.resolve(__dirname,"../test_files")
+    }
+  }
 })
 
 function withDebug(config: UserConfig): UserConfig {

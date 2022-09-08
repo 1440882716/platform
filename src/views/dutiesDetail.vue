@@ -5,37 +5,42 @@
       <div class="flex-r flex-start text-left title-color font28">
         <img class="arrow-icon" src="../assets/img/arrow.png" alt="" />
         <div class="duty-title">履职标题:</div>
-        <span>人大代表视察黄水镇水情况</span>
+        <span>{{ dutyData.title }}</span>
       </div>
       <div class="flex-r flex-start text-left title-color font28 m-t-28">
         <img class="arrow-icon" src="../assets/img/arrow.png" alt="" />
         <div class="duty-title">履职类型:</div>
-        <span>其他</span>
+        <span>{{ dutyData.typeName }}</span>
       </div>
       <div class="flex-r flex-start text-left title-color font28 m-t-28">
         <img class="arrow-icon" src="../assets/img/arrow.png" alt="" />
         <div class="duty-title">履职人:</div>
-        <span>尹宏波</span>
+        <span>{{ name }}</span>
       </div>
       <div class="flex-r flex-start text-left title-color font28 m-t-28">
         <img class="arrow-icon" src="../assets/img/arrow.png" alt="" />
         <div class="duty-title">履职时间:</div>
-        <span>2022-08-08 13:52:37</span>
+        <span>{{ dutyData.workAt }}</span>
       </div>
       <div class="flex-r flex-start text-left title-color font28 m-t-28">
         <img class="arrow-icon" src="../assets/img/arrow.png" alt="" />
         <div class="duty-title">履职标题:</div>
-        <span>人大代表视察黄水镇水情况</span>
+        <span>{{ dutyData.title }}</span>
       </div>
       <div class="flex-r flex-start text-left title-color font28 m-t-28">
         <img class="arrow-icon" src="../assets/img/arrow.png" alt="" />
         <div class="duty-title-content">履职内容:</div>
         <div class="content-duty">
-          XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟
-          <div class="flex-r">
-            <img class="duty-img" src="../assets/img/Rectangle55.png" alt="" />
-            <img class="duty-img" src="../assets/img/Rectangle55.png" alt="" />
-            <img class="duty-img" src="../assets/img/Rectangle55.png" alt="" />
+          {{ dutyData.content }}
+          <div class="flex-r" v-if="dutyData.images.length != 0">
+            <img
+              class="duty-img"
+              v-for="item in dutyData.images"
+              src="../assets/img/Rectangle55.png"
+              alt=""
+            />
+            <!-- <img class="duty-img" src="../assets/img/Rectangle55.png" alt="" />
+            <img class="duty-img" src="../assets/img/Rectangle55.png" alt="" /> -->
           </div>
         </div>
       </div>
@@ -51,18 +56,29 @@
   <Footer style="position: fixed; bottom: 0"></Footer>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from "vue"
-import { useRouter } from "vue-router"
+import { defineComponent, reactive, toRefs, onMounted, ref } from "vue"
+import { useRouter, useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
-
+import { InitData } from "../types/representative"
 export default defineComponent({
   components: {
     Header,
     Footer,
   },
   setup() {
-    return {}
+    const data = reactive(new InitData())
+    const route = useRoute()
+    const name = ref()
+    onMounted(() => {
+      let npsData = localStorage.getItem("dutyDetail") as string
+      name.value = route.query.name
+      data.dutyData = JSON.parse(npsData)
+    })
+    return {
+      ...toRefs(data),
+      name,
+    }
   },
 })
 </script>

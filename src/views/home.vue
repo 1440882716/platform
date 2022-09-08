@@ -1,106 +1,49 @@
 <template>
-  <Header></Header>
-  <div style="margin-top: 252px">
-    <swiper
-      class="swiper-box pointer"
-      style="width: 1688px; height: 650px"
-      :modules="modules"
-      :space-between="50"
-      :slidesPerView="5"
-      :coverflowEffect="{
-        rotate: 30,
-        stretch: 10,
-        depth: 60,
-        modifier: 2,
-        slideShadows: true,
-      }"
-      autoplay="false"
-      :navigation="{
-        nextEl: '.swiper-button-next', //前进后退按钮
-        prevEl: '.swiper-button-prev',
-      }"
-      @swiper="onSwiper"
-      @slideChange="onSlideChange"
-    >
-      <!-- src="../assets/img/icon_成果展示.png" -->
-      <swiper-slide @click="toPage(1)">
-        <div class="slide-box">
-          <div class="text-center">
-            <!-- <img class="tab-item" src="@file/logo_1661927139636.png" alt="" /> -->
-            <img
-              src="file:\\D:\khd\bigdata\test_files/3_1661394049126.png"
-              alt=""
-            />
-            <p class="font28 fff">成果展示</p>
+  <div
+    class="background-page"
+    :style="{ backgroundImage: 'url(' + backgroudImg + ')' }"
+  >
+    <Header></Header>
+    <div style="margin-top: 252px">
+      <swiper
+        class="swiper-box pointer"
+        style="width: 1688px; height: 650px"
+        :modules="modules"
+        :space-between="50"
+        :slidesPerView="5"
+        :coverflowEffect="{
+          rotate: 30,
+          stretch: 10,
+          depth: 60,
+          modifier: 2,
+          slideShadows: true,
+        }"
+        autoplay="false"
+        :navigation="{
+          nextEl: '.swiper-button-next', //前进后退按钮
+          prevEl: '.swiper-button-prev',
+        }"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
+      >
+        <swiper-slide v-for="item in navList" @click="nextPage(item)">
+          <div class="slide-box">
+            <div class="text-center">
+              <img class="tab-item" src="@file\logo_1661927139636.png" alt="" />
+              <!-- <img
+                class="tab-item"
+                src="../assets/img/icon_基本信息.png"
+                alt=""
+              /> -->
+              <p class="font28 fff">{{ item.name }}</p>
+            </div>
           </div>
-        </div>
-      </swiper-slide>
-      <swiper-slide @click="toPage(2)">
-        <div class="slide-box">
-          <div class="text-center">
-            <img
-              class="tab-item"
-              src="../assets/img/icon_工作制度.png"
-              alt=""
-            />
-            <p class="font28 fff">工作制度</p>
-          </div>
-        </div>
-      </swiper-slide>
-      <swiper-slide @click="toPage(3)">
-        <div class="slide-box">
-          <div class="text-center">
-            <img class="tab-item" src="../assets/img/flag-icon.png" alt="" />
-            <p class="font28 fff">活动情况</p>
-          </div>
-        </div>
-      </swiper-slide>
-      <swiper-slide @click="toPage(4)">
-        <div class="slide-box">
-          <div class="text-center">
-            <img
-              class="tab-item"
-              src="../assets/img/icon_代表信息.png"
-              alt=""
-            />
-            <p class="font28 fff">代表信息</p>
-          </div>
-        </div>
-      </swiper-slide>
-      <swiper-slide @click="toPage(5)">
-        <div class="slide-box">
-          <div class="text-center">
-            <img
-              class="tab-item"
-              src="../assets/img/icon_基本信息.png"
-              alt=""
-            />
-            <p class="font28 fff">基本信息</p>
-          </div>
-        </div>
-      </swiper-slide>
-      <swiper-slide @click="toPage(6)">
-        <div class="slide-box">
-          <div class="text-center">
-            <img
-              class="tab-item"
-              src="../assets/img/icon_工作计划.png"
-              alt=""
-            />
-            <p class="font28 fff">工作计划</p>
-          </div>
-        </div>
-      </swiper-slide>
-    </swiper>
-    <div class="swiper-button-prev" style="color: #ffffff"></div>
-    <div class="swiper-button-next" style="color: #ffffff"></div>
-    <!-- <el-carousel :interval="4000" type="card" height="200px">
-      <el-carousel-item v-for="item in 6" :key="item">
-        <h3 text="2xl" justify="center">{{ item }}</h3>
-      </el-carousel-item>
-    </el-carousel> -->
+        </swiper-slide>
+      </swiper>
+      <div class="swiper-button-prev" style="color: #ffffff"></div>
+      <div class="swiper-button-next" style="color: #ffffff"></div>
+    </div>
   </div>
-  <div @click="tomsg">测试文件下载</div>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue"
@@ -121,6 +64,7 @@ import "swiper/css/pagination"
 import "swiper/css/scrollbar"
 import { array } from "yargs"
 import { json } from "stream/consumers"
+import { url } from "inspector"
 
 export default defineComponent({
   components: {
@@ -131,6 +75,8 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const tokenStr = ref()
+    const navList = ref()
+    const backgroudImg = ref()
     //自动轮播的配置
     const autoplayOptions = {
       // delay: 2000,
@@ -151,99 +97,53 @@ export default defineComponent({
     const onSlideChange = () => {
       // console.log('slide change');
     }
-    const toPage = (num: number) => {
-      if (num == 1) {
-        router.push({
-          path: "/result",
-          query: {
-            // goodsId: id,
-          },
-        })
-      } else if (num == 2) {
-        router.push({
-          path: "/workSystem",
-          query: {
-            // goodsId: id,
-          },
-        })
-      } else if (num == 3) {
-        router.push({
-          path: "/active",
-          query: {
-            // goodsId: id,
-          },
-        })
-      } else if (num == 4) {
+    const nextPage = (info: any) => {
+      console.log("要打开的文件夹类型====", info.type)
+      // return
+      if (info.type == 0 && info.children.length != 0) {
         router.push({
           path: "/representative",
           query: {
-            // goodsId: id,
+            name: info.name,
           },
         })
-      } else if (num == 5) {
+      } else if (info.type == 1 && info.children.length != 0) {
         router.push({
-          path: "/infomation",
+          path: "/representative",
           query: {
-            // goodsId: id,
+            name: info.name,
           },
         })
-      } else if (num == 6) {
+      } else if (info.type == 7 && info.children.length != 0) {
+        console.log("文件类型===", info.type)
+        // return
+        localStorage.setItem("fileData", JSON.stringify(info.children))
         router.push({
-          path: "/",
-          query: {
-            // goodsId: id,
-          },
+          path: "/WorkSystem",
         })
       }
     }
-    const tomsg = () => {
-      const ipcRenderer = require("electron").ipcRenderer
-      ipcRenderer.send("download", {
-        downloadPath: "https://unpkg.com/vue@3.0.7/dist/vue.global.js", // 下载链接（以下载vue文件为例）
-        fileName: "vue.global.js", // 下载文件名，需要包含后缀名
-      })
-    }
+
     onMounted(() => {
-      // let token = localStorage.getItem("token")
-      // tokenStr.value = token
-      // var ws = new WebSocket(
-      //   "ws://192.168.1.116:9527/api/manager/display/websocket?version=1.06&Authorization=" +
-      //     tokenStr.value
-      // )
-      // ws.onerror = function () {
-      //   console.log("error")
-      // }
-      // ws.onopen = function () {
-      //   console.log("连接成功...")
-      // }
-      // ws.onmessage = function (e) {
-      //   console.log(e.data)
-      //   let files = JSON.parse(e.data)
-      //   let fileList = JSON.stringify(files.fileList)
-      //   let navList = JSON.stringify(files.nodeList)
-      //   console.log(fileList)
-      //   console.log(navList)
-      //   const ipcRenderer = require("electron").ipcRenderer
-      //   // 监听主进程过来的消息
-      //   ipcRenderer.on("main-process-message", (_event, ...args) => {
-      //     console.log("接收主进程过来的消息===", ...args)
-      //   })
-      //   ipcRenderer.on("read-file", (_event, ...args) => {
-      //     console.log("文件信息", ...args)
-      //   })
-      //   // 向主进程发送消息，保存应用的下载文件
-      //   ipcRenderer.send("down-file-list", fileList)
-      //   // 向主进程发送消息，保存应用的目录
-      //   ipcRenderer.send("save-data", navList)
-      // }
+      const ipcRenderer = require("electron").ipcRenderer
+      // 监听主进程过来的消息
+      ipcRenderer.on("read-nav", (_event, data) => {
+        console.log("获取的目录列表===", data)
+        // console.log(JSON.parse(data))
+        backgroudImg.value = "@/assets/img/main-bg.png"
+        navList.value = JSON.parse(data)
+        console.log(navList.value)
+      })
+      ipcRenderer.send("get-nav", "getNav")
     })
     return {
       tokenStr,
+      navList,
+      backgroudImg,
       autoplayOptions,
       onSwiper,
       onSlideChange,
-      toPage,
-      tomsg,
+      nextPage,
       modules: [
         Navigation,
         Pagination,
@@ -258,6 +158,12 @@ export default defineComponent({
 </script>
 <style scoped>
 @import "../assets/glob.css";
+.background-page {
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
 .swiper-box {
   /* width: 1688px;
   height: 650px; */
@@ -274,6 +180,8 @@ export default defineComponent({
   /* margin-top: 40px; */
 }
 .tab-item {
+  width: 108px;
+  height: 108px;
   margin-top: 40px;
 }
 .swiper-button-prev {

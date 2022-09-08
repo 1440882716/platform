@@ -1,21 +1,19 @@
 <template>
   <Header></Header>
   <div class="duty-box text-left flex-r">
-    <!-- <div class="npc-box text-left flex-r"> -->
     <img class="peopel" src="../assets/img/peopel.png" alt="" />
     <div>
-      <p class="font36 m-t-16">尹宏波</p>
+      <p class="font36 m-t-16">{{ npc_name }}</p>
       <p class="font20 m-t-24">
         <span class="deep-gray m-r-20">现任职位</span>
-        黄甲街道党工委委员、区人大常委会黄甲街道工委主任
+        {{ npc_des }}
       </p>
       <p class="font20 m-t-16">
-        <span class="deep-gray m-r-20">联系电话</span>138 8021 8999
+        <span class="deep-gray m-r-20">联系电话</span>{{ npc_phone }}
       </p>
     </div>
-    <!-- </div> -->
   </div>
-  <!-- 履职风采 -->
+  <!-- 履职风采 需要联网请求 -->
   <div class="conetent-box relative">
     <div class="mid-line"></div>
     <div class="duty-list-box text-left m-t-16">
@@ -24,19 +22,24 @@
         <div
           class="duty-list pointer flex-r flex-b"
           v-for="item in resultList"
-          @click="toDetail"
+          @click="toDetail(item)"
         >
           <div class="flex-r">
-            <div class="title-tag font16 tab-red">参加人大会议</div>
-            <div class="font20 title-color">
-              参加双流区、镇人大代表换届选举工作会
+            <div class="title-tag font16 tab-red">{{ item.typeName }}</div>
+            <div class="font20 title-color npc-content-duty">
+              {{ item.title }}
             </div>
           </div>
-          <span class="font16 gray-title">2022-08-15</span>
+          <span class="font16 gray-title">{{ item.workAt }}</span>
         </div>
       </div>
       <div class="flex-r flex-end m-t-16">
-        <el-pagination background layout="prev, pager, next" :total="100" />
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="totalPages"
+          :page-size="12"
+        />
       </div>
     </div>
   </div>
@@ -44,11 +47,12 @@
   <Footer style="position: fixed; bottom: 0"></Footer>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from "vue"
+import { defineComponent, reactive, toRefs, ref, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 import { InitData } from "../types/representative"
+import { duties } from "../http/api"
 export default defineComponent({
   components: {
     Header,
@@ -57,16 +61,62 @@ export default defineComponent({
   setup() {
     const data = reactive(new InitData())
     const router = useRouter()
-    const toDetail = () => {
+    const npc_name = ref()
+    const npc_des = ref()
+    const npc_phone = ref()
+    const npc_img = ref()
+    const npc_uid = ref()
+    const totalPages = ref()
+    const page = ref()
+    const size = ref()
+    const getNpc = () => {
+      let requestData = {
+        uid: npc_uid.value,
+        page: page.value,
+        size: size.value,
+      }
+      duties(requestData).then((res: any) => {
+        if (res.status == "OK") {
+          totalPages.value = res.data.totalPages
+          page.value = res.data.totalPages
+          size.value = res.data.totalPages
+          data.resultList = res.data.content
+        }
+      })
+    }
+    const toDetail = (info: any) => {
+      console.log(info)
+      localStorage.setItem("dutyDetail", JSON.stringify(info))
+      // return
       router.push({
         path: "/dutiesDetail",
         query: {
-          // goodsId: id,
+          name: npc_name.value,
         },
       })
     }
+    onMounted(() => {
+      let npsData = localStorage.getItem("npcDetail") as string
+      if (npsData != "" && npsData != undefined) {
+        npc_name.value = JSON.parse(npsData).name
+        npc_des.value = JSON.parse(npsData).introduction
+        npc_phone.value = JSON.parse(npsData).mobile
+        npc_img.value = JSON.parse(npsData).avatar
+        npc_uid.value = JSON.parse(npsData).uid
+        console.log(JSON.parse(npsData))
+        getNpc()
+      }
+    })
     return {
       ...toRefs(data),
+      npc_name,
+      npc_des,
+      npc_phone,
+      npc_img,
+      totalPages,
+      page,
+      size,
+      getNpc,
       toDetail,
     }
   },
@@ -91,6 +141,7 @@ export default defineComponent({
 }
 .conetent-box {
   padding: 0 42px;
+  overflow: hidden;
 }
 .duty-list-box {
   background-color: #fff;
@@ -108,13 +159,7 @@ export default defineComponent({
   border-bottom: 1px solid #e5e5e5;
   /* background-color: darkgoldenrod; */
 }
-.title-tag {
-  padding: 3px 12px;
-  border: 1px solid #f31a1a;
-  border-radius: 4px;
-  margin-right: 10px;
-  /* margin-left: 6px; */
-}
+
 .mid-line {
   width: 1px;
   height: 365px;
@@ -122,5 +167,24 @@ export default defineComponent({
   position: absolute;
   top: 90px;
   left: 50%;
+}
+.npc-content-duty {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* width: calc(100% -232px); */
+  width: 500px;
+  height: 29px;
+  line-height: 29px;
+  /* width: 100%; */
+  white-space: nowrap;
+  /* background-color: cadetblue; */
+}
+.title-tag {
+  padding: 3px 12px;
+  max-width: 122px;
+  border: 1px solid #f31a1a;
+  border-radius: 4px;
+  margin-right: 10px;
+  /* margin-left: 6px; */
 }
 </style>

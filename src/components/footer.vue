@@ -14,8 +14,6 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const toHome = () => {
-      //   console.log(router)
-      //   debugger
       router.push({
         path: "/home",
       })
