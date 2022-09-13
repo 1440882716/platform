@@ -1,100 +1,107 @@
 <template>
-  <Header></Header>
-  <div class="turn-container">
-    <div class="turn-banner">
-      <div class="turn-content">
-        <div id="flipbook">
-          <!-- <el-image
-            v-for="(item, index) in imgList"
-            :key="index"
-            fit="fill"
-            :src="item.url"
-            alt=""
-            srcset=""
-          /> -->
-          <!-- <image class="" src="../assets/img/test1.png" > -->
-          <img
-            style="width: 450px; height: 300px"
-            src="../assets/img/test1.png"
-            alt=""
-          />
-          <img
-            style="width: 450px; height: 300px"
-            src="../assets/img/test2.png"
-            alt=""
-          />
-          <img
-            style="width: 450px; height: 300px"
-            src="../assets/img/test3.png"
-            alt=""
-          />
-        </div>
-      </div>
+  <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
+    <Header></Header>
+    <div class="turn-container">
+      <!-- <img
+      style="width: 100px; height: 900px"
+      src="../static/pdf-page/bac1.png"
+      alt=""
+    /> -->
+      <!-- <div id="flipbookContainer"></div> -->
+      <iframe
+        id="mainIframe"
+        ref="iframeRef"
+        name="iframeRef"
+        src="src/static/pdf-page/entry.html"
+        scrolling="auto"
+        frameborder="0"
+        style="width: 100%; height: 900px"
+      ></iframe>
     </div>
+    <Footer style="position: fixed; bottom: 0"></Footer>
   </div>
-  <Footer style="position: fixed; bottom: 0"></Footer>
 </template>
 <script lang="ts">
 import { defineComponent, ref, nextTick, onMounted } from "vue"
+import { useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 import turn from "../utils/turn.js"
+// import flipBook from "../utils/dflip.min.js"
 const $ = require("jquery")
 export default defineComponent({
   components: {
     Header,
+    // Flipbook
     Footer,
   },
   setup() {
-    // const turn: any = require("../utils/turn.js")
-    // const $: any = require("@/jquery")
+    const route = useRoute()
+    const mainIframe = ref(null)
     const currentPage = ref(1)
+    const imgUrl = ref()
     const imgList = ref([{ url: "./assets/fsc/turn-img/1.jpg" }])
-    const onTurn = () => {
-      nextTick(() => {
-        // console.log($)
-        console.log(turn)
-        $("#flipbook").turn({
-          // autoCenter: true,
-          height: 646, //高度
-          width: 900, //宽度
-          display: "double", //单页显示/双页显示  single/double
-          elevation: 50,
-          duration: 500, //翻页速度(毫秒), 默认600ms
-          gradients: true, //翻页时的阴影渐变, 默认true
-          autoCenter: true, //自动居中, 默认false
-          acceleration: true, //硬件加速, 默认true, 如果是触摸设备设置为true
-          page: 1, //设置当前显示第几页
-          //   pages: imgList.value.length, //总页数
-          pages: 3,
-          when: {
-            //监听事件
-            turning: function (e: any, page: number, view: any) {
-              console.log(e, page, view)
-              // 翻页前触发
-            },
-            turned: function (e: any, page: number) {
-              // console.log(e, page)
-              currentPage.value = page
-              // 翻页后触发
-            },
-          },
-        })
-      })
-    }
 
-    const toPage = (i: number) => {
-      currentPage.value = i + 1
-      $("#flipbook").turn("page", currentPage.value) //进度条跳转到对应的页数
+    // let iframeSrc = ref<string>("http://localhost:3344")
+    let iframeRef = ref<any>(null) // 和iframe标签的ref绑定
+    let iframeWindow: any = null //iframe的window对象
+    // const UrlSearch = () => {
+    //   var name, value
+    //   var str = location.href //取得整个地址栏
+    //   var num = str.indexOf("?")
+    //   str = str.substr(num + 1) //取得所有参数   stringvar.substr(start [, length ]
+    //   var arr = str.split("&") //各个参数放到数组里
+    //   for (var i = 0; i < arr.length; i++) {
+    //     num = arr[i].indexOf("=")
+    //     if (num > 0) {
+    //       name = arr[i].substring(0, num)
+    //       value = arr[i].substr(num + 1)
+    //       //  this[name]=value;
+    //     }
+    //   }
+    // }
+    const sendMessage = (url: string) => {
+      if (iframeRef.value.attachEvent) {
+        // 兼容IE浏览器判断 ie的window.onload 是隐藏的 需要用attachEvent注册
+        // iframeRef.value.attachEvent("onload", function () {
+        //postMessage（message,origin） 向iframe发送参数
+        //message：iframe接收的参数，最好字符串   origin：其值可以是字符串"*"（表示无限制）或者一个url
+        iframeWindow.postMessage("message", url)
+        // })
+      } else {
+        iframeRef.value.onload = function () {
+          iframeWindow.postMessage("message", "*")
+        }
+      }
     }
     onMounted(() => {
-      // onTurn()
+      let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
+      imgUrl.value = bgImg
+      let pdfUrl = route.query.pdfUrl
+      let fileUrl = "D:\\khd\\bigdata\\test_files\\" + pdfUrl
+      console.log(fileUrl)
+      // 向iframe传参
+      // window.addEventListener("message", handleMessage) // 监听iframe的事件
+      //vue3使用ref定义的变量需要使用.value获取值， vue2直接iframeRef.contentWindow
+      iframeWindow = iframeRef.value.contentWindow
+      console.log("iframe的window对象===", iframeWindow)
+      // iframeWindow.postMessage(fileUrl, "*")
+
+      setTimeout(() => {
+        // sendMessage(fileUrl)
+        iframeWindow.postMessage(fileUrl, "*")
+      }, 1000)
     })
     return {
       currentPage,
       imgList,
-      onTurn,
-      toPage,
+      mainIframe,
+      imgUrl,
+      // iframeSrc,
+      iframeRef,
+      iframeWindow,
+      sendMessage,
+      // UrlSearch,
     }
   },
 })

@@ -7,7 +7,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, onMounted } from "vue"
 import { useRouter, useRoute } from "vue-router"
 export default defineComponent({
   setup() {
@@ -19,9 +19,13 @@ export default defineComponent({
       })
     }
     const backPage = () => {
-      console.log(66666)
       router.back()
     }
+
+    onMounted(() => {
+      // 这个页面的所有数据
+      let npsData = localStorage.getItem("allData") as string
+    })
     return {
       toHome,
       backPage,

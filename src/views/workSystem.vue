@@ -1,45 +1,51 @@
 <template>
-  <Header></Header>
-  <div class="content-box">
-    <!-- 成果展示 -->
-    <swiper
-      class="swiper-box"
-      style="width: 1480px; height: 700px"
-      :modules="modules"
-      :slidesPerView="4"
-      :grid="{
-        rows: 2,
-        fill: 'column',
-      }"
-      :navigation="{
-        nextEl: '.swiper-button-next', //前进后退按钮
-        prevEl: '.swiper-button-prev',
-      }"
-      @swiper="onSwiper"
-      @slideChange="onSlideChange"
-    >
-      <swiper-slide
-        v-for="item in systemList"
-        class="swiper-slide-box"
-        style="height: 50%"
+  <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
+    <Header></Header>
+    <div class="content-box">
+      <!-- 成果展示 -->
+      <swiper
+        class="swiper-box"
+        style="width: 1480px; height: 700px"
+        :modules="modules"
+        :slidesPerView="4"
+        :grid="{
+          rows: 2,
+          fill: 'column',
+        }"
+        :navigation="{
+          nextEl: '.swiper-button-next', //前进后退按钮
+          prevEl: '.swiper-button-prev',
+        }"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
       >
-        <div class="result-item font24 text-left flex-c" @click="toDetail">
-          <div class="book-img">
-            <p class="file-name font24 tab-red">{{ item.name }}</p>
+        <swiper-slide
+          v-for="item in systemList"
+          class="swiper-slide-box"
+          style="height: 50%"
+        >
+          <div
+            class="result-item font24 text-left flex-c pointer"
+            @click="toDetail(item)"
+          >
+            <div class="book-img">
+              <p class="file-name font24 tab-red">{{ item.name }}</p>
+            </div>
+            <span class="title-color m-t-16 text-width two-line-text">{{
+              item.name
+            }}</span>
           </div>
-          <!-- <img class="book-img" src="../assets/img/study-system.png" alt="" /> -->
-          <span class="title-color m-t-16">{{ item.name }}</span>
-        </div>
-      </swiper-slide>
-    </swiper>
-    <div class="swiper-button-prev" style="color: #ffffff"></div>
-    <div class="swiper-button-next" style="color: #ffffff"></div>
+        </swiper-slide>
+      </swiper>
+      <div class="swiper-button-prev" style="color: #ffffff"></div>
+      <div class="swiper-button-next" style="color: #ffffff"></div>
+    </div>
+    <Footer class="footer-fixed"></Footer>
   </div>
-  <Footer class="footer-fixed"></Footer>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted } from "vue"
-import { useRouter } from "vue-router"
+import { defineComponent, reactive, toRefs, onMounted, ref } from "vue"
+import { useRouter, useRoute } from "vue-router"
 import { InitData } from "../types/workSystem"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
@@ -59,6 +65,8 @@ export default defineComponent({
   setup() {
     const data = reactive(new InitData())
     const router = useRouter()
+    const route = useRoute()
+    const imgUrl = ref()
     const onSwiper = (swiper: any) => {
       // console.log(swiper);
     }
@@ -73,21 +81,26 @@ export default defineComponent({
         },
       })
     }
-    const toDetail = () => {
+    const toDetail = (info: any) => {
+      // console.log(info.url)
+      // return
       router.push({
         path: "/files",
         query: {
-          // goodsId: id,
+          pdfUrl: info.url,
         },
       })
     }
     onMounted(() => {
+      let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
+      imgUrl.value = bgImg
       let files = localStorage.getItem("fileData") as string
       data.systemList = JSON.parse(files)
       console.log("法律法规===", data.systemList)
     })
     return {
       ...toRefs(data),
+      imgUrl,
       toHome,
       onSwiper,
       onSlideChange,
@@ -99,6 +112,9 @@ export default defineComponent({
 </script>
 <style scoped>
 @import "../assets/glob.css";
+.div-box {
+  /* background: url(../assets/img/active-bg.png); */
+}
 .content-box {
   margin-top: 96px;
 }

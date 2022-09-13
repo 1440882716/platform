@@ -15,7 +15,24 @@
   <!-- 默认展示 -->
   <!-- 第一版 -->
   <div class="box" v-if="activeName == '1'">
-    <div class="box1">
+    <!-- <div class="stage"> -->
+    <!-- <div class="container"> -->
+    <div class="flex-r">
+      <div class="result-item" v-for="(item, index) in dataInfo">
+        <div :class="['npc-img', 'flex-r', activeClass + index]">
+          <img class="npc-photo" src="../assets/img/peopel.png" alt="" />
+          <div class="flex-c m-l-16 text-left">
+            <p class="font38">{{ item.npcMember.name }}</p>
+            <p class="font20 m-t-20">{{ item.npcMember.introduction }}</p>
+            <p class="font18 m-t-56">{{ item.npcMember.mobile }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!-- </div> -->
+
+    <!-- <div class="box1">
       <div class="one" @click="toDetail">
         <img src="../assets/img/npc.png" />
       </div>
@@ -37,7 +54,7 @@
       <div class="seven" @click="toDetail">
         <img src="../assets/img/npc.png" />
       </div>
-    </div>
+    </div> -->
   </div>
   <!-- 第二版 -->
 
@@ -74,8 +91,6 @@
               <p class="font18 m-t-56">{{ item.npcMember.mobile }}</p>
             </div>
           </div>
-          <!-- <img class="npc-img" src="../assets/img/npc.png" alt="" /> -->
-          <!-- <span class="title-color m-t-16">{{ item.title }}</span> -->
         </div>
       </swiper-slide>
     </swiper>
@@ -86,7 +101,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, reactive, toRefs, onMounted } from "vue"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import type { TabsPaneContext } from "element-plus"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
@@ -96,6 +111,7 @@ import { Swiper, SwiperSlide } from "swiper/vue"
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/grid"
+const $ = require("jquery")
 export default defineComponent({
   components: {
     Header,
@@ -106,9 +122,11 @@ export default defineComponent({
   setup() {
     const data = reactive(new InitData())
     const router = useRouter()
+    const route = useRoute()
     // const titleFlag = ref(1)
     const activeName = ref("1")
     const dataInfo = ref()
+    const activeClass = ref()
     const handleClick = (tab: TabsPaneContext, event: Event) => {
       console.log(activeName.value)
     }
@@ -137,14 +155,32 @@ export default defineComponent({
     onMounted(() => {
       let npsData = localStorage.getItem("npcinfo") as string
       dataInfo.value = JSON.parse(npsData)
-      console.log(dataInfo.value)
+      let bgistr = route.query.bgi
+      console.log("背景图片==", bgistr)
+      // 默认图片旋转
+      var imgL = dataInfo.value.length
+      var deg = 360 / imgL
+      var roY = 0,
+        roX = -10
+      var xN = 0,
+        yN = 0
+      var play = null
+      $(".result-item").each(function (i: any) {
+        console.log(i)
 
-      // document.body.style.setProperty("--el-color-primary", "#F31A1A")
+        //   //     $(this).css({
+        //   // //translateZ 定义2d旋转沿着z轴
+        // "transform": "rotateY(" + i * deg + "deg) translateZ(530px)"
+        //   //     });
+        //   // //防止图片被拖拽
+        //   //     $(this).attr('ondragstart', 'return false');
+      })
     })
     return {
       ...toRefs(data),
       activeName,
       dataInfo,
+      activeClass,
       handleClick,
       onSwiper,
       onSlideChange,
@@ -218,16 +254,13 @@ body {
   background-size: 100%;
 } */
 
-.box {
-  /* 给父盒子设置相对定位 */
+/* .box {
   position: relative;
   width: 400px;
   height: 400px;
   margin: 100px auto;
-  /* 开启3d效果， */
   transform-style: preserve-3d;
   transform: rotate(30deg);
-  /* 调用动画 */
   animation: move 8s linear infinite;
 }
 
@@ -240,7 +273,6 @@ body {
 }
 
 .box div {
-  /* 给子盒子设置绝对定位，方便更改其位置 */
   position: absolute;
   width: 400px;
   height: 400px;
@@ -251,7 +283,6 @@ body {
   height: 270px;
 }
 
-/* 利用3D空间转换，将图片定位到相应位置 */
 
 .one {
   transform: translateZ(400px);
@@ -280,7 +311,6 @@ body {
   transform: translateZ(-400px);
 }
 
-/* 定义动画 */
 
 @keyframes move {
   0% {
@@ -294,7 +324,6 @@ body {
   }
 }
 
-/* 定义动画 */
 
 @keyframes run {
   100% {
@@ -308,5 +337,7 @@ body {
 
 .box:hover .box1 {
   animation-play-state: paused;
-}
+} */
+
+/* ==============================================第二版 */
 </style>

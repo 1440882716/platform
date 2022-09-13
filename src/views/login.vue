@@ -20,7 +20,7 @@
           placeholder="输入密码"
           type="password"
         />
-        <div class="btn-box font16 fff" @click="toHome">登录</div>
+        <div class="btn-box font16 fff pointer" @click="toHome">登录</div>
       </div>
     </div>
     <div>
@@ -52,7 +52,7 @@ export default defineComponent({
           // 登录成功
           localStorage.setItem("token", res.data.token)
           var ws = new WebSocket(
-            "ws://192.168.1.116:9527/api/manager/display/websocket?version=1.06&Authorization=" +
+            "ws://192.168.1.116:9527/api/manager/display/websocket?version=0&Authorization=" +
               res.data.token
           )
           ws.onerror = function () {
@@ -67,12 +67,16 @@ export default defineComponent({
             let files = JSON.parse(e.data)
             let fileList = JSON.stringify(files.fileList)
             let navList = JSON.stringify(files.nodeList)
+            // let bgi = JSON.stringify(files.homeBackgroundImage)
+            console.log(files)
 
+            localStorage.setItem(
+              "bgi",
+              JSON.stringify(files.homeBackgroundImage)
+            )
             // console.log(JSON.parse(fileList))
             // console.log(JSON.parse(navList))
-            router.push({
-              path: "/home",
-            })
+
             // return
             // const ipcRenderer = require("electron").ipcRenderer
             // // 监听主进程过来的消息
@@ -86,6 +90,9 @@ export default defineComponent({
             // ipcRenderer.send("down-file-list", fileList)
             // // 向主进程发送消息，保存应用的目录
             // ipcRenderer.send("save-data", navList)
+            router.push({
+              path: "/home",
+            })
           }
           // return
         }

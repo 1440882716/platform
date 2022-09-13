@@ -5,7 +5,6 @@ import fs from 'fs'
 import path from 'path'
 import { json } from 'node:stream/consumers'
 
-// Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
 
 // Set application name for Windows 10+ notifications
@@ -209,25 +208,7 @@ ipcMain.on("get-data",(event,arg)=> {
       // }
     }
   })
-  // // 获取人大概况的数据
-  // if(arg == "人大概览"){
-  //   fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
-  //     if(error){
-  //        event.sender.send('read-renda', "读取失败");
-  //     }else {
-  //       //取出数据处理后 返回所需数据  
-  //       let dataArr = JSON.parse(data)
-  //       for(let i=0;i<dataArr.length;i++){
-  //         if(dataArr[i].name==arg){
-  //           let dataList = JSON.stringify(dataArr[i].children)
-  //           event.sender.send('read-renda', dataList);
-  //         }
-  //       }
-  //     }
-  //   })
-  // }else if(arg == ""){
 
-  // }
 })
 
 

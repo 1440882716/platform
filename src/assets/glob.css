@@ -237,3 +237,15 @@ input:focus{
   .flex-end{
     justify-content: flex-end;
   }
+  .two-line-text{
+    /* width: 200px; */
+    overflow:hidden;
+    text-overflow:ellipsis; 
+    display:-webkit-box; 
+    -webkit-box-orient:vertical; 
+    -webkit-line-clamp:2; 
+  }
+  .bg-box{
+    width: 100%;
+    height: 1080px;
+  }

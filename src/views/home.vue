@@ -1,11 +1,13 @@
 <template>
-  <div
+  <div class="background-page" :style="{ backgroundImage: `url(${imgUrl})` }">
+    <!-- D:\khd\bigdata\test_files\554f31ddea1605af86e55795be4832ba_1662443630171.jpeg -->
+    <!-- <div
     class="background-page"
-    :style="{ backgroundImage: 'url(' + backgroudImg + ')' }"
-  >
+    style="
+      background-image: url(D:/khd/bigdata/test_files/554f31ddea1605af86e55795be4832ba_1662443630171.jpeg);
+    "
+  > -->
     <Header></Header>
-    <!-- <div @click="zipHandle" class="font24 pointer">测试解压文件</div> -->
-    <!-- <img src="../static/testpage.zip" alt=""> -->
     <div style="margin-top: 252px">
       <swiper
         class="swiper-box pointer"
@@ -74,6 +76,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter()
+    const imgUrl = ref()
     // /@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
     // http://localhost:3344/@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
     const staticUrl = "D:/khd/bigdata/test_files/"
@@ -111,6 +114,7 @@ export default defineComponent({
           path: "/representative",
           query: {
             name: info.name,
+            bgi: info.backgroundImage,
           },
         })
       } else if (info.type == 1 && info.children.length != 0) {
@@ -118,12 +122,16 @@ export default defineComponent({
           path: "/representative",
           query: {
             name: info.name,
+            bgi: info.backgroundImage,
           },
         })
       } else if (info.type == 7 && info.children.length != 0) {
         localStorage.setItem("fileData", JSON.stringify(info.children))
         router.push({
           path: "/WorkSystem",
+          query: {
+            bgi: info.backgroundImage,
+          },
         })
       } else if (info.type == 8 && info.children.length != 0) {
         // 加载地图网页
@@ -135,7 +143,7 @@ export default defineComponent({
         // 解压文件
         zip.extractAllTo(path)
         let pageUrl = path + "\\index.html"
-        console.log(pageUrl)
+        // console.log(pageUrl)
 
         router.push({
           path: "/infomation",
@@ -157,20 +165,20 @@ export default defineComponent({
       // console.log("解压的文件===", entry)
     }
     onMounted(() => {
+      let str = localStorage.getItem("bgi") as string
+      imgUrl.value = "D:/khd/bigdata/test_files/" + str.replace(/"/g, "")
+      console.log(imgUrl.value)
       const ipcRenderer = require("electron").ipcRenderer
-
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
-        console.log("获取的目录列表===", data)
-        // console.log(JSON.parse(data))
         backgroudImg.value = "@/assets/img/main-bg.png"
         navList.value = JSON.parse(data)
-        console.log(navList.value)
       })
       ipcRenderer.send("get-nav", "getNav")
     })
     return {
       tokenStr,
+      imgUrl,
       // staticUrl,
       navList,
       backgroudImg,
@@ -194,6 +202,7 @@ export default defineComponent({
 <style scoped>
 @import "../assets/glob.css";
 .background-page {
+  /* background: url(../assets/img/home-bgi.jpeg); */
   background-size: 100% 100%;
   width: 100%;
   height: 100%;

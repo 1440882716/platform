@@ -41,7 +41,9 @@
     "adm-zip-iconv": "^0.4.9",
     "axios": "^0.27.2",
     "element-plus": "^2.2.13",
+    "flipbook-vue": "^1.0.0-alpha.4",
     "jquery": "^3.6.0",
+    "pdfjs-dist": "^2.16.105",
     "swiper": "^8.3.2",
     "vue-router": "^4.1.3"
   }

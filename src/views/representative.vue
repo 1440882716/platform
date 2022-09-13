@@ -1,32 +1,25 @@
 <template>
-  <Header></Header>
-  <div class="flex-r fff active-box flex-b">
-    <div
-      class="active-item text-center pointer"
-      v-for="item in showData"
-      @click="toDetail(item)"
-    >
-      <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
-      <p class="font32 name-p">{{ item.name }}</p>
+  <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
+    <Header></Header>
+    <div class="flex-r fff active-box flex-b">
+      <div
+        class="active-item text-center pointer"
+        v-for="item in showData"
+        @click="toDetail(item)"
+      >
+        <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
+        <p class="font32 name-p two-line-text">{{ item.name }}</p>
+      </div>
     </div>
-    <!-- <div class="active-item text-center pointer" @click="toDetail">
-      <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
-      <p class="font32">市人大代表</p>
-    </div>
-    <div class="active-item text-center pointer" @click="toDetail">
-      <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
-      <p class="font32">街道人大代表</p>
-    </div> -->
-  </div>
-  <div class="footer-fixed">
-    <div class="footer-box">
-      <div class="footer-icon flex-r">
-        <img @click="toHome" src="../assets/img/home-icon.png" alt="" />
-        <img @click="backPage" src="../assets/img/back-icon.png" alt="" />
+    <div class="footer-fixed">
+      <div class="footer-box">
+        <div class="footer-icon flex-r">
+          <img @click="toHome" src="../assets/img/home-icon.png" alt="" />
+          <img @click="backPage" src="../assets/img/back-icon.png" alt="" />
+        </div>
       </div>
     </div>
   </div>
-
   <!-- <Footer class="footer-fixed"></Footer> -->
 </template>
 <script lang="ts">
@@ -45,6 +38,7 @@ export default defineComponent({
     const allData = ref()
     const parentData = ref()
     const showData = ref()
+    const imgUrl = ref()
     const toDetail = (info: any) => {
       // type用来判断文件夹的类型children的长度！=0说明下级页面有内容
       // type==0 普通文件夹
@@ -56,6 +50,7 @@ export default defineComponent({
       // type==6 视频文件
       // type==7 文档文件夹
       // type==8 网页文件夹
+
       if (info.type == 0 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
@@ -66,6 +61,9 @@ export default defineComponent({
         localStorage.setItem("npcinfo", JSON.stringify(info.children))
         router.push({
           path: "/npcInfo",
+          query: {
+            bgi: info.backgroundImage,
+          },
         })
       } else if (info.type == 7 && info.children.length != 0) {
         parentData.value = showData.value
@@ -73,6 +71,9 @@ export default defineComponent({
         localStorage.setItem("fileData", JSON.stringify(info.children))
         router.push({
           path: "/WorkSystem",
+          query: {
+            bgi: info.backgroundImage,
+          },
         })
       } else if (info.type == 8 && info.children.length != 0) {
         parentData.value = showData.value
@@ -80,16 +81,21 @@ export default defineComponent({
         localStorage.setItem("mapData", JSON.stringify(info.children))
         router.push({
           path: "/infomation",
+          query: {
+            bgi: info.backgroundImage,
+          },
         })
       }
     }
     onMounted(() => {
       let name = route.query.name
-      // console.log(name)
+      let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
+      imgUrl.value = bgImg
       const ipcRenderer = require("electron").ipcRenderer
       ipcRenderer.send("get-data", name)
       ipcRenderer.on("read-renda", (event, data) => {
-        // console.log("获取该页面的数据===", data)
+        // 本页面所有的数据
+        localStorage.setItem("allData", data)
         allData.value = JSON.parse(data)
         showData.value = JSON.parse(data)
         // showObj.value.showData = JSON.parse(data)
@@ -102,12 +108,17 @@ export default defineComponent({
       })
     }
     const backPage = () => {
+      console.log(allData.value)
+      console.log(parentData)
+      showData.value = allData.value
+      // if()
       // router.back()
     }
     return {
       allData,
       parentData,
       showData,
+      imgUrl,
       toDetail,
       toHome,
       backPage,
@@ -147,10 +158,11 @@ export default defineComponent({
 /* ==================底部 */
 .footer-fixed {
   width: 100%;
-  /* height: 100px; */
   position: fixed;
   bottom: 0;
-  /* background-color: cadetblue; */
+  text-align: center;
+  display: flex;
+  align-items: center;
 }
 .footer-box {
   width: 100%;
@@ -160,10 +172,9 @@ export default defineComponent({
 }
 .footer-icon {
   position: absolute;
-  width: 480px;
   height: 140px;
   top: -57px;
   left: 50%;
-  margin-left: -240px;
+  margin-left: -140px;
 }
 </style>
