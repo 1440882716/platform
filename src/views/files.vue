@@ -2,12 +2,6 @@
   <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
     <Header></Header>
     <div class="turn-container">
-      <!-- <img
-      style="width: 100px; height: 900px"
-      src="../static/pdf-page/bac1.png"
-      alt=""
-    /> -->
-      <!-- <div id="flipbookContainer"></div> -->
       <iframe
         id="mainIframe"
         ref="iframeRef"
