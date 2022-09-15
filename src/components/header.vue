@@ -8,14 +8,16 @@
       <span class="fff" style="margin-right: 16px">{{ date }}</span>
       <span class="fff" style="margin-right: 27px">{{ time }}</span>
       <span class="fff">{{ weekday }}</span>
+      <span class="fff go-out pointer" @click="goOut">退出</span>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue"
-
+import { useRouter } from "vue-router"
 export default defineComponent({
   setup() {
+    const router = useRouter()
     const formatDate = () => {
       var t
       clearTimeout(t)
@@ -61,6 +63,13 @@ export default defineComponent({
     const date = ref() // 年月日
     const time = ref() // 时分秒
     const weekday = ref() // 时分秒
+    const goOut = () => {
+      // 退出清空token，回到登录页面
+      localStorage.setItem("token", "")
+      // router.push({
+      //   path: "/login",
+      // })
+    }
     onMounted(() => {
       formatDate()
     })
@@ -69,6 +78,7 @@ export default defineComponent({
       time,
       weekday,
       formatDate,
+      goOut,
     }
   },
 })
@@ -95,5 +105,8 @@ export default defineComponent({
   font-size: 38px;
   margin-left: 20px;
   letter-spacing: 5px;
+}
+.go-out {
+  margin-left: 20px;
 }
 </style>

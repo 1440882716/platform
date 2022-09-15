@@ -11,16 +11,16 @@
         <p class="font32 name-p two-line-text">{{ item.name }}</p>
       </div>
     </div>
-    <div class="footer-fixed">
+    <!-- <div class="footer-fixed">
       <div class="footer-box">
         <div class="footer-icon flex-r">
           <img @click="toHome" src="../assets/img/home-icon.png" alt="" />
           <img @click="backPage" src="../assets/img/back-icon.png" alt="" />
         </div>
       </div>
-    </div>
+    </div> -->
+    <Footer style="position: fixed; bottom: 0"></Footer>
   </div>
-  <!-- <Footer class="footer-fixed"></Footer> -->
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue"
@@ -110,9 +110,8 @@ export default defineComponent({
     const backPage = () => {
       console.log(allData.value)
       console.log(parentData)
-      showData.value = allData.value
-      // if()
-      // router.back()
+      // showData.value = allData.value
+      router.back()
     }
     return {
       allData,

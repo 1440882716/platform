@@ -15,6 +15,19 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
+// 获取文件的安装地址
+let homeDir =  path.dirname(app.getPath('exe'))
+console.log("set-------",homeDir);
+// D:\khd\bigdata\platform\node_modules\electron\dist
+// 在安装目录下创建一个文件夹
+fs.mkdir(path.join(homeDir, 'testFile'), (err) => { 
+  if (err) { 
+      return console.error(err); 
+  } 
+  console.log('Directory created successfully!'); 
+});
+
+
 // Remove electron security warnings
 // This warning only shows in development mode
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security

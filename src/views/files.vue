@@ -21,7 +21,6 @@ import { useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 import turn from "../utils/turn.js"
-// import flipBook from "../utils/dflip.min.js"
 const $ = require("jquery")
 export default defineComponent({
   components: {
@@ -54,20 +53,20 @@ export default defineComponent({
     //     }
     //   }
     // }
-    const sendMessage = (url: string) => {
-      if (iframeRef.value.attachEvent) {
-        // 兼容IE浏览器判断 ie的window.onload 是隐藏的 需要用attachEvent注册
-        // iframeRef.value.attachEvent("onload", function () {
-        //postMessage（message,origin） 向iframe发送参数
-        //message：iframe接收的参数，最好字符串   origin：其值可以是字符串"*"（表示无限制）或者一个url
-        iframeWindow.postMessage("message", url)
-        // })
-      } else {
-        iframeRef.value.onload = function () {
-          iframeWindow.postMessage("message", "*")
-        }
-      }
-    }
+    // const sendMessage = (url: string) => {
+    //   if (iframeRef.value.attachEvent) {
+    //     // 兼容IE浏览器判断 ie的window.onload 是隐藏的 需要用attachEvent注册
+    //     // iframeRef.value.attachEvent("onload", function () {
+    //     //postMessage（message,origin） 向iframe发送参数
+    //     //message：iframe接收的参数，最好字符串   origin：其值可以是字符串"*"（表示无限制）或者一个url
+    //     iframeWindow.postMessage("message", url)
+    //     // })
+    //   } else {
+    //     iframeRef.value.onload = function () {
+    //       iframeWindow.postMessage("message", "*")
+    //     }
+    //   }
+    // }
     onMounted(() => {
       let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
       imgUrl.value = bgImg
@@ -94,7 +93,7 @@ export default defineComponent({
       // iframeSrc,
       iframeRef,
       iframeWindow,
-      sendMessage,
+      // sendMessage,
       // UrlSearch,
     }
   },

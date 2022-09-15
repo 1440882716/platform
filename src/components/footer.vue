@@ -7,12 +7,13 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted } from "vue"
+import { defineComponent, onMounted, ref } from "vue"
 import { useRouter, useRoute } from "vue-router"
 export default defineComponent({
   setup() {
     const router = useRouter()
     const route = useRoute()
+    const allData = ref()
     const toHome = () => {
       router.push({
         path: "/home",
@@ -21,12 +22,12 @@ export default defineComponent({
     const backPage = () => {
       router.back()
     }
-
     onMounted(() => {
       // 这个页面的所有数据
-      let npsData = localStorage.getItem("allData") as string
+      allData.value = localStorage.getItem("allData") as string
     })
     return {
+      allData,
       toHome,
       backPage,
     }
