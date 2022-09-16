@@ -92,7 +92,12 @@ export default defineComponent({
       })
     }
     onMounted(() => {
-      let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
+      const storage = require("electron-localStorage")
+      let path = storage.getItem("filePath")
+      let url = path + "\\"
+      url = url.replace(/\\/g, "/")
+      let bgImg = url + route.query.bgi
+      // let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
       imgUrl.value = bgImg
       let files = localStorage.getItem("fileData") as string
       data.systemList = JSON.parse(files)

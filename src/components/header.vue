@@ -66,9 +66,9 @@ export default defineComponent({
     const goOut = () => {
       // 退出清空token，回到登录页面
       localStorage.setItem("token", "")
-      // router.push({
-      //   path: "/login",
-      // })
+      router.push({
+        path: "/",
+      })
     }
     onMounted(() => {
       formatDate()

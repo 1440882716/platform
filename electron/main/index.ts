@@ -4,6 +4,7 @@ import { join } from 'path'
 import fs from 'fs'
 import path from 'path'
 import { json } from 'node:stream/consumers'
+import { string } from 'yargs'
 
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
 
@@ -15,17 +16,36 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
-// 获取文件的安装地址
-let homeDir =  path.dirname(app.getPath('exe'))
-console.log("set-------",homeDir);
+
+// localStorage.getItem("filesName")
 // D:\khd\bigdata\platform\node_modules\electron\dist
 // 在安装目录下创建一个文件夹
-fs.mkdir(path.join(homeDir, 'testFile'), (err) => { 
-  if (err) { 
-      return console.error(err); 
-  } 
-  console.log('Directory created successfully!'); 
-});
+// fs.mkdir(path.join(homeDir, 'testFile'), (err) => { 
+//   if (err) { 
+//       return console.error(err); 
+//   } 
+//   console.log('Directory created successfully!'); 
+// });
+// 获取文件的安装地址
+// let homeDir =  path.dirname(app.getPath('exe'))
+// console.log("set-------",homeDir);
+// let filesPath:string
+// fs.mkdir(path.join(homeDir, 'testFile'), (err) => { 
+//   if (err) { 
+//       // return console.error(err.code); 
+//       // 该文件夹已经存在,直接讲文件放进这个文件夹，不需要重新创建文件
+//       if(err.code == "EEXIST"){
+//         err.path
+//       }
+      
+//   }else{
+//     // 文件夹创建成功,讲下载的文件放入这个文件夹
+//     console.log('Directory created successfully!'); 
+//     let homePath = homeDir.replace(/\\/g, "\\\\")
+//     // filesPath = homePath+"\\"+
+//   }
+  
+// });
 
 
 // Remove electron security warnings
@@ -93,37 +113,39 @@ async function createWindow() {
 
 
   // 下载
-  const filesDown=(win:any,downPath:string,savePath:string)=>{
+  const filesDown=(win:any,downPath:string,savePath:string,filesNum:number)=>{
+    console.log("in======",savePath);
+    // return
     win.webContents.downloadURL(downPath)
-    // win.webContents.downloadURL("http://106.13.196.72:9000/npc/file/display/c9fd7a730230a7190f68311276bd0b37_1661248552327.jpeg")
     win.webContents.session.on('will-download', (event:any, item:any, webContents:any) => {
-      // 无需对话框提示， 直接将文件保存到路径
-      item.setSavePath('D:\\khd\\bigdata\\test_files'+`\\${item.getFilename()}`);
-      // if(savePath!= "" && savePath!= undefined){
-        // item.setSavePath('D:\\khd\\bigdata\\test_files'+`\\${item.getFilename()}`);
-      // }else{
-
-      // }
-      item.on('updated', (event:any, state:any) => {
-        if (state === 'interrupted') {
-          // console.log('Download is interrupted but can be resumed')
-        } else if (state === 'progressing') {
-          if (item.isPaused()) {
-            console.log('Download is paused')
-          } else {
-            console.log(`Received bytes: ${item.getReceivedBytes()}`)
-          }
-        }
-      })
+      let url = savePath+`\\${item.getFilename()}`;
+      item.setSavePath(url);
+      // console.log(url);
+      // return
+      // item.on('updated', (event:any, state:any) => {
+      //   if (state === 'interrupted') {
+      //     console.log('Download is interrupted but can be resumed')
+      //   } else if (state === 'progressing') {
+      //     if (item.isPaused()) {
+      //       console.log('Download is paused')
+      //     } else {
+      //       console.log(`Received bytes: ${item.getReceivedBytes()}`)
+      //     }
+      //   }
+      // })
       item.once('done', (event:any, state:any) => {
         if (state === 'completed') {
           console.log('=======================================================Download successfully')
           // console.log("文件保存的路径===",item.getSavePath());
-          let systemPath =item.getSavePath() 
-          let index = systemPath.lastIndexOf("\\")
-          let path_url = systemPath.substring(0, index)
-          savePath = path_url
-          // console.log("save path is "+savePath);
+          // let systemPath =item.getSavePath() 
+          // let index = systemPath.lastIndexOf("\\")
+          // let path_url = systemPath.substring(0, index)
+          // savePath = path_url
+
+           // 将下载进度缓存下来，避免后续重复下载
+           const storage = require('electron-localStorage');
+           storage.setItem('version', filesNum);
+          
           
         } else {
           console.log('Download failed=========================================='+ state)
@@ -132,12 +154,8 @@ async function createWindow() {
     })
   }
 
-
-// })
-
-
-
   // 主进程与渲染进程通信
+  // 保存目录
   ipcMain.on("save-data",(event,arg)=>{
       // 接受渲染进程的数据并存到本地
       fs.writeFile(path.join("./src/renderer/data.json"),arg, "utf8",(err)=>{
@@ -158,7 +176,7 @@ async function createWindow() {
         }
       })
   })
-
+  // 保存下载文件
   ipcMain.on("down-file-list",(event,arg)=>{
     // 接受渲染进程的数据并存导本地
     fs.writeFile(path.join("./src/renderer/files.json"),arg, "utf8",(err)=>{
@@ -166,19 +184,47 @@ async function createWindow() {
          event.sender.send('main-process-message', "下载文件写入失败"+err);
       }else {
         event.sender.send('main-process-message', "下载文件写入成功");
-        fs.readFile(path.join("./src/renderer/files.json"), "utf8",(error,data)=>{
+        const storage = require('electron-localStorage');
+        // 读本地文件目录并且下载
+        fs.readFile(path.join("./src/renderer/files.json"), "utf8",(error,data)=>{  
           if(error){
-            // console.log("Reading error");
+            // 文件读取失败;
           }else {
             let fileList = JSON.parse(data)
             let baseurl = "http://106.13.196.72:9000"
-            // let savePath:string
-            // console.log("Reading success=========",fileList);
-            // filesDown(win,baseurl+"/npc/file/1fb4ed79a8d463f7136b8a187112017f_1661334648771.jpg",savePath)
-            for(let i=0;i<fileList.length;i++){
-              filesDown(win,baseurl+fileList[i].url,savePath)
-              version = fileList[i].version
-            } 
+            // 获取文件的安装地址
+            let homeDir =  path.dirname(app.getPath('exe'))
+            // console.log("set-------",homeDir);
+            let newFiles = storage.getItem("filesName")
+            // 创建对应地区的文件夹
+            let filesPath="";
+            fs.mkdir(path.join(homeDir, newFiles), (err) => { 
+              if (err) { 
+              // 该文件夹已经存在
+                if(err.code == "EEXIST"){
+                  filesPath = err.path as string
+                }
+                console.log("creating is error ====",err);
+                // console.log("save path is =====",filesPath);
+                for(let i=0;i<fileList.length;i++){
+                  filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+                }
+              }else{
+                // 文件夹创建成功,讲下载的文件放入这个文件夹
+                console.log('Directory created successfully!'); 
+                // let homePath = homeDir.replace(/\\/g, "\\\\")
+                filesPath = homeDir+"\\"+newFiles
+                console.log("files down path is =====",filesPath);
+                for(let i=0;i<fileList.length;i++){
+                  filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+                }
+              }
+              // 将文件下载的目录缓存
+              storage.setItem('filePath',filesPath)
+              
+               // 遍历文件下载
+             
+            });
           }
         })
       }

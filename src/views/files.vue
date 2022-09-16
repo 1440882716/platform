@@ -68,17 +68,21 @@ export default defineComponent({
     //   }
     // }
     onMounted(() => {
-      let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
+      const storage = require("electron-localStorage")
+      let path = storage.getItem("filePath")
+      let url = path + "\\"
+      url = url.replace(/\\/g, "/")
+      let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
       let pdfUrl = route.query.pdfUrl
-      let fileUrl = "D:\\khd\\bigdata\\test_files\\" + pdfUrl
+      // let fileUrl = "D:\\khd\\bigdata\\test_files\\" + pdfUrl
+      let fileUrl = url.replace(/\//g, "\\\\") + pdfUrl
       console.log(fileUrl)
       // 向iframe传参
       // window.addEventListener("message", handleMessage) // 监听iframe的事件
       //vue3使用ref定义的变量需要使用.value获取值， vue2直接iframeRef.contentWindow
       iframeWindow = iframeRef.value.contentWindow
       console.log("iframe的window对象===", iframeWindow)
-      // iframeWindow.postMessage(fileUrl, "*")
 
       setTimeout(() => {
         // sendMessage(fileUrl)

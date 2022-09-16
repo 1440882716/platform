@@ -32,11 +32,8 @@
         <swiper-slide v-for="item in navList" @click="nextPage(item)">
           <div class="slide-box">
             <div class="text-center">
-              <img
-                class="tab-item"
-                :src="'D:/khd/bigdata/test_files/' + item.icon"
-                alt=""
-              />
+              <!-- :src="'D:/khd/bigdata/test_files/' + item.icon" -->
+              <img class="tab-item" :src="staticUrl + item.icon" alt="" />
               <p class="font28 fff">{{ item.name }}</p>
             </div>
           </div>
@@ -79,12 +76,7 @@ export default defineComponent({
     const imgUrl = ref()
     // /@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
     // http://localhost:3344/@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
-    const staticUrl = "D:/khd/bigdata/test_files/"
-
-    //这里，直接获取根目录然后放上去拼接就好了
-
-    // console.log(staticUrl)
-
+    const staticUrl = ref()
     const tokenStr = ref()
     const navList = ref()
     const backgroudImg = ref()
@@ -134,9 +126,11 @@ export default defineComponent({
           },
         })
       } else if (info.type == 8 && info.children.length != 0) {
+        const storage = require("electron-localStorage")
         // 加载地图网页
         let zipPath = info.children[0].url
-        let path = "D:\\khd\\bigdata\\test_files"
+        // let path = "D:\\khd\\bigdata\\test_files"
+        let path = storage.getItem("filePath")
         var admZip = require("adm-zip-iconv")
         console.log(path + "\\" + zipPath)
         var zip = new admZip(path + "\\" + zipPath, "GBK")
@@ -165,9 +159,15 @@ export default defineComponent({
       // console.log("解压的文件===", entry)
     }
     onMounted(() => {
+      const storage = require("electron-localStorage")
+      let path = storage.getItem("filePath")
+      let url = path + "\\"
+      staticUrl.value = url.replace(/\\/g, "/")
+      console.log("首页获取到的文件下载路径====", path)
+
       let str = localStorage.getItem("bgi") as string
-      imgUrl.value = "D:/khd/bigdata/test_files/" + str.replace(/"/g, "")
-      console.log(imgUrl.value)
+      imgUrl.value = path + "\\" + str.replace(/"/g, "")
+      imgUrl.value = imgUrl.value.replace(/\\/g, "/")
       const ipcRenderer = require("electron").ipcRenderer
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
@@ -179,7 +179,7 @@ export default defineComponent({
     return {
       tokenStr,
       imgUrl,
-      // staticUrl,
+      staticUrl,
       navList,
       backgroudImg,
       autoplayOptions,

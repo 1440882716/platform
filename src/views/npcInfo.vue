@@ -171,7 +171,11 @@ export default defineComponent({
     onMounted(() => {
       let npsData = localStorage.getItem("npcinfo") as string
       dataInfo.value = JSON.parse(npsData)
-      let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
+      const storage = require("electron-localStorage")
+      let path = storage.getItem("filePath")
+      let url = path + "\\"
+      url = url.replace(/\\/g, "/")
+      let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
       // console.log("人员信息===", dataInfo.value)
       rotateNpc.value = handleArr(dataInfo.value, 8)

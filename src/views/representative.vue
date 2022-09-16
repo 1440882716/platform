@@ -89,7 +89,11 @@ export default defineComponent({
     }
     onMounted(() => {
       let name = route.query.name
-      let bgImg = "D:/khd/bigdata/test_files/" + route.query.bgi
+      const storage = require("electron-localStorage")
+      let path = storage.getItem("filePath")
+      let url = path + "\\"
+      url = url.replace(/\\/g, "/")
+      let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
       const ipcRenderer = require("electron").ipcRenderer
       ipcRenderer.send("get-data", name)
