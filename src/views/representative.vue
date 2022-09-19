@@ -58,6 +58,7 @@ export default defineComponent({
       if (info.type == 1 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
+        console.log(info.children)
         localStorage.setItem("npcinfo", JSON.stringify(info.children))
         router.push({
           path: "/npcInfo",

@@ -165,6 +165,9 @@ export default defineComponent({
       staticUrl.value = url.replace(/\\/g, "/")
       console.log("首页获取到的文件下载路径====", path)
 
+      // 讲图片的根路径存下
+      localStorage.setItem("imgSrc", url)
+
       let str = localStorage.getItem("bgi") as string
       imgUrl.value = path + "\\" + str.replace(/"/g, "")
       imgUrl.value = imgUrl.value.replace(/\\/g, "/")

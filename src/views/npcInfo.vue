@@ -14,7 +14,7 @@
       </div>
     </div>
     <!-- 默认展示 -->
-    <el-carousel
+    <!-- <el-carousel
       indicator-position="outside"
       :autoplay="false"
       v-if="activeName == '1'"
@@ -56,7 +56,18 @@
           </div>
         </div>
       </el-carousel-item>
-    </el-carousel>
+    </el-carousel> -->
+
+    <iframe
+      v-if="activeName == '1'"
+      id="mainIframe"
+      ref="iframeRef"
+      name="iframeRef"
+      src="src/static/npc-page/index.html"
+      scrolling="auto"
+      frameborder="0"
+      style="width: 80%; height: 800px"
+    ></iframe>
 
     <!-- 列表展示 -->
     <div class="list-box" v-if="activeName == '2'">
@@ -123,6 +134,7 @@ export default defineComponent({
   setup() {
     const data = reactive(new InitData())
     const router = useRouter()
+    const staticUrl = ref() //本地路径地址
     const route = useRoute()
     const imgUrl = ref()
     // const titleFlag = ref(1)
@@ -175,14 +187,15 @@ export default defineComponent({
       let path = storage.getItem("filePath")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")
+      staticUrl.value = url
       let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
-      // console.log("人员信息===", dataInfo.value)
       rotateNpc.value = handleArr(dataInfo.value, 8)
-      console.log("处理过后的数组===>", rotateNpc.value)
+      // console.log("处理过后的数组===>", rotateNpc.value)
     })
     return {
       ...toRefs(data),
+      staticUrl,
       imgUrl,
       activeName,
       dataInfo,
@@ -320,10 +333,6 @@ body {
 .five {
   transform: translateZ(-200px) translateX(-400px) rotateY(-90deg);
 }
-/* .six {
-  transform: translateZ(-200px) translateX(-400px) rotateY(60deg);
-} */
-
 .six {
   transform: translateZ(-400px) translateX(400px) rotateY(135deg);
   /* transform: rotateY(180deg); */
@@ -338,7 +347,7 @@ body {
 }
 
 @keyframes move {
-  0% {
+  /* 0% {
     transform: rotateX(30deg);
   }
   50% {
@@ -346,7 +355,7 @@ body {
   }
   100% {
     transform: rotateX(30deg);
-  }
+  } */
 }
 
 @keyframes run {

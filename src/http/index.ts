@@ -49,7 +49,7 @@ export  const request =(options:any)=> {
             // ElMessage.error('服务器请求错误，请稍后再试')  
         }
         else{
-          ElMessage.error('服务器请求错误，请稍后再试')
+          ElMessage.error('网络出问题啦，请检查网络设置')
         }
         return Promise.reject(error)
       }

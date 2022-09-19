@@ -2,7 +2,7 @@
   <div class="header-box flex-r flex-b">
     <div class="flex-r">
       <img class="gh-icon" src="../assets/img/gh-icon.png" alt="" />
-      <div class="fff system-title">双流区人大代表之家智慧平台</div>
+      <div class="fff system-title">{{ locationName }}人大代表之家智慧平台</div>
     </div>
     <div style="margin-right: 148px; margin-top: 10px" class="font24">
       <span class="fff" style="margin-right: 16px">{{ date }}</span>
@@ -18,6 +18,7 @@ import { useRouter } from "vue-router"
 export default defineComponent({
   setup() {
     const router = useRouter()
+    const locationName = ref()
     const formatDate = () => {
       var t
       clearTimeout(t)
@@ -66,14 +67,17 @@ export default defineComponent({
     const goOut = () => {
       // 退出清空token，回到登录页面
       localStorage.setItem("token", "")
+      localStorage.setItem("location", "")
       router.push({
         path: "/",
       })
     }
     onMounted(() => {
+      locationName.value = localStorage.getItem("location")
       formatDate()
     })
     return {
+      locationName,
       date,
       time,
       weekday,

@@ -52,13 +52,14 @@ export default defineComponent({
           const storage = require("electron-localStorage")
           // 登录成功
           localStorage.setItem("token", res.data.token)
+          localStorage.setItem("location", res.data.locationName)
           storage.setItem("filesName", res.data.location)
           let version = storage.getItem("version")
           if (version == undefined || version == "") {
             version = 0
             console.log("最初的===", version)
           } else {
-            version = 0
+            // version = 0
             console.log("历史的===", version)
           }
           var ws = new WebSocket(
@@ -80,6 +81,7 @@ export default defineComponent({
               "bgi",
               JSON.stringify(files.homeBackgroundImage)
             )
+
             // const ipcRenderer = require("electron").ipcRenderer
             // // 监听主进程过来的消息
             // ipcRenderer.on("main-process-message", (_event, ...args) => {
@@ -92,12 +94,15 @@ export default defineComponent({
             // ipcRenderer.send("down-file-list", fileList)
             // // 向主进程发送消息，保存应用的目录
             // ipcRenderer.send("save-data", navList)
-
+            // debugger
             router.push({
               path: "/home",
             })
           }
           // return
+          router.push({
+            path: "/home",
+          })
         }
       })
     }

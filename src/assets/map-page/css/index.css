@@ -31,7 +31,7 @@ h3 {
 }
 
 body {
-	background-color: white;
+	/* background-color: white; */
 }
 
 input {
@@ -101,7 +101,7 @@ input {
 /*content*/
 body {
 	/* background-image: url(../img/background.png); */
-	background-image: url(../img/main-bg.png);
+	/* background-image: url(../img/main-bg.png); */
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	box-sizing: border-box;

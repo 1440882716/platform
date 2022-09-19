@@ -18,28 +18,31 @@
     <div class="mid-line"></div>
     <div class="duty-list-box text-left m-t-16">
       <div class="font28 tab-red m-b-20">履职风采</div>
-      <div class="flex-r list-box flex-b">
-        <div
-          class="duty-list pointer flex-r flex-b"
-          v-for="item in resultList"
-          @click="toDetail(item)"
-        >
-          <div class="flex-r">
-            <div class="title-tag font16 tab-red">{{ item.typeName }}</div>
-            <div class="font20 title-color npc-content-duty">
-              {{ item.title }}
+      <!-- 有网络，展示履职列表 -->
+      <div>
+        <div class="flex-r list-box flex-b">
+          <div
+            class="duty-list pointer flex-r flex-b"
+            v-for="item in resultList"
+            @click="toDetail(item)"
+          >
+            <div class="flex-r">
+              <div class="title-tag font16 tab-red">{{ item.typeName }}</div>
+              <div class="font20 title-color npc-content-duty">
+                {{ item.title }}
+              </div>
             </div>
+            <span class="font16 gray-title">{{ item.workAt }}</span>
           </div>
-          <span class="font16 gray-title">{{ item.workAt }}</span>
         </div>
-      </div>
-      <div class="flex-r flex-end m-t-16">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="totalPages"
-          :page-size="12"
-        />
+        <div class="flex-r flex-end m-t-16">
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="totalPages"
+            :page-size="12"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -69,6 +72,7 @@ export default defineComponent({
     const totalPages = ref()
     const page = ref()
     const size = ref()
+    // 获取代表的履职信息
     const getNpc = () => {
       let requestData = {
         uid: npc_uid.value,
@@ -81,7 +85,10 @@ export default defineComponent({
           page.value = res.data.totalPages
           size.value = res.data.totalPages
           data.resultList = res.data.content
+        } else {
+          // 履职信息获取失败
         }
+        console.log("请求到的履职信息===", data.resultList)
       })
     }
     const toDetail = (info: any) => {

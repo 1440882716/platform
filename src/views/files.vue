@@ -9,7 +9,7 @@
         src="src/static/pdf-page/entry.html"
         scrolling="auto"
         frameborder="0"
-        style="width: 100%; height: 900px"
+        style="width: 50%; height: 400px"
       ></iframe>
     </div>
     <Footer style="position: fixed; bottom: 0"></Footer>
@@ -82,8 +82,7 @@ export default defineComponent({
       // window.addEventListener("message", handleMessage) // 监听iframe的事件
       //vue3使用ref定义的变量需要使用.value获取值， vue2直接iframeRef.contentWindow
       iframeWindow = iframeRef.value.contentWindow
-      console.log("iframe的window对象===", iframeWindow)
-
+      // console.log("iframe的window对象===", iframeWindow)
       setTimeout(() => {
         // sendMessage(fileUrl)
         iframeWindow.postMessage(fileUrl, "*")
