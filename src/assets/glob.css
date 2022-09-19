@@ -237,6 +237,10 @@ input:focus{
   .flex-end{
     justify-content: flex-end;
   }
+  .flex-center{
+    align-items: center;
+    justify-content: center;
+  }
   .two-line-text{
     /* width: 200px; */
     overflow:hidden;

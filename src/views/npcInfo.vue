@@ -66,8 +66,16 @@
       src="src/static/npc-page/index.html"
       scrolling="auto"
       frameborder="0"
-      style="width: 80%; height: 800px"
+      style="width: 80%; height: 600px"
     ></iframe>
+    <div v-if="activeName == '1'" class="flex flex-center">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="10"
+        :page-size="8"
+      />
+    </div>
 
     <!-- 列表展示 -->
     <div class="list-box" v-if="activeName == '2'">
@@ -191,7 +199,17 @@ export default defineComponent({
       let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
       rotateNpc.value = handleArr(dataInfo.value, 8)
-      // console.log("处理过后的数组===>", rotateNpc.value)
+      console.log("处理后的人员数组===", rotateNpc.value)
+      console.log(rotateNpc.value.length)
+
+      // 接收iframe传递过来的uid
+      window.addEventListener("message", (e) => {
+        for (let i = 0; i < dataInfo.value.length; i++) {
+          if (e.data == dataInfo.value[i].npcMember.uid) {
+            toDetail(dataInfo.value[i])
+          }
+        }
+      })
     })
     return {
       ...toRefs(data),

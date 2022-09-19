@@ -85,17 +85,6 @@
 
 </head>
 <body>
-<!-- <div id="title1"
-     style="height:9%;font-size:60px;font-weight: 800;text-align: center;color:red;padding-top: 3%;text-shadow: 3px 5px #fff;">
-    <b><strong><span>黄甲街道人大代表</span></strong></b>
-</div>
-<div class="home">
-    <img src="./img/返回首页.png"  >
-</div>
-<div class="back">
-    <img src="./img/返回.png"  >
-</div> -->
-<!-- <br> -->
 <div class="pic">
 </div>
 
@@ -112,22 +101,22 @@
         // let imgs = [];
         for (let i = 0; i < npsData.length; ++i) {
             var divDom = document.createElement('div');
+            divDom.setAttribute("uid",npsData[i].npcMember.uid)
             divDom.style.display="flex";
             divDom.style.flexDirection="row";
-            // 左边代表头像
+            // 代表头像
             var imgDom = document.createElement('img');
-            imgDom.src = imgSrc+'peopel.png'
+            // imgDom.src = imgSrc+npsData[i].npcMember.avatar
+            imgDom.src = imgSrc+"peopel.png"
             divDom.append(imgDom)
             // 右边代表信息
             // var rightDiv = document.createElement('div');
-            // rightDiv.style.width="100px"
             // divDom.append(rightDiv)
             var nameP = document.createElement('p');
             nameP.innerHTML = npsData[i].name
             nameP.style.fontSize="16px"
             divDom.append(nameP)
-            // var brDom = document.createElement('br');
-            // divDom.append(brDom)
+           
             var introductionP = document.createElement('p');
             introductionP.innerHTML = npsData[i].npcMember.introduction
             introductionP.style.fontSize="10px"
@@ -156,6 +145,11 @@
                 // <!--translateZ 定义2d旋转沿着z轴-->
                 "transform": "rotateY(" + i * deg + "deg) translateZ(530px)"
             });
+            $(this).children("img").css({
+                "width":"84px",
+                "height":"116px",
+                "margin-top":"2px"
+            })
             // <!--防止图片被拖拽-->
             $(this).attr('ondragstart', 'return false');
         });
@@ -252,19 +246,17 @@
                 });
             }, 3);
         });
+        // 代表详情
+        $(".pic div").click(function (){
+            var uid = $(this).attr("uid")
+            // console.log(uid);
+            window.parent.postMessage(uid, '*')
+            
+        })
 
     });
-    $(".back").click(function () {
-        interObj.GetRootDirInfo().then(function (info) {
-            baseInfo = JSON.parse(info);//resource的目录信息
-            //location.href = baseInfo.dir.FullName.replace(baseInfo.dir.MatchName,'HTM@homePage')+'\\index.html?dirName=returnFromDir';
-            location.href = baseInfo.dir.FullName.replace(baseInfo.dir.MatchName, 'entry') +
-                '\\entry.html?dirName=returnFromDir';
-        });
-    });
-    $(".home").click(function () {
-        interObj.BackToHome();
-    });
+    
+   
 </script>
 </body>
 </html>
