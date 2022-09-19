@@ -68,14 +68,16 @@
       frameborder="0"
       style="width: 80%; height: 600px"
     ></iframe>
-    <div v-if="activeName == '1'" class="flex flex-center">
+    <!-- <div v-if="activeName == '1'" class="flex flex-center">
       <el-pagination
         background
         layout="prev, pager, next"
-        :total="10"
+        :total="6"
         :page-size="8"
+        @current-change="changePage"
+        :current-page="currentPage"
       />
-    </div>
+    </div> -->
 
     <!-- 列表展示 -->
     <div class="list-box" v-if="activeName == '2'">
@@ -145,6 +147,7 @@ export default defineComponent({
     const staticUrl = ref() //本地路径地址
     const route = useRoute()
     const imgUrl = ref()
+    const currentPage = ref()
     // const titleFlag = ref(1)
     const activeName = ref("1")
     const dataInfo = ref()
@@ -170,6 +173,12 @@ export default defineComponent({
           },
         })
       }
+    }
+    const changePage = (val: any) => {
+      // console.log("当前页码===", val)
+      // console.log(rotateNpc.value[val - 1])
+      // localStorage.setItem("npcinfo", rotateNpc.value[val - 1])
+      // rotateNpc.value
     }
 
     // 处理人员数组==>二维数组
@@ -213,6 +222,7 @@ export default defineComponent({
     })
     return {
       ...toRefs(data),
+      currentPage,
       staticUrl,
       imgUrl,
       activeName,
@@ -224,6 +234,7 @@ export default defineComponent({
       onSlideChange,
       toDetail,
       handleArr,
+      changePage,
       modules: [Navigation, Pagination, Autoplay, Grid],
     }
   },
@@ -398,5 +409,10 @@ body {
 .test-right-text {
   /* width: calc(100% - 200px); */
   margin-left: 180px;
+}
+.el-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

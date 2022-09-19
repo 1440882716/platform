@@ -95,8 +95,8 @@
         let npsData = localStorage.getItem("npcinfo")
         let imgSrc = localStorage.getItem("imgSrc")
         npsData = JSON.parse(npsData)
-        console.log("获取缓存的代表信息===",npsData);
-        console.log("图片的跟路径===",imgSrc);
+        // console.log("获取缓存的代表信息===",npsData);
+        // console.log("图片的跟路径===",imgSrc);
         let imgsDom = document.querySelector('div.pic');
         // let imgs = [];
         for (let i = 0; i < npsData.length; ++i) {
@@ -109,28 +109,43 @@
             // imgDom.src = imgSrc+npsData[i].npcMember.avatar
             imgDom.src = imgSrc+"peopel.png"
             divDom.append(imgDom)
-            // 右边代表信息
-            // var rightDiv = document.createElement('div');
-            // divDom.append(rightDiv)
-            var nameP = document.createElement('p');
-            nameP.innerHTML = npsData[i].name
-            nameP.style.fontSize="16px"
-            divDom.append(nameP)
-           
-            var introductionP = document.createElement('p');
-            introductionP.innerHTML = npsData[i].npcMember.introduction
-            introductionP.style.fontSize="10px"
-            nameP.style.display="block"
-            divDom.append(introductionP)
-            // 联系方式
-            var phoneP = document.createElement('p');
-            phoneP.innerHTML = npsData[i].npcMember.mobile
-            phoneP.style.fontSize="8px"
-            // nameP.style.display="inline-block"
-            divDom.append(phoneP)
-            // divDom.append(rightDiv)
+
+            var nameUl = document.createElement('ul');
+            nameUl.style.marginLeft = "10px"
+            divDom.append(nameUl)
+            var nameli = document.createElement('li');
+            nameli.style.fontSize="16px"
+            nameli.style.listStyleType= "none"
+            nameli.innerHTML= npsData[i].name
+            nameUl.append(nameli)
+            var introductionli = document.createElement('li');
+            introductionli.style.fontSize="10px"
+            introductionli.style.listStyleType= "none"
+            introductionli.innerHTML= npsData[i].npcMember.introduction
+            nameUl.append(introductionli)
+            var phoneli = document.createElement('li');
+            phoneli.style.fontSize="10px"
+            phoneli.style.listStyleType= "none"
+            phoneli.innerHTML= npsData[i].npcMember.mobile
+            nameUl.append(phoneli)
+            // // 代表姓名
+            // var nameP = document.createElement('p');
+            // nameP.innerHTML = npsData[i].name
+            // nameP.style.fontSize="16px"
+            // divDom.append(nameP)
+            // // 代表职位
+            // var introductionP = document.createElement('p');
+            // introductionP.innerHTML = npsData[i].npcMember.introduction
+            // introductionP.style.fontSize="10px"
+            // nameP.style.display="block"
+            // divDom.append(introductionP)
+            // // 联系方式
+            // var phoneP = document.createElement('p');
+            // phoneP.innerHTML = npsData[i].npcMember.mobile
+            // phoneP.style.fontSize="8px"
+            // divDom.append(phoneP)
+
             imgsDom.append(divDom);
-            // imgsDom.append(imgDom);
         }
 
 
