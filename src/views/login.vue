@@ -51,16 +51,16 @@ export default defineComponent({
         if (res.status == "OK") {
           const storage = require("electron-localStorage")
           // 登录成功
-          localStorage.setItem("token", res.data.token)
           localStorage.setItem("location", res.data.locationName)
+          localStorage.setItem("token", res.data.token)
           storage.setItem("filesName", res.data.location)
           let version = storage.getItem("version")
           if (version == undefined || version == "") {
             version = 0
-            console.log("最初的===", version)
+            console.log("初始化进度===", version)
           } else {
             // version = 0
-            console.log("历史的===", version)
+            console.log("历史下载进度===", version)
           }
           var ws = new WebSocket(
             "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
@@ -81,28 +81,24 @@ export default defineComponent({
               "bgi",
               JSON.stringify(files.homeBackgroundImage)
             )
-
-            // const ipcRenderer = require("electron").ipcRenderer
-            // // 监听主进程过来的消息
-            // ipcRenderer.on("main-process-message", (_event, ...args) => {
-            //   // console.log("接收主进程过来的消息===", ...args)
-            // })
-            // ipcRenderer.on("read-file", (_event, ...args) => {
-            //   // console.log("文件信息", ...args)
-            // })
-            // // 向主进程发送消息，保存应用的下载文件
-            // ipcRenderer.send("down-file-list", fileList)
-            // // 向主进程发送消息，保存应用的目录
-            // ipcRenderer.send("save-data", navList)
-            // debugger
+            if (files.fileList.length != 0) {
+              const ipcRenderer = require("electron").ipcRenderer
+              // 监听主进程过来的消息
+              ipcRenderer.on("main-process-message", (_event, ...args) => {
+                // console.log("接收主进程过来的消息===", ...args)
+              })
+              ipcRenderer.on("read-file", (_event, ...args) => {
+                // console.log("文件信息", ...args)
+              })
+              // 向主进程发送消息，保存应用的下载文件
+              ipcRenderer.send("down-file-list", fileList)
+              // 向主进程发送消息，保存应用的目录
+              ipcRenderer.send("save-data", navList)
+            }
             router.push({
               path: "/home",
             })
           }
-          // return
-          router.push({
-            path: "/home",
-          })
         }
       })
     }

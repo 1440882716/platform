@@ -27,6 +27,7 @@ import { defineComponent, onMounted, ref } from "vue"
 import { useRouter, useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
+import { ElMessage } from "element-plus"
 export default defineComponent({
   components: {
     Header,
@@ -45,17 +46,17 @@ export default defineComponent({
       // type==1 人员信息文件夹
       // type==2 人员数据
       // type==3 网页文件  比如地图
-      // type==4 图片 （展示没有用到）
+      // type==4 图片 （目前没有用到）
       // type==5 文本文档
       // type==6 视频文件
       // type==7 文档文件夹
       // type==8 网页文件夹
+      // type==9 视频文件夹
 
       if (info.type == 0 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
-      }
-      if (info.type == 1 && info.children.length != 0) {
+      } else if (info.type == 1 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
         console.log(info.children)
@@ -85,6 +86,22 @@ export default defineComponent({
           query: {
             bgi: info.backgroundImage,
           },
+        })
+      } else if (info.type == 9 && info.children.length != 0) {
+        parentData.value = showData.value
+        showData.value = info.children
+        localStorage.setItem("fileData", JSON.stringify(info.children))
+        router.push({
+          path: "/videoList",
+          query: {
+            bgi: info.backgroundImage,
+          },
+        })
+      } else {
+        // console.log("文件没有内容")
+        ElMessage({
+          message: "该文件夹没有内容",
+          type: "warning",
         })
       }
     }

@@ -66,6 +66,18 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import(/* webpackChunkName: "about" */ '../views/infomation.vue'),
         meta: { title: "基本信息" },
       },
+      {
+        path: '/videoList',
+        name: 'videoList',
+        component: () => import(/* webpackChunkName: "about" */ '../views/videoList.vue'),
+        meta: { title: "视频列表" },
+      },
+      {
+        path: '/video',
+        name: 'video',
+        component: () => import(/* webpackChunkName: "about" */ '../views/video.vue'),
+        meta: { title: "视频播放" },
+      }
   
 ]
 

@@ -47,6 +47,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
+import { ElMessage } from "element-plus"
 import Header from "../components/header.vue"
 import {
   Navigation,
@@ -79,7 +80,7 @@ export default defineComponent({
     const staticUrl = ref()
     const tokenStr = ref()
     const navList = ref()
-    const backgroudImg = ref()
+    // const backgroudImg = ref()
     //自动轮播的配置
     const autoplayOptions = {
       // delay: 2000,
@@ -117,6 +118,14 @@ export default defineComponent({
             bgi: info.backgroundImage,
           },
         })
+      } else if (info.type == 6 && info.children.length != 0) {
+        localStorage.setItem("fileData", JSON.stringify(info.children))
+        router.push({
+          path: "/videoList",
+          query: {
+            bgi: info.backgroundImage,
+          },
+        })
       } else if (info.type == 7 && info.children.length != 0) {
         localStorage.setItem("fileData", JSON.stringify(info.children))
         router.push({
@@ -129,7 +138,6 @@ export default defineComponent({
         const storage = require("electron-localStorage")
         // 加载地图网页
         let zipPath = info.children[0].url
-        // let path = "D:\\khd\\bigdata\\test_files"
         let path = storage.getItem("filePath")
         var admZip = require("adm-zip-iconv")
         console.log(path + "\\" + zipPath)
@@ -137,13 +145,24 @@ export default defineComponent({
         // 解压文件
         zip.extractAllTo(path)
         let pageUrl = path + "\\index.html"
-        // console.log(pageUrl)
-
         router.push({
           path: "/infomation",
           query: {
             url: pageUrl,
           },
+        })
+      } else if (info.type == 9 && info.children.length != 0) {
+        localStorage.setItem("fileData", JSON.stringify(info.children))
+        router.push({
+          path: "/videoList",
+          query: {
+            bgi: info.backgroundImage,
+          },
+        })
+      } else {
+        ElMessage({
+          message: "该文件夹没有内容",
+          type: "warning",
         })
       }
     }
@@ -158,38 +177,84 @@ export default defineComponent({
       var entry = zip.getEntry("index.html")
       // console.log("解压的文件===", entry)
     }
+    // 监听websocket推送的更新文件
+    const wsFun = () => {
+      const storage = require("electron-localStorage")
+      let token = localStorage.getItem("token")
+      let version = storage.getItem("version")
+      if (version == undefined || version == "") {
+        version = 0
+        console.log("初始化进度===", version)
+      } else {
+        // version = 1.71
+        // storage.setItem("version", 1.71)
+        console.log("历史下载进度===", version)
+      }
+      var ws = new WebSocket(
+        "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
+          version +
+          "&Authorization=" +
+          token
+      )
+      // ws.onerror = function () {}
+      ws.onopen = function () {}
+      ws.onmessage = function (e) {
+        let files = JSON.parse(e.data)
+        let fileList = JSON.stringify(files.fileList)
+        let navList = JSON.stringify(files.nodeList)
+        console.log(files)
+        if (files.fileList.length == 0) {
+          // 没有更新文件
+          console.log("没有更新文件")
+        } else {
+          localStorage.setItem("bgi", JSON.stringify(files.homeBackgroundImage))
+          const ipcRenderer = require("electron").ipcRenderer
+          // 监听主进程过来的消息
+          ipcRenderer.on("main-process-message", (_event, ...args) => {
+            // console.log("接收主进程过来的消息===", ...args)
+          })
+          ipcRenderer.on("read-file", (_event, ...args) => {
+            // console.log("文件信息", ...args)
+          })
+          // 向主进程发送消息，保存应用的下载文件
+          ipcRenderer.send("down-file-list", fileList)
+          // 向主进程发送消息，保存应用的目录
+          ipcRenderer.send("save-data", navList)
+        }
+      }
+    }
     onMounted(() => {
       const storage = require("electron-localStorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
       staticUrl.value = url.replace(/\\/g, "/")
-      console.log("首页获取到的文件下载路径====", path)
-
       // 讲图片的根路径存下
       localStorage.setItem("imgSrc", url)
-
       let str = localStorage.getItem("bgi") as string
       imgUrl.value = path + "\\" + str.replace(/"/g, "")
       imgUrl.value = imgUrl.value.replace(/\\/g, "/")
       const ipcRenderer = require("electron").ipcRenderer
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
-        backgroudImg.value = "@/assets/img/main-bg.png"
+        // backgroudImg.value = "@/assets/img/main-bg.png"
         navList.value = JSON.parse(data)
       })
       ipcRenderer.send("get-nav", "getNav")
+      // 监听ws推送的消息
+      wsFun()
     })
     return {
       tokenStr,
       imgUrl,
       staticUrl,
       navList,
-      backgroudImg,
+      // backgroudImg,
       autoplayOptions,
       onSwiper,
       onSlideChange,
       nextPage,
       zipHandle,
+      wsFun,
       modules: [
         Navigation,
         Pagination,
