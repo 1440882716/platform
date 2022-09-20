@@ -80,11 +80,9 @@
 	
     window.addEventListener('message', function(messageEvent) {
         pdfUrl = messageEvent.data; 
-        // console.log('收到的数据：=====',pdfUrl);
         pdfUrl = pdfUrl.replace(/\\/g, "\\\\")
         var pdf = 'docbook.pdf';
         var pdf = pdfUrl
-        // console.log("替换后的文件===",pdfUrl);
 	    if(pdf==null){
 	        pdf="error.pdf"
 	    }

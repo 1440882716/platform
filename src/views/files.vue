@@ -9,7 +9,7 @@
         src="src/static/pdf-page/entry.html"
         scrolling="auto"
         frameborder="0"
-        style="width: 50%; height: 400px"
+        style="width: 100%; height: 900px"
       ></iframe>
     </div>
     <Footer style="position: fixed; bottom: 0"></Footer>
