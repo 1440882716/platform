@@ -135,7 +135,7 @@ export default defineComponent({
           },
         })
       } else if (info.type == 8 && info.children.length != 0) {
-        const storage = require("electron-localStorage")
+        const storage = require("electron-localstorage")
         // 加载地图网页
         let zipPath = info.children[0].url
         let path = storage.getItem("filePath")
@@ -178,53 +178,45 @@ export default defineComponent({
       // console.log("解压的文件===", entry)
     }
     // 监听websocket推送的更新文件
-    const wsFun = () => {
-      const storage = require("electron-localStorage")
-      let token = localStorage.getItem("token")
-      let version = storage.getItem("version")
-      if (version == undefined || version == "") {
-        version = 0
-        console.log("初始化进度===", version)
-      } else {
-        // version = 1.71
-        // storage.setItem("version", 1.71)
-        console.log("历史下载进度===", version)
-      }
-      var ws = new WebSocket(
-        "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
-          version +
-          "&Authorization=" +
-          token
-      )
-      // ws.onerror = function () {}
-      ws.onopen = function () {}
-      ws.onmessage = function (e) {
-        let files = JSON.parse(e.data)
-        let fileList = JSON.stringify(files.fileList)
-        let navList = JSON.stringify(files.nodeList)
-        console.log(files)
-        if (files.fileList.length == 0) {
-          // 没有更新文件
-          console.log("没有更新文件")
-        } else {
-          localStorage.setItem("bgi", JSON.stringify(files.homeBackgroundImage))
-          const ipcRenderer = require("electron").ipcRenderer
-          // 监听主进程过来的消息
-          ipcRenderer.on("main-process-message", (_event, ...args) => {
-            // console.log("接收主进程过来的消息===", ...args)
-          })
-          ipcRenderer.on("read-file", (_event, ...args) => {
-            // console.log("文件信息", ...args)
-          })
-          // 向主进程发送消息，保存应用的下载文件
-          ipcRenderer.send("down-file-list", fileList)
-          // 向主进程发送消息，保存应用的目录
-          ipcRenderer.send("save-data", navList)
-        }
-      }
-    }
+    // const wsFun = () => {
+    //   const storage = require("electron-localstorage")
+    //   let token = localStorage.getItem("token")
+    //   let version = storage.getItem("version")
+    //   if (version == undefined || version == "") {
+    //     version = 0
+    //     console.log("初始化进度===", version)
+    //   } else {
+    //     // storage.setItem("version", 1.71)
+    //     console.log("历史下载进度===", version)
+    //   }
+    //   var ws = new WebSocket(
+    //     "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
+    //       version +
+    //       "&Authorization=" +
+    //       token
+    //   )
+    //   ws.onopen = function () {}
+    //   ws.onmessage = function (e) {
+    //     let files = JSON.parse(e.data)
+    //     let fileList = JSON.stringify(files.fileList)
+    //     let navList = JSON.stringify(files.nodeList)
+    //     console.log(files)
+    //     if (files.fileList.length == 0) {
+    //       console.log("没有更新文件")
+    //     } else {
+    //       localStorage.setItem("bgi", JSON.stringify(files.homeBackgroundImage))
+    //       const ipcRenderer = require("electron").ipcRenderer
+    //       ipcRenderer.on("main-process-message", (_event, ...args) => {
+    //       })
+    //       ipcRenderer.on("read-file", (_event, ...args) => {
+    //       })
+    //       ipcRenderer.send("down-file-list", fileList)
+    //       ipcRenderer.send("save-data", navList)
+    //     }
+    //   }
+    // }
     onMounted(() => {
-      const storage = require("electron-localStorage")
+      const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
       staticUrl.value = url.replace(/\\/g, "/")
@@ -241,7 +233,7 @@ export default defineComponent({
       })
       ipcRenderer.send("get-nav", "getNav")
       // 监听ws推送的消息
-      wsFun()
+      // wsFun()
     })
     return {
       tokenStr,
@@ -254,7 +246,7 @@ export default defineComponent({
       onSlideChange,
       nextPage,
       zipHandle,
-      wsFun,
+      // wsFun,
       modules: [
         Navigation,
         Pagination,

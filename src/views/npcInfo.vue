@@ -57,27 +57,17 @@
         </div>
       </el-carousel-item>
     </el-carousel> -->
-
+    <!-- src="src/static/npc-page/index.html" -->
     <iframe
       v-if="activeName == '1'"
       id="mainIframe"
       ref="iframeRef"
       name="iframeRef"
-      src="src/static/npc-page/index.html"
+      src="static/npc-page/index.html"
       scrolling="auto"
       frameborder="0"
       style="width: 80%; height: 600px"
     ></iframe>
-    <!-- <div v-if="activeName == '1'" class="flex flex-center">
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="6"
-        :page-size="8"
-        @current-change="changePage"
-        :current-page="currentPage"
-      />
-    </div> -->
 
     <!-- 列表展示 -->
     <div class="list-box" v-if="activeName == '2'">
@@ -200,7 +190,7 @@ export default defineComponent({
     onMounted(() => {
       let npsData = localStorage.getItem("npcinfo") as string
       dataInfo.value = JSON.parse(npsData)
-      const storage = require("electron-localStorage")
+      const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")

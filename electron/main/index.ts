@@ -74,9 +74,9 @@ const indexHtml = join(ROOT_PATH.dist, 'index.html')
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
-    fullscreen: true,
-    // width:1000,
-    // height:800,
+    // fullscreen: true,
+    width:1000,
+    height:800,
     icon: join(ROOT_PATH.public, 'favicon.ico'),
     webPreferences: {
       preload,
@@ -143,7 +143,7 @@ async function createWindow() {
           // savePath = path_url
 
            // 将下载进度缓存下来，避免后续重复下载
-           const storage = require('electron-localStorage');
+           const storage = require('electron-localstorage');
            storage.setItem('version', filesNum);
           
           
@@ -154,102 +154,181 @@ async function createWindow() {
     })
   }
 
-  // 主进程与渲染进程通信
+  // 主进程监听渲染进程的消息
   // 保存目录
   ipcMain.on("save-data",(event,arg)=>{
-      // 接受渲染进程的数据并存到本地
-      fs.writeFile(path.join("./src/renderer/data.json"),arg, "utf8",(err)=>{
-        if(err){
-           event.sender.send('main-process-message', "目录文件写入失败"+err);
-        }else {
-          event.sender.send('main-process-message', "目录文件写入成功");
-          // 读取本地文件发给渲染进程
-          // fs.readFile(path.join(__dirname, "../renderer/data.json"), "utf8",(error,data)=>{
-          // fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
-          //   if(error){
-          //      event.sender.send('read-file', "读取失败");
-          //   }else {
-          //     event.sender.send('read-file', data);
-              
-          //   }
-          // })
-        }
-      })
+    // const navContent = arg
+    // const file = './src/renderer/data.json';
+    // fs.access(file, fs.constants.W_OK, (err) => {
+    //     if(err){
+    //     event.sender.send('has-render-data', {
+    //       "status" : 0 ,
+    //       "msg"    : "该文件不可写"
+    //       });
+    //   }else{
+    //     event.sender.send('has-render-data', {
+    //       "status" : 0 ,
+    //       "msg"    : "该文件可写"
+    //       });
+    //   }
+    //   }); 
+    console.log("content===",arg);
+    
+    fs.writeFile("D:\\navData.json", arg,  (err)=> {
+      if (err) {
+        console.log(err);
+      }
+      console.log("=======success");
+    });
+      // // 接受渲染进程的数据并存到本地
+      // fs.writeFile(path.join("./src/renderer/data.json"),arg, "utf8",(err)=>{
+      //   if(err){
+      //      event.sender.send('main-process-message', {
+      //       "status" : 0 ,
+      //       "msg"    : "目录数据存储失败"
+      //       });
+      //   }else {
+      //     event.sender.send('main-process-message', {
+      //       "status" : 1 ,
+      //       "msg"    : "目录数据存储成功"
+      //       });
+      //   }
+      // })
   })
   // 保存下载文件
   ipcMain.on("down-file-list",(event,arg)=>{
-    // 接受渲染进程的数据并存导本地
-    fs.writeFile(path.join("./src/renderer/files.json"),arg, "utf8",(err)=>{
-      if(err){
-         event.sender.send('main-process-message', "下载文件写入失败"+err);
-      }else {
-        event.sender.send('main-process-message', "下载文件写入成功");
-        const storage = require('electron-localStorage');
-        // 读本地文件目录并且下载
-        fs.readFile(path.join("./src/renderer/files.json"), "utf8",(error,data)=>{  
-          if(error){
-            // 文件读取失败;
-          }else {
-            let fileList = JSON.parse(data)
-            let baseurl = "http://106.13.196.72:9000"
-            // 获取文件的安装地址
-            let homeDir =  path.dirname(app.getPath('exe'))
-            // console.log("set-------",homeDir);
-            let newFiles = storage.getItem("filesName")
-            // 创建对应地区的文件夹
-            let filesPath="";
-            fs.mkdir(path.join(homeDir, newFiles), (err) => { 
-              if (err) { 
-              // 该文件夹已经存在
-                if(err.code == "EEXIST"){
-                  filesPath = err.path as string
-                }
-                console.log("creating is error ====",err);
-                // console.log("save path is =====",filesPath);
-                for(let i=0;i<fileList.length;i++){
-                  filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
-                }
-              }else{
-                // 文件夹创建成功,讲下载的文件放入这个文件夹
-                console.log('Directory created successfully!'); 
-                // let homePath = homeDir.replace(/\\/g, "\\\\")
-                filesPath = homeDir+"\\"+newFiles
-                console.log("files down path is =====",filesPath);
-                for(let i=0;i<fileList.length;i++){
-                  filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
-                }
-              }
-              // 将文件下载的目录缓存
-              storage.setItem('filePath',filesPath)
+    fs.writeFile("D:\\fileData.json", arg,  (err)=> {
+      if (err) {
+        console.log(err);
+      }else{
+         // event.sender.send('main-process-message', "下载文件写入成功");
+         const storage = require('electron-localstorage');
+         // 读本地文件目录并且下载
+         fs.readFile(path.join("D:\\fileData.json"), "utf8",(error,data)=>{  
+           if(error){
+             // 文件读取失败;
+           }else {
+             let fileList = JSON.parse(data)
+             let baseurl = "http://106.13.196.72:9000"
+             // 获取文件的安装地址
+            //  let homeDir =  path.dirname(app.getPath('exe'))
+             let homeDir = "D:\\"
+             // console.log("set-------",homeDir);
+             let newFiles = storage.getItem("filesName")
+             // 创建对应地区的文件夹
+             let filesPath="";
+             fs.mkdir(path.join(homeDir, newFiles), (err) => { 
+               if (err) { 
+               // 该文件夹已经存在
+                 if(err.code == "EEXIST"){
+                   filesPath = err.path as string
+                 }
+                 console.log("creating is error ====",err);
+                 // console.log("save path is =====",filesPath);
+                 for(let i=0;i<fileList.length;i++){
+                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+                 }
+               }else{
+                 // 文件夹创建成功,讲下载的文件放入这个文件夹
+                 console.log('Directory created successfully!'); 
+                 // let homePath = homeDir.replace(/\\/g, "\\\\")
+                 filesPath = homeDir+"\\"+newFiles
+                 console.log("files down path is =====",filesPath);
+                 for(let i=0;i<fileList.length;i++){
+                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+                 }
+               }
+               // 将文件下载的目录缓存
+               storage.setItem('filePath',filesPath)
+               
+                // 遍历文件下载
               
-               // 遍历文件下载
-             
-            });
-          }
-        })
+             });
+           }
+         })
       }
-    })
+    });
+
+    // // 接受渲染进程的数据并存导本地
+    // fs.writeFile(path.join("./src/renderer/files.json"),arg, "utf8",(err)=>{
+    //   if(err){
+    //     //  event.sender.send('main-process-message', "下载文件写入失败"+err);
+    //   }else {
+    //     // event.sender.send('main-process-message', "下载文件写入成功");
+    //     const storage = require('electron-localstorage');
+    //     // 读本地文件目录并且下载
+    //     fs.readFile(path.join("./src/renderer/files.json"), "utf8",(error,data)=>{  
+    //       if(error){
+    //         // 文件读取失败;
+    //       }else {
+    //         let fileList = JSON.parse(data)
+    //         let baseurl = "http://106.13.196.72:9000"
+    //         // 获取文件的安装地址
+    //         let homeDir =  path.dirname(app.getPath('exe'))
+    //         // let homeDir = "D:\\"
+    //         // console.log("set-------",homeDir);
+    //         let newFiles = storage.getItem("filesName")
+    //         // 创建对应地区的文件夹
+    //         let filesPath="";
+    //         fs.mkdir(path.join(homeDir, newFiles), (err) => { 
+    //           if (err) { 
+    //           // 该文件夹已经存在
+    //             if(err.code == "EEXIST"){
+    //               filesPath = err.path as string
+    //             }
+    //             console.log("creating is error ====",err);
+    //             // console.log("save path is =====",filesPath);
+    //             for(let i=0;i<fileList.length;i++){
+    //               filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+    //             }
+    //           }else{
+    //             // 文件夹创建成功,讲下载的文件放入这个文件夹
+    //             console.log('Directory created successfully!'); 
+    //             // let homePath = homeDir.replace(/\\/g, "\\\\")
+    //             filesPath = homeDir+"\\"+newFiles
+    //             console.log("files down path is =====",filesPath);
+    //             for(let i=0;i<fileList.length;i++){
+    //               filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+    //             }
+    //           }
+    //           // 将文件下载的目录缓存
+    //           storage.setItem('filePath',filesPath)
+              
+    //            // 遍历文件下载
+             
+    //         });
+    //       }
+    //     })
+    //   }
+    // })
 })
 // 首页获取目录信息
 ipcMain.on("get-nav",(event,arg)=>{
   if(arg == "getNav"){
-    fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+    
+    // fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+    fs.readFile(path.join("D:\\navData.json"), "utf8",(error,data)=>{
       if(error){
-         event.sender.send('read-nav', "读取失败");
+        //  event.sender.send('read-nav', "读取失败");
       }else {
         event.sender.send('read-nav', data);
         
       }
     })
   }else{
-    event.sender.send('read-nav', "文件读取失败");
+    // event.sender.send('read-nav', "文件读取失败");
   }
 })
 // 获取对应children里面的内容
 ipcMain.on("get-data",(event,arg)=> {
-  fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+  // fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
+  fs.readFile(path.join("D:\\navData.json"), "utf8",(error,data)=>{
     if(error){
-       event.sender.send('read-renda', "读取失败");
+      //  event.sender.send('read-renda', "读取失败");
+      event.sender.send('read-renda', {
+        "status" : 0 ,
+        "msg"    : "目录数据存储失败"
+        });
     }else {
       //取出数据处理后 返回所需数据  
       let dataArr = JSON.parse(data)

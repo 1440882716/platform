@@ -107,7 +107,7 @@ export default defineComponent({
     }
     onMounted(() => {
       let name = route.query.name
-      const storage = require("electron-localStorage")
+      const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")

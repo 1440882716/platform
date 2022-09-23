@@ -1,7 +1,10 @@
 <template>
   <div>
     <Header></Header>
-    <video :src="videoUrl" width="800" height="800" controls autoplay></video>
+    <div style="margin-top: 200px">
+      <video :src="videoUrl" width="800" height="440" controls autoplay></video>
+    </div>
+
     <Footer class="footer-fixed"></Footer>
   </div>
 </template>
@@ -22,7 +25,7 @@ export default defineComponent({
     onMounted(() => {
       videoName.value = route.query.name
       let url = route.query.videoUrl
-      const storage = require("electron-localStorage")
+      const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       videoUrl.value = path + "\\" + url
       console.log("本地视频地址", videoUrl.value)

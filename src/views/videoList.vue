@@ -25,7 +25,7 @@
           style="height: 50%"
         >
           <div
-            class="result-item font24 text-left flex-c pointer"
+            class="result-item font24 text-center flex-c pointer"
             @click="toDetail(item)"
           >
             <div class="book-img">
@@ -93,7 +93,7 @@ export default defineComponent({
       }
     }
     onMounted(() => {
-      const storage = require("electron-localStorage")
+      const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")
