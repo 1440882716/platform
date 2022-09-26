@@ -172,28 +172,14 @@ async function createWindow() {
     //       });
     //   }
     //   }); 
-    console.log("content===",arg);
+    // console.log("content===",arg);
     
     fs.writeFile("D:\\navData.json", arg,  (err)=> {
       if (err) {
-        console.log(err);
+        // console.log(err);
       }
       console.log("=======success");
     });
-      // // 接受渲染进程的数据并存到本地
-      // fs.writeFile(path.join("./src/renderer/data.json"),arg, "utf8",(err)=>{
-      //   if(err){
-      //      event.sender.send('main-process-message', {
-      //       "status" : 0 ,
-      //       "msg"    : "目录数据存储失败"
-      //       });
-      //   }else {
-      //     event.sender.send('main-process-message', {
-      //       "status" : 1 ,
-      //       "msg"    : "目录数据存储成功"
-      //       });
-      //   }
-      // })
   })
   // 保存下载文件
   ipcMain.on("down-file-list",(event,arg)=>{
@@ -201,7 +187,6 @@ async function createWindow() {
       if (err) {
         console.log(err);
       }else{
-         // event.sender.send('main-process-message', "下载文件写入成功");
          const storage = require('electron-localstorage');
          // 读本地文件目录并且下载
          fs.readFile(path.join("D:\\fileData.json"), "utf8",(error,data)=>{  

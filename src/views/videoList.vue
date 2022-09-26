@@ -29,7 +29,7 @@
             @click="toDetail(item)"
           >
             <div class="book-img">
-              <p class="file-name font24 tab-red">{{ item.name }}</p>
+              <img class="play-icon" src="../assets/img/player.png" alt="" />
             </div>
             <span class="title-color m-t-16 text-width two-line-text">{{
               item.name
@@ -137,7 +137,9 @@ export default defineComponent({
 .book-img {
   width: 220px;
   height: 235px;
-  background: url(../assets/img/空白封面.png);
+  line-height: 285px;
+  text-align: center;
+  background: url(../assets/img/视频背景.png);
   background-size: 220px 235px;
 }
 .file-name {
@@ -161,6 +163,10 @@ export default defineComponent({
   width: 68px;
   height: 136px;
   background-image: url(../assets/img/right-btn.png);
+}
+.play-icon {
+  width: 64px;
+  height: 64px;
 }
 .footer-fixed {
   position: fixed;

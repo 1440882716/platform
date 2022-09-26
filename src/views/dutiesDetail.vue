@@ -36,21 +36,12 @@
             <img
               class="duty-img"
               v-for="item in dutyData.images"
-              src="../assets/img/Rectangle55.png"
+              :src="staticUrl + item"
               alt=""
             />
-            <!-- <img class="duty-img" src="../assets/img/Rectangle55.png" alt="" />
-            <img class="duty-img" src="../assets/img/Rectangle55.png" alt="" /> -->
           </div>
         </div>
       </div>
-      <!-- <div class="flex-r flex-start text-left title-color font28 m-t-28">
-        <img class="arrow-icon" src="../assets/img/arrow.png" alt="" />
-        <div class="duty-title-content">履职内容:</div>
-        <div class="content-duty">
-          XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟，XXX地区道路乱七八糟XXX地区道路乱七八糟
-        </div>
-      </div> -->
     </div>
   </div>
   <Footer style="position: fixed; bottom: 0"></Footer>
@@ -70,7 +61,12 @@ export default defineComponent({
     const data = reactive(new InitData())
     const route = useRoute()
     const name = ref()
+    const staticUrl = ref()
     onMounted(() => {
+      const storage = require("electron-localstorage")
+      let path = storage.getItem("filePath")
+      let url = path + "\\"
+      staticUrl.value = url.replace(/\\/g, "/")
       let npsData = localStorage.getItem("dutyDetail") as string
       name.value = route.query.name
       data.dutyData = JSON.parse(npsData)
@@ -78,6 +74,7 @@ export default defineComponent({
     return {
       ...toRefs(data),
       name,
+      staticUrl,
     }
   },
 })

@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div class="page" v-loading="loading">
     <div class="title-img">
       <img src="../assets/img/title-img.png" alt="" />
     </div>
@@ -32,93 +32,99 @@
 import { defineComponent, ref } from "vue"
 import { useRouter } from "vue-router"
 import { login } from "../http/api"
+import { ElMessage } from "element-plus"
 export default defineComponent({
   setup() {
     const router = useRouter()
+    const loading = ref(false)
     const account = ref({
       username: "admin",
       password: "123456",
     })
     const toHome = () => {
-      // let systemPath =
-      //   "D:\\img\\1fb4ed79a8d463f7136b8a187112017f_1661334648771.jpg"
-      // let index = systemPath.lastIndexOf("\\")
-      // let pos = systemPath.substring(0, index)
-      // console.log("文件保存的位置===", pos)
-      // return
-      login(account.value).then((res: any) => {
-        // console.log(res)
-        if (res.status == "OK") {
-          const storage = require("electron-localstorage")
-          // 登录成功
-          localStorage.setItem("location", res.data.locationName)
-          localStorage.setItem("token", res.data.token)
-          storage.setItem("filesName", res.data.location)
-          let version = storage.getItem("version")
-          if (version == undefined || version == "") {
-            version = 0
-            console.log("初始化进度===", version)
-          } else {
-            version = 1.71
-            console.log("历史下载进度===", version)
-          }
-          var ws = new WebSocket(
-            "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
-              version +
-              "&Authorization=" +
-              res.data.token
-          )
-          ws.onerror = function () {}
-          ws.onopen = function () {}
-          // 接收websocket推送的消息
-          ws.onmessage = function (e) {
-            // console.log(e.data)
-            let files = JSON.parse(e.data)
-            let fileList = JSON.stringify(files.fileList)
-            let navList = JSON.stringify(files.nodeList)
-            console.log(files)
-            console.log("目录结构==", navList)
-            console.log("要下载的文件==", fileList)
-            localStorage.setItem(
-              "bgi",
-              JSON.stringify(files.homeBackgroundImage)
-            )
-            if (files.fileList.length != 0) {
-              const ipcRenderer = require("electron").ipcRenderer
-              // 监听主进程过来的消息
-              ipcRenderer.on("has-render-data", (_event, ...args) => {
-                console.log("接收主进程过来的消息===", ...args)
-              })
-              ipcRenderer.on("main-process-message", (_event, ...args) => {
-                console.log("接收主进程过来的消息===", ...args)
-              })
-
-              // ipcRenderer.on("read-file", (_event, ...args) => {
-              //   console.log("文件信息", ...args)
-              // })
-              // 向主进程发送消息，保存应用的目录
-              ipcRenderer.send("save-data", navList)
-              console.log("保存目录.......")
-
-              // 向主进程发送消息，保存应用的下载文件
-              ipcRenderer.send("down-file-list", fileList)
-              console.log("保存文件.......")
+      if (!account.value.username) {
+        ElMessage({
+          message: "请输入账号",
+          type: "warning",
+        })
+      } else if (!account.value.password) {
+        ElMessage({
+          message: "请输入登录密码",
+          type: "warning",
+        })
+      } else {
+        loading.value = true
+        login(account.value).then((res: any) => {
+          if (res.status == "OK") {
+            const storage = require("electron-localstorage")
+            // 登录成功
+            localStorage.setItem("location", res.data.locationName)
+            localStorage.setItem("token", res.data.token)
+            storage.setItem("filesName", res.data.location)
+            let version = storage.getItem("version")
+            if (version == undefined || version == "") {
+              version = 0
+              console.log("初始化进度===", version)
             } else {
-              const ipcRenderer = require("electron").ipcRenderer
-              // 监听主进程过来的消息
-              // 向主进程发送消息，保存应用的目录
-              ipcRenderer.send("save-data", navList)
-              console.log("保存目录.......")
+              // version = 1.71
+              console.log("历史下载进度===", version)
             }
-            router.push({
-              path: "/home",
-            })
+            var ws = new WebSocket(
+              "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
+                version +
+                "&Authorization=" +
+                res.data.token
+            )
+            ws.onerror = function () {}
+            ws.onopen = function () {}
+            ws.onmessage = function (e) {
+              let files = JSON.parse(e.data)
+              let fileList = JSON.stringify(files.fileList)
+              let navList = JSON.stringify(files.nodeList)
+              console.log(files)
+              // console.log("目录结构==", navList)
+              // console.log("要下载的文件==", fileList)
+              localStorage.setItem(
+                "bgi",
+                JSON.stringify(files.homeBackgroundImage)
+              )
+              if (files.fileList.length != 0) {
+                const ipcRenderer = require("electron").ipcRenderer
+                // 监听主进程过来的消息
+                ipcRenderer.on("has-render-data", (_event, ...args) => {
+                  console.log("接收主进程过来的消息===", ...args)
+                })
+                ipcRenderer.on("main-process-message", (_event, ...args) => {
+                  console.log("接收主进程过来的消息===", ...args)
+                })
+                // 向主进程发送消息，保存应用的目录
+                ipcRenderer.send("save-data", navList)
+                console.log("保存目录.......")
+
+                // 向主进程发送消息，保存应用的下载文件
+                ipcRenderer.send("down-file-list", fileList)
+                console.log("保存文件.......")
+              } else {
+                const ipcRenderer = require("electron").ipcRenderer
+                // 监听主进程过来的消息
+                // 向主进程发送消息，保存应用的目录
+                ipcRenderer.send("save-data", navList)
+                console.log("保存目录.......")
+              }
+              loading.value = false
+              router.push({
+                path: "/home",
+              })
+            }
+          } else {
+            ElMessage.error("登录失败，请检查网络设置")
           }
-        }
-      })
+        })
+      }
     }
     return {
       account,
+      loading,
       toHome,
     }
   },

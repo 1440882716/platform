@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header></Header>
-    <div style="margin-top: 200px">
+    <div style="margin-top: 150px">
       <video :src="videoUrl" width="800" height="440" controls autoplay></video>
     </div>
 

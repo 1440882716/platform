@@ -63,7 +63,7 @@
       id="mainIframe"
       ref="iframeRef"
       name="iframeRef"
-      src="static/npc-page/index.html"
+      src="D:/npc-page/index.html"
       scrolling="auto"
       frameborder="0"
       style="width: 80%; height: 600px"
@@ -95,7 +95,7 @@
         >
           <div class="result-item flex-c">
             <div class="npc-img flex-r">
-              <img class="npc-photo" src="../assets/img/peopel.png" alt="" />
+              <img class="npc-photo" :src="item.npcMember.avatar" alt="" />
               <div class="flex-c m-l-16 text-left">
                 <p class="font38">{{ item.npcMember.name }}</p>
                 <p class="font20 m-t-20">{{ item.npcMember.introduction }}</p>
