@@ -11,7 +11,7 @@
     <div style="margin-top: 252px">
       <swiper
         class="swiper-box pointer"
-        style="width: 1688px; height: 650px"
+        style="width: 1688px; height: 320px"
         :modules="modules"
         :space-between="50"
         :slidesPerView="5"
@@ -46,7 +46,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import { ElMessage } from "element-plus"
 import Header from "../components/header.vue"
 import {
@@ -74,6 +74,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const imgUrl = ref()
     // /@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
     // http://localhost:3344/@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
@@ -169,6 +170,7 @@ export default defineComponent({
         version = 0
         console.log("初始化进度===", version)
       } else {
+        version = 1.71
         // storage.setItem("version", 1.71)
         console.log("历史下载进度===", version)
       }
@@ -203,18 +205,21 @@ export default defineComponent({
       staticUrl.value = url.replace(/\\/g, "/")
       // 讲图片的根路径存下
       localStorage.setItem("imgSrc", url)
-      let str = localStorage.getItem("bgi") as string
-      imgUrl.value = path + "\\" + str.replace(/"/g, "")
-      imgUrl.value = imgUrl.value.replace(/\\/g, "/")
+
       const ipcRenderer = require("electron").ipcRenderer
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
-        // backgroudImg.value = "@/assets/img/main-bg.png"
         navList.value = JSON.parse(data)
       })
       ipcRenderer.send("get-nav", "getNav")
+      // let str = route.query.bgi as string
+      let str = localStorage.getItem("bgi") as string
+      console.log("取出缓存首页的背景图片===", str)
+      imgUrl.value = path + "\\" + str.replace(/"/g, "")
+      imgUrl.value = imgUrl.value.replace(/\\/g, "/")
+      console.log("首页的背景图片===", imgUrl.value)
       // 监听ws推送的消息
-      wsFun()
+      // wsFun()
     })
     return {
       tokenStr,

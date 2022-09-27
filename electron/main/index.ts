@@ -113,42 +113,27 @@ async function createWindow() {
 
 
   // 下载
-  const filesDown=(win:any,downPath:string,savePath:string,filesNum:number)=>{
-    console.log("in======",savePath);
-    // return
+  const filesDown=(win:any,downPath:string,savePath:string,filesNum:number,filesCount:number,downIndex:number)=>{
     win.webContents.downloadURL(downPath)
     win.webContents.session.on('will-download', (event:any, item:any, webContents:any) => {
       let url = savePath+`\\${item.getFilename()}`;
       item.setSavePath(url);
-      // console.log(url);
-      // return
-      // item.on('updated', (event:any, state:any) => {
-      //   if (state === 'interrupted') {
-      //     console.log('Download is interrupted but can be resumed')
-      //   } else if (state === 'progressing') {
-      //     if (item.isPaused()) {
-      //       console.log('Download is paused')
-      //     } else {
-      //       console.log(`Received bytes: ${item.getReceivedBytes()}`)
-      //     }
-      //   }
-      // })
       item.once('done', (event:any, state:any) => {
         if (state === 'completed') {
-          console.log('=======================================================Download successfully')
-          // console.log("文件保存的路径===",item.getSavePath());
-          // let systemPath =item.getSavePath() 
-          // let index = systemPath.lastIndexOf("\\")
-          // let path_url = systemPath.substring(0, index)
-          // savePath = path_url
-
-           // 将下载进度缓存下来，避免后续重复下载
-           const storage = require('electron-localstorage');
-           storage.setItem('version', filesNum);
-          
-          
+          //  将下载进度写入本地文件
+          let obj = {version:filesNum}
+          let dataV= JSON.stringify(obj)
+          fs.writeFile("D:\\version.json", dataV,  (err)=> {
+            if (err) {
+            }else{
+              // if(filesCount == downIndex){
+              //   let obj = {state:"ok"}
+              //   let data = JSON.stringify(obj)
+              //   win.webContents.send('down-over', data);
+              // }
+            }
+          });
         } else {
-          console.log('Download failed=========================================='+ state)
         }
       })
     })
@@ -178,8 +163,9 @@ async function createWindow() {
       if (err) {
         // console.log(err);
       }
-      console.log("=======success");
+      // console.log("=======success");
     });
+    
   })
   // 保存下载文件
   ipcMain.on("down-file-list",(event,arg)=>{
@@ -209,18 +195,16 @@ async function createWindow() {
                    filesPath = err.path as string
                  }
                  console.log("creating is error ====",err);
-                 // console.log("save path is =====",filesPath);
+                 let filesCount = fileList.length-1
                  for(let i=0;i<fileList.length;i++){
-                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version,filesCount,i)
                  }
                }else{
                  // 文件夹创建成功,讲下载的文件放入这个文件夹
-                 console.log('Directory created successfully!'); 
-                 // let homePath = homeDir.replace(/\\/g, "\\\\")
-                 filesPath = homeDir+"\\"+newFiles
-                 console.log("files down path is =====",filesPath);
+                 filesPath = homeDir+newFiles
+                 let filesCount = fileList.length-1
                  for(let i=0;i<fileList.length;i++){
-                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
+                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version,filesCount,i)
                  }
                }
                // 将文件下载的目录缓存
@@ -287,21 +271,34 @@ async function createWindow() {
     //   }
     // })
 })
+// 登录页获取下载进度
+ipcMain.on("get-version",(event,arg)=>{
+  if(arg == "getVersion"){
+    fs.readFile(path.join("D:\\version.json"), "utf8",(error,data)=>{
+      if(error){
+        let obj = {version:0}
+        let data = JSON.stringify(obj)
+        event.sender.send('read-version', data);
+      }else {
+        event.sender.send('read-version', data);
+        
+      }
+    })
+  }
+   
+ 
+})
 // 首页获取目录信息
 ipcMain.on("get-nav",(event,arg)=>{
   if(arg == "getNav"){
-    
-    // fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
     fs.readFile(path.join("D:\\navData.json"), "utf8",(error,data)=>{
       if(error){
-        //  event.sender.send('read-nav', "读取失败");
       }else {
         event.sender.send('read-nav', data);
         
       }
     })
   }else{
-    // event.sender.send('read-nav', "文件读取失败");
   }
 })
 // 获取对应children里面的内容

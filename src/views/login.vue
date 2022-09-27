@@ -56,66 +56,83 @@ export default defineComponent({
         loading.value = true
         login(account.value).then((res: any) => {
           if (res.status == "OK") {
+            let homeBgi = ""
+            const ipcRenderer = require("electron").ipcRenderer
             const storage = require("electron-localstorage")
+            // storage.removeItem("version")
+            // return
             // 登录成功
             localStorage.setItem("location", res.data.locationName)
             localStorage.setItem("token", res.data.token)
             storage.setItem("filesName", res.data.location)
-            let version = storage.getItem("version")
-            if (version == undefined || version == "") {
-              version = 0
-              console.log("初始化进度===", version)
-            } else {
-              // version = 1.71
-              console.log("历史下载进度===", version)
-            }
-            var ws = new WebSocket(
-              "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
-                version +
-                "&Authorization=" +
-                res.data.token
-            )
-            ws.onerror = function () {}
-            ws.onopen = function () {}
-            ws.onmessage = function (e) {
-              let files = JSON.parse(e.data)
-              let fileList = JSON.stringify(files.fileList)
-              let navList = JSON.stringify(files.nodeList)
-              console.log(files)
-              // console.log("目录结构==", navList)
-              // console.log("要下载的文件==", fileList)
-              localStorage.setItem(
-                "bgi",
-                JSON.stringify(files.homeBackgroundImage)
-              )
-              if (files.fileList.length != 0) {
-                const ipcRenderer = require("electron").ipcRenderer
-                // 监听主进程过来的消息
-                ipcRenderer.on("has-render-data", (_event, ...args) => {
-                  console.log("接收主进程过来的消息===", ...args)
-                })
-                ipcRenderer.on("main-process-message", (_event, ...args) => {
-                  console.log("接收主进程过来的消息===", ...args)
-                })
-                // 向主进程发送消息，保存应用的目录
-                ipcRenderer.send("save-data", navList)
-                console.log("保存目录.......")
 
-                // 向主进程发送消息，保存应用的下载文件
-                ipcRenderer.send("down-file-list", fileList)
-                console.log("保存文件.......")
-              } else {
-                const ipcRenderer = require("electron").ipcRenderer
-                // 监听主进程过来的消息
-                // 向主进程发送消息，保存应用的目录
-                ipcRenderer.send("save-data", navList)
-                console.log("保存目录.......")
+            let version = 0
+            ipcRenderer.send("get-version", "getVersion")
+            ipcRenderer.on("read-version", (_event, data) => {
+              version = JSON.parse(data).version
+              console.log("下载的进度是===", version)
+              var ws = new WebSocket(
+                "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
+                  version +
+                  "&Authorization=" +
+                  res.data.token
+              )
+              ws.onerror = function () {}
+              ws.onopen = function () {}
+              ws.onmessage = function (e) {
+                let files = JSON.parse(e.data)
+                let fileList = JSON.stringify(files.fileList)
+                let navList = JSON.stringify(files.nodeList)
+                console.log(files)
+                homeBgi = files.homeBackgroundImage
+                // localStorage.setItem(
+                //   "bgi",
+                //   JSON.stringify(files.homeBackgroundImage)
+                // )
+                if (files.fileList.length != 0) {
+                  // 监听主进程过来的消息
+                  ipcRenderer.on("has-render-data", (_event, ...args) => {
+                    // console.log("接收主进程过来的消息===", ...args)
+                  })
+                  ipcRenderer.on("main-process-message", (_event, ...args) => {
+                    // console.log("接收主进程过来的消息===", ...args)
+                  })
+                  // 向主进程发送消息，保存应用的目录
+                  ipcRenderer.send("save-data", navList)
+                  ipcRenderer.send("down-file-list", fileList)
+                  // ipcRenderer.on("down-over", (_event, data) => {
+                  // console.log("主进程的下载进度===", JSON.parse(data))
+                  // let downover = JSON.parse(data)
+                  // if (downover.state == "ok") {
+                  // loading.value = false
+                  // router.push({
+                  //   path: "/home",
+                  // })
+                  // }
+                  // })
+                } else {
+                  const ipcRenderer = require("electron").ipcRenderer
+                  // 监听主进程过来的消息
+                  // 向主进程发送消息，保存应用的目录
+                  ipcRenderer.send("save-data", navList)
+                  // loading.value = false
+                  // router.push({
+                  //   path: "/home",
+                  // })
+                }
+                localStorage.setItem(
+                  "bgi",
+                  JSON.stringify(files.homeBackgroundImage)
+                )
               }
-              loading.value = false
-              router.push({
-                path: "/home",
-              })
-            }
+            })
+            loading.value = false
+            router.push({
+              path: "/home",
+              query: {
+                bgi: homeBgi,
+              },
+            })
           } else {
             ElMessage.error("登录失败，请检查网络设置")
           }

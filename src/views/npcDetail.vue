@@ -1,7 +1,7 @@
 <template>
   <Header></Header>
   <div class="duty-box text-left flex-r">
-    <img class="peopel" src="../assets/img/peopel.png" alt="" />
+    <img class="peopel" :src="staticUrl + npc_img" alt="" />
     <div>
       <p class="font36 m-t-16">{{ npc_name }}</p>
       <p class="font20 m-t-24">
@@ -64,6 +64,7 @@ export default defineComponent({
   setup() {
     const data = reactive(new InitData())
     const router = useRouter()
+    const staticUrl = ref()
     const npc_name = ref()
     const npc_des = ref()
     const npc_phone = ref()
@@ -104,6 +105,10 @@ export default defineComponent({
     }
     onMounted(() => {
       let npsData = localStorage.getItem("npcDetail") as string
+      const storage = require("electron-localstorage")
+      let path = storage.getItem("filePath")
+      let url = path + "\\"
+      staticUrl.value = url.replace(/\\/g, "/")
       if (npsData != "" && npsData != undefined) {
         npc_name.value = JSON.parse(npsData).name
         npc_des.value = JSON.parse(npsData).introduction
@@ -116,6 +121,7 @@ export default defineComponent({
     })
     return {
       ...toRefs(data),
+      staticUrl,
       npc_name,
       npc_des,
       npc_phone,
