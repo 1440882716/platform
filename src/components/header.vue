@@ -20,6 +20,12 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const locationName = ref()
+    const addZero = (num: any) => {
+      if (parseInt(num) < 10) {
+        num = "0" + num
+      }
+      return num
+    }
     const formatDate = () => {
       var t
       clearTimeout(t)
@@ -59,7 +65,7 @@ export default defineComponent({
           break
       }
       date.value = year + "年" + month + "月" + day + "日"
-      time.value = h + ":" + m + ":" + s
+      time.value = addZero(h) + ":" + addZero(m) + ":" + addZero(s)
       t = setTimeout(formatDate, 1000) //设置定时器，循环运行
     }
     const date = ref() // 年月日
@@ -70,11 +76,12 @@ export default defineComponent({
     }
     const goOut = () => {
       // 退出清空token，回到登录页面
-      // var token = localStorage.getItem("token")
       var ws = new WebSocket(
         "ws://192.168.1.116:9527/api/manager/display/websocket"
       )
-      ws.onclose = function () {}
+      ws.onclose = function () {
+        localStorage.setItem("token", "")
+      }
       localStorage.setItem("token", "")
       localStorage.setItem("location", "")
       router.push({
@@ -90,6 +97,7 @@ export default defineComponent({
       date,
       time,
       weekday,
+      addZero,
       formatDate,
       update,
       goOut,

@@ -43,9 +43,9 @@ const indexHtml = join(ROOT_PATH.dist, 'index.html')
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
-    // fullscreen: true,
-    width:1000,
-    height:800,
+    fullscreen: true,
+    // width:1000,
+    // height:800,
     // frame: false,
     icon: join(ROOT_PATH.public, 'favicon.ico'),
     webPreferences: {

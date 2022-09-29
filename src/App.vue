@@ -26,8 +26,8 @@ onMounted(() => {
   color: #2c3e50;
   background-image: url(./assets/img/main-bg.png);
   width: 100%;
-  height: 1080px;
-  /* margin-top: 60px; */
+  /* height: 1080px; */
+  height: 100%;
 }
 
 .logo-box {

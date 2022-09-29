@@ -143,8 +143,8 @@ export default defineComponent({
     const route = useRoute()
     const imgUrl = ref()
     const currentPage = ref()
-    // const titleFlag = ref(1)
     const activeName = ref("1")
+    // const activeName = ref(1)
     const dataInfo = ref()
     const rotateNpc = ref()
     const activeClass = ref()
@@ -414,4 +414,35 @@ body {
   align-items: center;
   justify-content: center;
 }
+/* .tab-box {
+  width: 230px;
+  height: 40px;
+  margin: 0 auto;
+  margin-top: 24px;
+}
+.slide-bar {
+  width: 94px;
+  height: 2px;
+  background-color: #f31a1a;
+  margin-top: 10px;
+}
+.left-side {
+  animation: mymove 1s infinite;
+}
+@keyframes mymove {
+  from {
+    left: 837px;
+  }
+  to {
+    left: 967px;
+  }
+}
+@-webkit-keyframes mymove  {
+  from {
+    left: 837px;
+  }
+  to {
+    left: 967px;
+  }
+} */
 </style>

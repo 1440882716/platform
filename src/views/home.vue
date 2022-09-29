@@ -56,7 +56,7 @@ import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/scrollbar"
-import { array } from "yargs"
+import { array, string } from "yargs"
 import { json } from "stream/consumers"
 import { url } from "inspector"
 import path from "path"
@@ -87,6 +87,12 @@ export default defineComponent({
       // console.log('slide change');
     }
     const nextPage = (info: any) => {
+      console.log(info.name)
+
+      let navArr = []
+      navArr.push(info.name)
+      console.log(navArr)
+      localStorage.setItem("nav_arr", JSON.stringify(navArr))
       // return
       if (info.type == 0 && info.children.length != 0) {
         router.push({
@@ -215,7 +221,7 @@ export default defineComponent({
       let str = localStorage.getItem("bgi") as string
       imgUrl.value = path + "\\" + str.replace(/"/g, "")
       imgUrl.value = imgUrl.value.replace(/\\/g, "/")
-      console.log("背景图片====", imgUrl.value)
+      // console.log("背景图片====", imgUrl.value)
     })
     return {
       tokenStr,

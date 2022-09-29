@@ -29,7 +29,9 @@
             @click="toDetail(item)"
           >
             <div class="book-img">
-              <p class="file-name font24 tab-red">{{ item.name }}</p>
+              <p class="file-name font24 tab-red">
+                {{ item.name.slice(0, item.name.length - 4) }}
+              </p>
             </div>
             <span class="title-color m-t-16 text-width two-line-text">{{
               item.name

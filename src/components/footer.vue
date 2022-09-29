@@ -20,6 +20,9 @@ export default defineComponent({
       })
     }
     const backPage = () => {
+      let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
+      navArr.pop()
+      localStorage.setItem("nav_arr", JSON.stringify(navArr))
       router.back()
     }
     onMounted(() => {

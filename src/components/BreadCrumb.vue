@@ -1,13 +1,6 @@
 <template>
-  <div>
-    <el-breadcrumb separator="/">
-      <!-- 自定义返回函数 -->
-      <el-breadcrumb-item @click="goback"> ← 返回</el-breadcrumb-item>
-      <!--item.meta.title  显示的还是路由里面的名字 -->
-      <el-breadcrumb-item v-for="(item, index) in navArray">{{
-        // item.meta.title
-      }}</el-breadcrumb-item>
-    </el-breadcrumb>
+  <div class="nav-box" v-for="item in navArray">
+    <span style="fontsize: 24px">{{ item }}</span>
   </div>
 </template>
 <script lang="ts">
@@ -20,14 +13,11 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     // 监听函数监听路径的变化
-    watch(
-      () => route.path,
-      (newValue, oldValue) => {
-        // route.matched 目前匹配的是哪个 获得的值赋给  navArray.valu 上面用 v-for遍历值
-        // navArray.value = route.matched
-      }
-    )
     const goback = () => {}
+    onMounted(() => {
+      let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
+      navArray.value = navArr
+    })
     return {
       navArray,
       goback,
@@ -35,4 +25,12 @@ export default defineComponent({
   },
 })
 </script>
-<style scoped></style>
+<style scoped>
+.nav-box {
+  padding-left: 24px;
+  margin-top: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+}
+</style>

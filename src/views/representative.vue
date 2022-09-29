@@ -1,6 +1,7 @@
 <template>
   <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
     <Header></Header>
+    <BreadCrumb></BreadCrumb>
     <div class="flex-r fff active-box flex-b">
       <div
         class="active-item text-center pointer"
@@ -11,14 +12,6 @@
         <p class="font28 name-p two-line-text">{{ item.name }}</p>
       </div>
     </div>
-    <!-- <div class="footer-fixed">
-      <div class="footer-box">
-        <div class="footer-icon flex-r">
-          <img @click="toHome" src="../assets/img/home-icon.png" alt="" />
-          <img @click="backPage" src="../assets/img/back-icon.png" alt="" />
-        </div>
-      </div>
-    </div> -->
     <Footer style="position: fixed; bottom: 0"></Footer>
   </div>
 </template>
@@ -26,11 +19,13 @@
 import { defineComponent, onMounted, ref } from "vue"
 import { useRouter, useRoute } from "vue-router"
 import Header from "../components/header.vue"
+import BreadCrumb from "../components/BreadCrumb.vue"
 import Footer from "../components/footer.vue"
 import { ElMessage } from "element-plus"
 export default defineComponent({
   components: {
     Header,
+    BreadCrumb,
     Footer,
   },
   setup() {
@@ -52,6 +47,10 @@ export default defineComponent({
       // type==7 文档文件夹
       // type==8 网页文件夹
       // type==9 视频文件夹
+      let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
+      console.log(navArr)
+      navArr.push(info.name)
+      localStorage.setItem("nav_arr", JSON.stringify(navArr))
 
       if (info.type == 0 && info.children.length != 0) {
         parentData.value = showData.value
