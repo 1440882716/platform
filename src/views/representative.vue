@@ -8,7 +8,7 @@
         @click="toDetail(item)"
       >
         <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
-        <p class="font32 name-p two-line-text">{{ item.name }}</p>
+        <p class="font28 name-p two-line-text">{{ item.name }}</p>
       </div>
     </div>
     <!-- <div class="footer-fixed">

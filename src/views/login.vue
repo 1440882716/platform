@@ -38,8 +38,8 @@ export default defineComponent({
     const router = useRouter()
     const loading = ref(false)
     const account = ref({
-      username: "admin",
-      password: "123456",
+      username: "",
+      password: "",
     })
     const toHome = () => {
       if (!account.value.username) {
@@ -85,10 +85,10 @@ export default defineComponent({
                 let navList = JSON.stringify(files.nodeList)
                 console.log(files)
                 homeBgi = files.homeBackgroundImage
-                // localStorage.setItem(
-                //   "bgi",
-                //   JSON.stringify(files.homeBackgroundImage)
-                // )
+                localStorage.setItem(
+                  "bgi",
+                  JSON.stringify(files.homeBackgroundImage)
+                )
                 if (files.fileList.length != 0) {
                   // 监听主进程过来的消息
                   ipcRenderer.on("has-render-data", (_event, ...args) => {
@@ -100,16 +100,16 @@ export default defineComponent({
                   // 向主进程发送消息，保存应用的目录
                   ipcRenderer.send("save-data", navList)
                   ipcRenderer.send("down-file-list", fileList)
-                  // ipcRenderer.on("down-over", (_event, data) => {
-                  // console.log("主进程的下载进度===", JSON.parse(data))
-                  // let downover = JSON.parse(data)
-                  // if (downover.state == "ok") {
-                  // loading.value = false
-                  // router.push({
-                  //   path: "/home",
-                  // })
-                  // }
-                  // })
+                  ipcRenderer.on("down-over", (_event, data) => {
+                    console.log("主进程的下载进度===", JSON.parse(data))
+                    let downover = JSON.parse(data)
+                    if (downover.state == "ok") {
+                      loading.value = false
+                      router.push({
+                        path: "/home",
+                      })
+                    }
+                  })
                 } else {
                   const ipcRenderer = require("electron").ipcRenderer
                   // 监听主进程过来的消息
@@ -120,10 +120,10 @@ export default defineComponent({
                   //   path: "/home",
                   // })
                 }
-                localStorage.setItem(
-                  "bgi",
-                  JSON.stringify(files.homeBackgroundImage)
-                )
+                // localStorage.setItem(
+                //   "bgi",
+                //   JSON.stringify(files.homeBackgroundImage)
+                // )
               }
             })
             loading.value = false

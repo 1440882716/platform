@@ -1,13 +1,7 @@
 <template>
-  <div class="background-page" :style="{ backgroundImage: `url(${imgUrl})` }">
-    <!-- D:\khd\bigdata\test_files\554f31ddea1605af86e55795be4832ba_1662443630171.jpeg -->
-    <!-- <div
-    class="background-page"
-    style="
-      background-image: url(D:/khd/bigdata/test_files/554f31ddea1605af86e55795be4832ba_1662443630171.jpeg);
-    "
-  > -->
+  <div class="background-page" :style="{ backgroundImage: `url('${imgUrl}')` }">
     <Header></Header>
+    <!-- <div @click="update">刷新</div> -->
     <div style="margin-top: 252px">
       <swiper
         class="swiper-box pointer"
@@ -45,7 +39,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue"
+import { defineComponent, onMounted, ref, getCurrentInstance } from "vue"
 import { useRouter, useRoute } from "vue-router"
 import { ElMessage } from "element-plus"
 import Header from "../components/header.vue"
@@ -73,16 +67,14 @@ export default defineComponent({
     SwiperSlide,
   },
   setup() {
+    // const imgUrl = getCurrentInstance()
     const router = useRouter()
     const route = useRoute()
-    const imgUrl = ref()
-    // /@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
-    // http://localhost:3344/@fs/D:/khd/bigdata/test_files/icon_基本信息_1662448716087.png
     const staticUrl = ref()
+    const imgUrl = ref()
+
     const tokenStr = ref()
     const navList = ref()
-    // const backgroudImg = ref()
-    //自动轮播的配置
     const autoplayOptions = {
       // delay: 2000,
       // disableOnInteraction: false,
@@ -198,33 +190,38 @@ export default defineComponent({
         }
       }
     }
+
+    const update = () => {
+      window.location.reload()
+    }
+
     onMounted(() => {
+      // window.location.reload()
       const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
       staticUrl.value = url.replace(/\\/g, "/")
+
       // 讲图片的根路径存下
       localStorage.setItem("imgSrc", url)
-
       const ipcRenderer = require("electron").ipcRenderer
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
         navList.value = JSON.parse(data)
       })
       ipcRenderer.send("get-nav", "getNav")
-      // let str = route.query.bgi as string
-      let str = localStorage.getItem("bgi") as string
-      console.log("取出缓存首页的背景图片===", str)
-      imgUrl.value = path + "\\" + str.replace(/"/g, "")
-      imgUrl.value = imgUrl.value.replace(/\\/g, "/")
-      console.log("首页的背景图片===", imgUrl.value)
       // 监听ws推送的消息
       // wsFun()
+      let str = localStorage.getItem("bgi") as string
+      imgUrl.value = path + "\\" + str.replace(/"/g, "")
+      imgUrl.value = imgUrl.value.replace(/\\/g, "/")
+      console.log("背景图片====", imgUrl.value)
     })
     return {
       tokenStr,
-      imgUrl,
       staticUrl,
+      imgUrl,
+
       navList,
       // backgroudImg,
       autoplayOptions,
@@ -232,6 +229,7 @@ export default defineComponent({
       onSlideChange,
       nextPage,
       wsFun,
+      update,
       modules: [
         Navigation,
         Pagination,

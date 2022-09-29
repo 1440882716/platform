@@ -98,7 +98,12 @@
               <img class="npc-photo" :src="item.npcMember.avatar" alt="" />
               <div class="flex-c m-l-16 text-left">
                 <p class="font38">{{ item.npcMember.name }}</p>
-                <p class="font20 m-t-20">{{ item.npcMember.introduction }}</p>
+                <p class="font20 m-t-20 three-line-text npc-des-box">
+                  {{ item.npcMember.introduction }}
+                </p>
+                <!-- <p class="font20 m-t-20 three-line-text">
+                  四川天味食品集团股份有限公司四川天味食品集团股份有限公司四川天味食品集团股份有限公司
+                </p> -->
                 <p class="font18 m-t-56">{{ item.npcMember.mobile }}</p>
               </div>
             </div>
@@ -331,6 +336,10 @@ body {
 .box div img {
   width: 380px;
   height: 270px;
+}
+.npc-des-box {
+  height: 80px;
+  /* background-color: cadetblue; */
 }
 
 .one {

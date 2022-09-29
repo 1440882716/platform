@@ -8,6 +8,7 @@
       <span class="fff" style="margin-right: 16px">{{ date }}</span>
       <span class="fff" style="margin-right: 27px">{{ time }}</span>
       <span class="fff">{{ weekday }}</span>
+      <span class="fff go-out pointer" @click="update">刷新资源</span>
       <span class="fff go-out pointer" @click="goOut">退出</span>
     </div>
   </div>
@@ -64,8 +65,16 @@ export default defineComponent({
     const date = ref() // 年月日
     const time = ref() // 时分秒
     const weekday = ref() // 时分秒
+    const update = () => {
+      window.location.reload()
+    }
     const goOut = () => {
       // 退出清空token，回到登录页面
+      // var token = localStorage.getItem("token")
+      var ws = new WebSocket(
+        "ws://192.168.1.116:9527/api/manager/display/websocket"
+      )
+      ws.onclose = function () {}
       localStorage.setItem("token", "")
       localStorage.setItem("location", "")
       router.push({
@@ -82,6 +91,7 @@ export default defineComponent({
       time,
       weekday,
       formatDate,
+      update,
       goOut,
     }
   },

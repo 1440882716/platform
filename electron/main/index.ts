@@ -17,37 +17,6 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 
-// localStorage.getItem("filesName")
-// D:\khd\bigdata\platform\node_modules\electron\dist
-// 在安装目录下创建一个文件夹
-// fs.mkdir(path.join(homeDir, 'testFile'), (err) => { 
-//   if (err) { 
-//       return console.error(err); 
-//   } 
-//   console.log('Directory created successfully!'); 
-// });
-// 获取文件的安装地址
-// let homeDir =  path.dirname(app.getPath('exe'))
-// console.log("set-------",homeDir);
-// let filesPath:string
-// fs.mkdir(path.join(homeDir, 'testFile'), (err) => { 
-//   if (err) { 
-//       // return console.error(err.code); 
-//       // 该文件夹已经存在,直接讲文件放进这个文件夹，不需要重新创建文件
-//       if(err.code == "EEXIST"){
-//         err.path
-//       }
-      
-//   }else{
-//     // 文件夹创建成功,讲下载的文件放入这个文件夹
-//     console.log('Directory created successfully!'); 
-//     let homePath = homeDir.replace(/\\/g, "\\\\")
-//     // filesPath = homePath+"\\"+
-//   }
-  
-// });
-
-
 // Remove electron security warnings
 // This warning only shows in development mode
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
@@ -77,6 +46,7 @@ async function createWindow() {
     // fullscreen: true,
     width:1000,
     height:800,
+    // frame: false,
     icon: join(ROOT_PATH.public, 'favicon.ico'),
     webPreferences: {
       preload,
@@ -113,7 +83,7 @@ async function createWindow() {
 
 
   // 下载
-  const filesDown=(win:any,downPath:string,savePath:string,filesNum:number,filesCount:number,downIndex:number)=>{
+  const filesDown=(win:any,downPath:string,savePath:string,filesNum:number,filesCount:number)=>{
     win.webContents.downloadURL(downPath)
     win.webContents.session.on('will-download', (event:any, item:any, webContents:any) => {
       let url = savePath+`\\${item.getFilename()}`;
@@ -126,7 +96,7 @@ async function createWindow() {
           fs.writeFile("D:\\version.json", dataV,  (err)=> {
             if (err) {
             }else{
-              // if(filesCount == downIndex){
+              // if(filesCount == filesNum){
               //   let obj = {state:"ok"}
               //   let data = JSON.stringify(obj)
               //   win.webContents.send('down-over', data);
@@ -195,16 +165,16 @@ async function createWindow() {
                    filesPath = err.path as string
                  }
                  console.log("creating is error ====",err);
-                 let filesCount = fileList.length-1
+                 let filesCount = fileList[fileList.length-1].version
                  for(let i=0;i<fileList.length;i++){
-                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version,filesCount,i)
+                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version,filesCount)
                  }
                }else{
                  // 文件夹创建成功,讲下载的文件放入这个文件夹
                  filesPath = homeDir+newFiles
-                 let filesCount = fileList.length-1
+                 let filesCount = fileList[fileList.length-1].version
                  for(let i=0;i<fileList.length;i++){
-                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version,filesCount,i)
+                   filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version,filesCount)
                  }
                }
                // 将文件下载的目录缓存
