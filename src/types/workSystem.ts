@@ -8,11 +8,12 @@ export class InitData{
    
     systemList:systemData[]=[
         {
-            description:"",
-            name:"",
+            description:"123.pdf",
+            name:"1.pdf",
             type:5,
             url:""
-        }       
+        },
+
     ]
  
     

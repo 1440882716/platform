@@ -1,6 +1,11 @@
 <template>
-  <div class="nav-box" v-for="item in navArray">
-    <span style="fontsize: 24px">{{ item }}</span>
+  <div class="nav-box">
+    <div class="flex-r" v-for="(item, index) in navArray">
+      <span style="fontsize: 24px; margin-left: 10px; margin-right: 10px">{{
+        item
+      }}</span>
+      <span v-if="index != navArray.length - 1">></span>
+    </div>
   </div>
 </template>
 <script lang="ts">

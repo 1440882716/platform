@@ -36,13 +36,6 @@
     </style>
     </head>
     <body>
-    <!-- <div class="back">
-        <img src="./images/返回.png" alt="">
-    </div>
-    <div class="home">
-        <img src="./images/返回首页.png" alt="">
-    </div> -->
-
     <div id="flipbookContainer"></div>
 
     <!-- jQuery 1.9.1 or above -->
@@ -81,12 +74,13 @@
     window.addEventListener('message', function(messageEvent) {
         pdfUrl = messageEvent.data; 
         pdfUrl = pdfUrl.replace(/\\/g, "\\\\")
-        var pdf = 'docbook.pdf';
+        // var pdf = 'docbook.pdf';
         var pdf = pdfUrl
 	    if(pdf==null){
 	        pdf="error.pdf"
 	    }
-    var options = {height: '100%',backgroundImage: "bac2.png",hideControls: "altPrev,pageNumber,altNext,play,outline,thumbnail,zoomIn,zoomOut,fullScreen,share,download,more,pageMode,startPage,endPage,sound"};
+    // var options = {height: '100%',backgroundImage: "bac.png",hideControls: "altPrev,pageNumber,altNext,play,outline,thumbnail,zoomIn,zoomOut,fullScreen,share,download,more,pageMode,startPage,endPage,sound"};
+    var options = {height: '100%',hideControls: "pageNumber,altNext,play,outline,thumbnail,fullScreen,share,download,more,startPage,endPage,sound"};
 
     var flipBook = $("#flipbookContainer").flipBook(pdf, options);
 
@@ -95,18 +89,6 @@
     
 
     });
-    // $(".back").click(function () {
-    //     interObj.GetRootDirInfo().then(function (info) {
-    //         baseInfo = JSON.parse(info);//resource的目录信息
-    //         location.href = baseInfo.dir.FullName.replace(baseInfo.dir.MatchName,'entry')+'\\entry.html?dirName=returnFromDir';
-    //     });
-    // });
-    // $(".home").click(function () {
-    //     interObj.GetRootDirInfo().then(function (info) {
-    //         baseInfo = JSON.parse(info);//resource的目录信息
-    //         location.href = baseInfo.dir.FullName.replace(baseInfo.dir.MatchName,'entry')+'\\entry.html?dirName=homePage';
-    //     });
-    // });
     </script>
     </body>
     </html>

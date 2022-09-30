@@ -2,6 +2,7 @@
   <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
     <Header></Header>
     <div class="turn-container">
+      <!-- src="D:/pdf-page/entry.html" -->
       <iframe
         id="mainIframe"
         ref="iframeRef"

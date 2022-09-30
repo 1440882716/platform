@@ -1,7 +1,7 @@
 <template>
   <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
     <Header></Header>
-    <BreadCrumb></BreadCrumb>
+    <!-- <BreadCrumb></BreadCrumb> -->
     <div class="flex-r fff active-box flex-b">
       <div
         class="active-item text-center pointer"

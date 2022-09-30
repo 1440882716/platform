@@ -1,9 +1,29 @@
 <template>
   <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
     <Header></Header>
+    <!-- <BreadCrumb></BreadCrumb> -->
     <div class="content-box">
+      <div class="flex-r less-box flex-b" v-if="systemList.length <= 8">
+        <div class="less-item" v-for="item in systemList">
+          <div
+            class="result-item font24 text-center flex-c pointer"
+            @click="toDetail(item)"
+          >
+            <div class="book-img">
+              <p class="file-name font24 tab-red">
+                {{ item.name.slice(0, item.name.length - 4) }}
+              </p>
+            </div>
+            <span class="title-color m-t-16 text-width two-line-text">{{
+              item.name
+            }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- 成果展示 -->
       <swiper
+        v-else
         class="swiper-box"
         style="width: 1480px; height: 700px"
         :modules="modules"
@@ -13,7 +33,7 @@
           fill: 'column',
         }"
         :navigation="{
-          nextEl: '.swiper-button-next', //前进后退按钮
+          nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
         }"
         @swiper="onSwiper"
@@ -50,6 +70,7 @@ import { defineComponent, reactive, toRefs, onMounted, ref } from "vue"
 import { useRouter, useRoute } from "vue-router"
 import { InitData } from "../types/workSystem"
 import Header from "../components/header.vue"
+import BreadCrumb from "../components/BreadCrumb.vue"
 import Footer from "../components/footer.vue"
 import { Navigation, Pagination, Autoplay, Grid } from "swiper"
 import { Swiper, SwiperSlide } from "swiper/vue"
@@ -60,6 +81,7 @@ import "swiper/css/grid"
 export default defineComponent({
   components: {
     Header,
+    BreadCrumb,
     Footer,
     Swiper,
     SwiperSlide,
@@ -161,6 +183,16 @@ export default defineComponent({
   width: 68px;
   height: 136px;
   background-image: url(../assets/img/right-btn.png);
+}
+.less-box {
+  width: 1480px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.less-item {
+  width: 370px;
+  height: 350px;
 }
 .footer-fixed {
   position: fixed;
