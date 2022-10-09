@@ -43,9 +43,9 @@ const indexHtml = join(ROOT_PATH.dist, 'index.html')
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
-    fullscreen: true,
-    // width:1000,
-    // height:800,
+    // fullscreen: true,
+    width:1000,
+    height:800,
     // frame: false,
     icon: join(ROOT_PATH.public, 'favicon.ico'),
     webPreferences: {
@@ -152,9 +152,7 @@ async function createWindow() {
              let fileList = JSON.parse(data)
              let baseurl = "http://106.13.196.72:9000"
              // 获取文件的安装地址
-            //  let homeDir =  path.dirname(app.getPath('exe'))
              let homeDir = "D:\\"
-             // console.log("set-------",homeDir);
              let newFiles = storage.getItem("filesName")
              // 创建对应地区的文件夹
              let filesPath="";

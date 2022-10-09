@@ -2,8 +2,25 @@
   <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
     <Header></Header>
     <div class="content-box">
+      <!-- 少于8个的展示方式 -->
+      <div class="flex-r less-box flex-b" v-if="systemList.length <= 8">
+        <div class="less-item" v-for="item in systemList">
+          <div
+            class="result-item font24 text-center flex-c pointer"
+            @click="toDetail(item)"
+          >
+            <div class="book-img">
+              <img class="play-icon" src="../assets/img/player.png" alt="" />
+            </div>
+            <span class="title-color m-t-16 text-width two-line-text">{{
+              item.name
+            }}</span>
+          </div>
+        </div>
+      </div>
       <!-- 成果展示 -->
       <swiper
+        v-else
         class="swiper-box"
         style="width: 1480px; height: 700px"
         :modules="modules"
@@ -167,6 +184,16 @@ export default defineComponent({
 .play-icon {
   width: 64px;
   height: 64px;
+}
+.less-box {
+  width: 1480px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.less-item {
+  width: 370px;
+  height: 350px;
 }
 .footer-fixed {
   position: fixed;

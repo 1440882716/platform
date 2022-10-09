@@ -26,8 +26,16 @@
         <swiper-slide v-for="item in navList" @click="nextPage(item)">
           <div class="slide-box">
             <div class="text-center">
-              <!-- :src="'D:/khd/bigdata/test_files/' + item.icon" -->
-              <img class="tab-item" :src="staticUrl + item.icon" alt="" />
+              <div v-if="item.icon">
+                <img class="tab-item" :src="staticUrl + item.icon" alt="" />
+              </div>
+              <div v-else>
+                <img
+                  class="tab-item"
+                  src="../assets/img/icon_基本信息.png"
+                  alt=""
+                />
+              </div>
               <p class="font28 fff">{{ item.name }}</p>
             </div>
           </div>
@@ -102,11 +110,24 @@ export default defineComponent({
             bgi: info.backgroundImage,
           },
         })
-      } else if (info.type == 1 && info.children.length != 0) {
+      }
+      // else if (info.type == 1 && info.children.length != 0) {
+      //   router.push({
+      //     path: "/representative",
+      //     query: {
+      //       name: info.name,
+      //       bgi: info.backgroundImage,
+      //     },
+      //   })
+      // }
+      else if (info.type == 1 && info.children.length != 0) {
+        // parentData.value = showData.value
+        // showData.value = info.children
+        console.log(info.children)
+        localStorage.setItem("npcinfo", JSON.stringify(info.children))
         router.push({
-          path: "/representative",
+          path: "/npcInfo",
           query: {
-            name: info.name,
             bgi: info.backgroundImage,
           },
         })

@@ -77,7 +77,7 @@ export default defineComponent({
     const goOut = () => {
       // 退出清空token，回到登录页面
       var ws = new WebSocket(
-        "ws://192.168.1.116:9527/api/manager/display/websocket"
+        "wss://www.khdpro1.top/api/manager/display/websocket"
       )
       ws.onclose = function () {
         localStorage.setItem("token", "")

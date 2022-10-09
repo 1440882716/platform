@@ -18,6 +18,10 @@ onMounted(() => {
   padding: 0;
   margin: 0;
 }
+body {
+  min-height: 100%;
+  height: 100%;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -26,8 +30,9 @@ onMounted(() => {
   color: #2c3e50;
   background-image: url(./assets/img/main-bg.png);
   width: 100%;
-  /* height: 1080px; */
   height: 100%;
+  /* height: 1080px; */
+  background-size: cover;
 }
 
 .logo-box {

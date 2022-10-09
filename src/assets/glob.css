@@ -260,5 +260,6 @@ input:focus{
   .bg-box{
     width: 100%;
     height: 1080px;
+    background-size: cover;
     /* height: 100%; */
   }

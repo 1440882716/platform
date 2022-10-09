@@ -72,7 +72,7 @@ export default defineComponent({
               version = JSON.parse(data).version
               console.log("下载的进度是===", version)
               var ws = new WebSocket(
-                "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
+                "wss://www.khdpro1.top/api/manager/display/websocket?version=" +
                   version +
                   "&Authorization=" +
                   res.data.token
