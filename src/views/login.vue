@@ -59,8 +59,8 @@ export default defineComponent({
             let homeBgi = ""
             const ipcRenderer = require("electron").ipcRenderer
             const storage = require("electron-localstorage")
-            // storage.removeItem("version")
-            // return
+            console.log("地区文件夹名===", res.data.location)
+
             // 登录成功
             localStorage.setItem("location", res.data.locationName)
             localStorage.setItem("token", res.data.token)
