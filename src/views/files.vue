@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
+  <!-- <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }"> -->
+  <!-- 固定背景 -->
+  <div class="bg-box">
     <Header></Header>
     <div class="turn-container">
       <!-- src="D:/pdf-page/entry.html" -->
@@ -88,5 +90,12 @@ export default defineComponent({
 .slider-current {
   background-color: #666;
   border-radius: 5px;
+}
+.bg-box {
+  background: url(../assets/img/pdf-bgi.png);
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100%;
+  position: fixed;
 }
 </style>

@@ -1,16 +1,53 @@
 <template>
   <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
+    <!-- <div class="bg-box"> -->
     <Header></Header>
-    <!-- <BreadCrumb></BreadCrumb> -->
-    <div class="flex-r fff active-box flex-b">
-      <div
-        class="active-item text-center pointer"
-        v-for="item in showData"
-        @click="toDetail(item)"
+    <!-- 滑动组件 -->
+    <div class="big-box" style="margin-top: 252px">
+      <swiper
+        class="swiper-box pointer"
+        style="height: 363px"
+        :modules="modules"
+        :space-between="50"
+        :slidesPerView="5"
+        :coverflowEffect="{
+          rotate: 30,
+          stretch: 10,
+          depth: 60,
+          modifier: 2,
+          slideShadows: true,
+        }"
+        :navigation="{
+          nextEl: '.swiper-button-next', //前进后退按钮
+          prevEl: '.swiper-button-prev',
+        }"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
       >
-        <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
-        <p class="font28 name-p two-line-text">{{ item.name }}</p>
-      </div>
+        <swiper-slide
+          v-for="item in showData"
+          @click="toDetail(item)"
+          class="slide-item"
+        >
+          <div class="slide-box">
+            <!-- <div class="text-center"> -->
+            <!-- <div v-if="item.icon">
+                <img class="npc-icon" src="../assets/img/npc-icon.png" alt="" />
+              </div>
+              <div v-else>
+                <img
+                  class="tab-item"
+                  src="../assets/img/icon_基本信息.png"
+                  alt=""
+                />
+              </div> -->
+            <div class="font28 fff files-name">{{ item.name }}</div>
+            <!-- </div> -->
+          </div>
+        </swiper-slide>
+      </swiper>
+      <div class="swiper-button-prev" style="color: #ffffff"></div>
+      <div class="swiper-button-next" style="color: #ffffff"></div>
     </div>
     <Footer style="position: fixed; bottom: 0"></Footer>
   </div>
@@ -22,11 +59,26 @@ import Header from "../components/header.vue"
 import BreadCrumb from "../components/BreadCrumb.vue"
 import Footer from "../components/footer.vue"
 import { ElMessage } from "element-plus"
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Autoplay,
+  EffectCoverflow,
+} from "swiper"
+import { Swiper, SwiperSlide } from "swiper/vue"
+import "swiper/css"
+import "swiper/css/navigation"
+import "swiper/css/pagination"
+import "swiper/css/scrollbar"
 export default defineComponent({
   components: {
     Header,
     BreadCrumb,
     Footer,
+    Swiper,
+    SwiperSlide,
   },
   setup() {
     const router = useRouter()
@@ -35,6 +87,7 @@ export default defineComponent({
     const parentData = ref()
     const showData = ref()
     const imgUrl = ref()
+    const filesNum = ref()
     const toDetail = (info: any) => {
       // type用来判断文件夹的类型children的长度！=0说明下级页面有内容
       // type==0 普通文件夹
@@ -77,15 +130,40 @@ export default defineComponent({
           },
         })
       } else if (info.type == 8 && info.children.length != 0) {
-        parentData.value = showData.value
-        showData.value = info.children
-        localStorage.setItem("mapData", JSON.stringify(info.children))
+        console.log("下级文件===8===", info)
+        const storage = require("electron-localstorage")
+        const ipcRenderer = require("electron").ipcRenderer
+        // 加载地图网页
+        let zipPath = info.children[0].url
+        let path = storage.getItem("filePath")
+        var admZip = require("adm-zip-iconv")
+        let pathNameArr = zipPath.split(".")
+        let pathName = pathNameArr[0]
+        var zip = new admZip(path + "\\" + zipPath, "GBK")
+        // 创建属于这个压缩包的文件夹
+        storage.setItem("zipFiles", pathName)
+        ipcRenderer.send("create-zipFile", "getVersion")
+
+        // 解压文件
+        zip.extractAllTo(path + "\\" + pathName, true)
+        let pageUrl = path + "\\" + pathName + "\\" + "index.html"
         router.push({
           path: "/infomation",
           query: {
+            url: pageUrl,
             bgi: info.backgroundImage,
           },
         })
+
+        // parentData.value = showData.value
+        // showData.value = info.children
+        // localStorage.setItem("mapData", JSON.stringify(info.children))
+        // router.push({
+        //   path: "/infomation",
+        //   query: {
+        //     bgi: info.backgroundImage,
+        //   },
+        // })
       } else if (info.type == 9 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
@@ -119,8 +197,16 @@ export default defineComponent({
         localStorage.setItem("allData", data)
         allData.value = JSON.parse(data)
         showData.value = JSON.parse(data)
+        let number = showData.value.length
+        if (number < 5) {
+          filesNum.value = number
+        } else {
+          filesNum.value = 5
+        }
+
         // showObj.value.showData = JSON.parse(data)
         // console.log("获取该页面的数据===", showData.value)
+        console.log("文件夹个数===", showData.value.length)
       })
     })
     const toHome = () => {
@@ -134,26 +220,55 @@ export default defineComponent({
       // showData.value = allData.value
       router.back()
     }
+    const onSwiper = (swiper: any) => {}
+    const onSlideChange = () => {
+      // console.log('slide change');
+    }
     return {
       allData,
       parentData,
       showData,
       imgUrl,
+      filesNum,
       toDetail,
       toHome,
       backPage,
+      onSwiper,
+      onSlideChange,
+      // nextPage,
+      // wsFun,
+      // update,
+      // creenSaver, //屏保
+      // hideBanner,
+      modules: [
+        Navigation,
+        Pagination,
+        Scrollbar,
+        A11y,
+        Autoplay,
+        EffectCoverflow,
+      ],
     }
   },
 })
 </script>
 <style scoped>
 @import "../assets/glob.css";
+.bg-box {
+  background: url(../assets/img/file-bgi.png);
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
 .active-box {
-  /* min-width: 706px; */
-  width: 1109px;
-  margin: 0 auto;
+  min-width: 706px;
+  /* width: 1109px; */
+  margin: 0 50px;
   margin-top: 275px;
   /* background-color: burlywood; */
+  white-space: nowrap;
+  overflow-x: auto;
 }
 .active-item {
   width: 303px;
@@ -175,6 +290,81 @@ export default defineComponent({
   padding-left: 30px;
   padding-right: 20px;
 }
+/* ======================swiper组件样式 */
+.big-box {
+  width: auto;
+  /* background-color: thistle; */
+  align-items: center;
+}
+.swiper-box {
+  margin: 0 auto;
+  /* background-color: wheat; */
+  display: flex;
+  align-items: center;
+}
+.slide-item {
+  width: 106px;
+  height: 363px;
+  flex: 1;
+  /* background-color: tomato; */
+  display: flex;
+  align-items: center;
+}
+.slide-box {
+  width: 329px;
+  /* height: 306px; */
+  text-align: center;
+  flex: 1;
+  /* background-color: antiquewhite; */
+  /* background: url(../assets/img/active-bg.png) center center no-repeat; */
+}
+
+.files-name {
+  margin: 0 auto;
+  /* margin-left: 32px; */
+  width: 106px;
+  height: 363px;
+  text-align: center;
+  writing-mode: vertical-lr;
+  padding-left: 62px;
+  background: url(../assets/img/图标.png) center center no-repeat;
+}
+.icon-box {
+  width: 108px;
+  height: 108px;
+  /* margin-top: 40px; */
+}
+.tab-item {
+  width: 108px;
+  height: 108px;
+  margin-top: 40px;
+}
+.swiper-button-prev {
+  width: 68px;
+  height: 136px;
+  background-image: url(../assets/img/left-btn.png);
+}
+.swiper-button-next {
+  width: 68px;
+  height: 136px;
+  background-image: url(../assets/img/right-btn.png);
+}
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+
 /* ==================底部 */
 .footer-fixed {
   width: 100%;

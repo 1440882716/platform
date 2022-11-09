@@ -1,11 +1,15 @@
 <template>
+  <div @click="creenSaver">
+    <u-banner v-if="bannerShow" @click.native="hideBanner"></u-banner>
+  </div>
   <div class="background-page" :style="{ backgroundImage: `url('${imgUrl}')` }">
+    <!-- <div class="background-page"> -->
     <Header></Header>
     <!-- <div @click="update">刷新</div> -->
     <div style="margin-top: 252px">
       <swiper
         class="swiper-box pointer"
-        style="width: 1688px; height: 320px"
+        style="width: 1688px; height: 363px"
         :modules="modules"
         :space-between="50"
         :slidesPerView="5"
@@ -26,7 +30,7 @@
         <swiper-slide v-for="item in navList" @click="nextPage(item)">
           <div class="slide-box">
             <div class="text-center">
-              <div v-if="item.icon">
+              <!-- <div v-if="item.icon">
                 <img class="tab-item" :src="staticUrl + item.icon" alt="" />
               </div>
               <div v-else>
@@ -35,8 +39,8 @@
                   src="../assets/img/icon_基本信息.png"
                   alt=""
                 />
-              </div>
-              <p class="font28 fff">{{ item.name }}</p>
+              </div> -->
+              <div class="font28 fff files-name">{{ item.name }}</div>
             </div>
           </div>
         </swiper-slide>
@@ -47,10 +51,17 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, getCurrentInstance } from "vue"
+import {
+  defineComponent,
+  onMounted,
+  ref,
+  getCurrentInstance,
+  reactive,
+} from "vue"
 import { useRouter, useRoute } from "vue-router"
 import { ElMessage } from "element-plus"
 import Header from "../components/header.vue"
+import Bannar from "../components/bannar.vue"
 import {
   Navigation,
   Pagination,
@@ -71,6 +82,7 @@ import path from "path"
 export default defineComponent({
   components: {
     Header,
+    Bannar,
     Swiper,
     SwiperSlide,
   },
@@ -83,6 +95,7 @@ export default defineComponent({
 
     const tokenStr = ref()
     const navList = ref()
+    const bannerShow = ref(false)
     const autoplayOptions = {
       // delay: 2000,
       // disableOnInteraction: false,
@@ -90,9 +103,40 @@ export default defineComponent({
       // pauseOnMouseEnter: true,
       // reverseDirection: true,
     }
+    const state = reactive({
+      time: 10, // 60s倒计时
+      // timer: 0,
+    })
+    // 定时器对象
+    let timer: NodeJS.Timer | null = null
     const onSwiper = (swiper: any) => {}
     const onSlideChange = () => {
       // console.log('slide change');
+    }
+    const creenSaver = () => {
+      state.time = 0
+    }
+    // 设置定时器，展示屏保
+    // 设置计时器方法
+    const setTimer = () => {
+      console.log("调用了定时器")
+      // clearTimeout(timer)
+      timer = null
+      timer = setTimeout(() => {
+        if (state.time < 10) {
+          state.time++
+          console.log(state.time)
+          setTimer()
+        } else {
+          bannerShow.value = true
+          state.time = 0
+        }
+      }, 1000)
+    }
+    const hideBanner = () => {
+      bannerShow.value = false
+      state.time = 0
+      setTimer()
     }
     const nextPage = (info: any) => {
       console.log(info.name)
@@ -103,6 +147,7 @@ export default defineComponent({
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
       // return
       if (info.type == 0 && info.children.length != 0) {
+        console.log("下级文件===1===", info)
         router.push({
           path: "/representative",
           query: {
@@ -148,16 +193,28 @@ export default defineComponent({
           },
         })
       } else if (info.type == 8 && info.children.length != 0) {
+        console.log("下级文件===8===", info)
+
         const storage = require("electron-localstorage")
+        const ipcRenderer = require("electron").ipcRenderer
         // 加载地图网页
         let zipPath = info.children[0].url
         let path = storage.getItem("filePath")
         var admZip = require("adm-zip-iconv")
-        console.log(path + "\\" + zipPath)
+        let pathNameArr = zipPath.split(".")
+        let pathName = pathNameArr[0]
+
         var zip = new admZip(path + "\\" + zipPath, "GBK")
         // 解压文件
-        zip.extractAllTo(path)
-        let pageUrl = path + "\\index.html"
+        // zip.extractAllTo(path)
+        // 创建属于这个压缩包的文件夹
+        storage.setItem("zipFiles", pathName)
+        ipcRenderer.send("create-zipFile", "getVersion")
+
+        // 解压文件
+        zip.extractAllTo(path + "\\" + pathName, true)
+        let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+        // let pageUrl = path + "\\index.html"
         router.push({
           path: "/infomation",
           query: {
@@ -224,6 +281,7 @@ export default defineComponent({
 
     onMounted(() => {
       // window.location.reload()
+      setTimer()
       const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
@@ -248,15 +306,19 @@ export default defineComponent({
       tokenStr,
       staticUrl,
       imgUrl,
-
       navList,
       // backgroudImg,
       autoplayOptions,
+      state,
+      timer,
+      bannerShow, //控制屏保显示
       onSwiper,
       onSlideChange,
       nextPage,
       wsFun,
       update,
+      creenSaver, //屏保
+      hideBanner,
       modules: [
         Navigation,
         Pagination,
@@ -272,7 +334,7 @@ export default defineComponent({
 <style scoped>
 @import "../assets/glob.css";
 .background-page {
-  /* background: url(../assets/img/home-bgi.jpeg); */
+  background: url(../assets/img/home-bgi.png);
   background-size: 100% 100%;
   width: 100%;
   height: 100%;
@@ -283,10 +345,21 @@ export default defineComponent({
   height: 650px; */
 }
 .slide-box {
-  /* padding-top: 40px; */
   width: 329px;
-  height: 306px;
-  background: url(../assets/img/active-bg.png) center center no-repeat;
+  /* height: 306px; */
+  text-align: center;
+
+  /* background: url(../assets/img/active-bg.png) center center no-repeat; */
+}
+.files-name {
+  margin: 0 auto;
+  /* margin-left: 32px; */
+  width: 106px;
+  height: 363px;
+  text-align: center;
+  writing-mode: vertical-lr;
+  padding-left: 62px;
+  background: url(../assets/img/图标.png) center center no-repeat;
 }
 .icon-box {
   width: 108px;

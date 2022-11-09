@@ -65,10 +65,14 @@ export default defineComponent({
             localStorage.setItem("location", res.data.locationName)
             localStorage.setItem("token", res.data.token)
             storage.setItem("filesName", res.data.location)
-
+            // 设置本地资源的根目录
+            localStorage.setItem("imgSrc", "D:\\" + res.data.location + "\\")
+            storage.setItem("filePath", "D:\\" + res.data.location)
             let version = 0
             ipcRenderer.send("get-version", "getVersion")
             ipcRenderer.on("read-version", (_event, data) => {
+              console.log("获取版本的结果===", data)
+
               version = JSON.parse(data).version
               console.log("下载的进度是===", version)
               var ws = new WebSocket(
@@ -77,11 +81,45 @@ export default defineComponent({
                   "&Authorization=" +
                   res.data.token
               )
+              // 心跳检测
+              var heartCheck = {
+                timeout: 55000, // 9分钟发一次心跳，比server端设置的连接时间稍微小一点，在接近断开的情况下以通信的方式去重置连接时间。
+                serverTimeoutObj: 0,
+                reset: function () {
+                  // clearTimeout(this.timeoutObj)
+                  clearTimeout(this.serverTimeoutObj)
+                  return this
+                },
+                start: function () {
+                  var self = this
+                  heartCheck.serverTimeoutObj = window.setInterval(() => {
+                    if (ws.readyState == 1) {
+                      console.log("连接状态，发送消息保持连接")
+                      ws.send("ping")
+                      heartCheck.reset().start() // 如果获取到消息，说明连接是正常的，重置心跳检测
+                    } else {
+                      console.log("断开状态，尝试重连")
+                      ws.onopen = function () {
+                        // 重置心跳检测
+                        heartCheck.reset().start()
+                      }
+                    }
+                  }, this.timeout)
+                },
+              }
               ws.onerror = function () {}
-              ws.onopen = function () {}
+              ws.onopen = function () {
+                // 重置心跳检测
+                heartCheck.reset().start()
+              }
               ws.onmessage = function (e) {
                 let files = JSON.parse(e.data)
+                // 需要判断fileList是否有内容
+
+                // if(files.fileList){
                 let fileList = JSON.stringify(files.fileList)
+                // }
+
                 let navList = JSON.stringify(files.nodeList)
                 console.log(files)
                 homeBgi = files.homeBackgroundImage
@@ -89,7 +127,8 @@ export default defineComponent({
                   "bgi",
                   JSON.stringify(files.homeBackgroundImage)
                 )
-                if (files.fileList.length != 0) {
+
+                if (files.fileList && files.fileList.length != 0) {
                   // 监听主进程过来的消息
                   ipcRenderer.on("has-render-data", (_event, ...args) => {
                     // console.log("接收主进程过来的消息===", ...args)
@@ -124,6 +163,8 @@ export default defineComponent({
                 //   "bgi",
                 //   JSON.stringify(files.homeBackgroundImage)
                 // )
+                // 重置心跳检测
+                heartCheck.reset().start()
               }
             })
             loading.value = false
@@ -134,7 +175,8 @@ export default defineComponent({
               },
             })
           } else {
-            ElMessage.error("登录失败，请检查网络设置")
+            ElMessage.error(res.message)
+            loading.value = false
           }
         })
       }

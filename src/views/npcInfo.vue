@@ -63,7 +63,7 @@
       id="mainIframe"
       ref="iframeRef"
       name="iframeRef"
-      src="D:/npc-page/index.html"
+      :src="'D:/npc-page/index.html?time=' + new Date().getTime()"
       scrolling="auto"
       frameborder="0"
       style="width: 80%; height: 600px"
@@ -95,7 +95,11 @@
         >
           <div class="result-item flex-c">
             <div class="npc-img flex-r">
-              <img class="npc-photo" :src="item.npcMember.avatar" alt="" />
+              <img
+                class="npc-photo"
+                :src="staticUrl + item.npcMember.avatar"
+                alt=""
+              />
               <div class="flex-c m-l-16 text-left">
                 <p class="font38">{{ item.npcMember.name }}</p>
                 <p class="font20 m-t-20 three-line-text npc-des-box">
@@ -144,13 +148,14 @@ export default defineComponent({
     const imgUrl = ref()
     const currentPage = ref()
     const activeName = ref("1")
+    const npsData = ref()
     // const activeName = ref(1)
     const dataInfo = ref()
     const rotateNpc = ref()
     const activeClass = ref()
-    const handleClick = (tab: TabsPaneContext, event: Event) => {
-      console.log(activeName.value)
-    }
+    let iframeRef = ref<any>(null) // 和iframe标签的ref绑定
+    let iframeWindow: any = null //iframe的window对象
+
     const onSwiper = (swiper: any) => {}
     const onSlideChange = () => {}
     const toDetail = (info: any) => {
@@ -191,10 +196,23 @@ export default defineComponent({
       }
       return result
     }
+    const handleClick = (tab: TabsPaneContext, event: Event) => {
+      console.log(activeName.value)
+      if (activeName.value == "2") {
+        console.log("默认列表")
+        // console.log(iframeRef)
+        // console.log("===", iframeRef.value)
+
+        // iframeWindow = iframeRef.value.contentWindow
+        // setTimeout(() => {
+        //   iframeWindow.postMessage(npsData.value, "*")
+        // }, 1000)
+      }
+    }
 
     onMounted(() => {
-      let npsData = localStorage.getItem("npcinfo") as string
-      dataInfo.value = JSON.parse(npsData)
+      npsData.value = localStorage.getItem("npcinfo") as string
+      dataInfo.value = JSON.parse(npsData.value)
       const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
       let url = path + "\\"
@@ -203,9 +221,16 @@ export default defineComponent({
       let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
       rotateNpc.value = handleArr(dataInfo.value, 8)
-      console.log("处理后的人员数组===", rotateNpc.value)
-      console.log(rotateNpc.value.length)
-
+      // 代表信息和代表图片的地址头
+      let npcObj = {
+        imgSrc: staticUrl.value,
+        data: npsData.value,
+      }
+      // 向iframe嵌套的页面传值
+      iframeWindow = iframeRef.value.contentWindow
+      setTimeout(() => {
+        iframeWindow.postMessage(npcObj, "*")
+      }, 1000)
       // 接收iframe传递过来的uid
       window.addEventListener("message", (e) => {
         for (let i = 0; i < dataInfo.value.length; i++) {
@@ -224,6 +249,9 @@ export default defineComponent({
       dataInfo,
       rotateNpc,
       activeClass,
+      iframeRef,
+      iframeWindow,
+      npsData,
       handleClick,
       onSwiper,
       onSlideChange,

@@ -11,12 +11,12 @@
           >
             <div class="book-img">
               <p class="file-name font24 tab-red">
-                {{ item.name.slice(0, item.name.length - 4) }}
+                {{ item.name }}
               </p>
             </div>
-            <span class="title-color m-t-16 text-width two-line-text">{{
+            <!-- <span class="title-color m-t-16 text-width two-line-text">{{
               item.name
-            }}</span>
+            }}</span> -->
           </div>
         </div>
       </div>
@@ -50,12 +50,12 @@
           >
             <div class="book-img">
               <p class="file-name font24 tab-red">
-                {{ item.name.slice(0, item.name.length - 4) }}
+                {{ item.name }}
               </p>
             </div>
-            <span class="title-color m-t-16 text-width two-line-text">{{
+            <!-- <span class="title-color m-t-16 text-width two-line-text">{{
               item.name
-            }}</span>
+            }}</span> -->
           </div>
         </swiper-slide>
       </swiper>

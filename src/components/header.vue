@@ -73,14 +73,43 @@ export default defineComponent({
     const weekday = ref() // 时分秒
     const update = () => {
       window.location.reload()
+      // var ws = new WebSocket(
+      //   "wss://www.khdpro1.top/api/manager/display/websocket"
+      // )
     }
     const goOut = () => {
       // 退出清空token，回到登录页面
       var ws = new WebSocket(
         "wss://www.khdpro1.top/api/manager/display/websocket"
       )
+      var heartCheck = {
+        timeout: 55000, // 9分钟发一次心跳，比server端设置的连接时间稍微小一点，在接近断开的情况下以通信的方式去重置连接时间。
+        serverTimeoutObj: 0,
+        reset: function () {
+          // clearTimeout(this.timeoutObj)
+          clearTimeout(this.serverTimeoutObj)
+          return this
+        },
+        start: function () {
+          var self = this
+          heartCheck.serverTimeoutObj = window.setInterval(() => {
+            if (ws.readyState == 1) {
+              console.log("连接状态，发送消息保持连接")
+              ws.send("ping")
+              heartCheck.reset().start() // 如果获取到消息，说明连接是正常的，重置心跳检测
+            } else {
+              console.log("断开状态，尝试重连")
+              ws.onopen = function () {
+                // 重置心跳检测
+                heartCheck.reset().start()
+              }
+            }
+          }, this.timeout)
+        },
+      }
       ws.onclose = function () {
         localStorage.setItem("token", "")
+        heartCheck.reset()
       }
       localStorage.setItem("token", "")
       localStorage.setItem("location", "")
