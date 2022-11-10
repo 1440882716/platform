@@ -139,15 +139,15 @@ export default defineComponent({
       setTimer()
     }
     const nextPage = (info: any) => {
-      console.log(info.name)
+      // console.log(info.name)
 
       let navArr = []
       navArr.push(info.name)
-      console.log(navArr)
+      // console.log(navArr)
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
       // return
       if (info.type == 0 && info.children.length != 0) {
-        console.log("下级文件===1===", info)
+        // console.log("下级文件===1===", info)
         router.push({
           path: "/representative",
           query: {
@@ -193,7 +193,7 @@ export default defineComponent({
           },
         })
       } else if (info.type == 8 && info.children.length != 0) {
-        console.log("下级文件===8===", info)
+        // console.log("下级文件===8===", info)
 
         const storage = require("electron-localstorage")
         const ipcRenderer = require("electron").ipcRenderer

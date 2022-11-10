@@ -87,20 +87,6 @@ async function createWindow() {
       (event: any, item: any, webContents: any) => {
         let url = savePath + `\\${item.getFilename()}`
         item.setSavePath(url)
-        // 
-        // item.on('updated', (event: any, state: any) => {
-        //   if (state === 'interrupted') {
-        //     // 下载已经中断，可以恢复
-        //     // console.log('1=================interrupted')
-        //     // item.resume()
-        //   } else if (state === 'progressing') {
-        //     if (item.isPaused()) {
-        //       console.log('Download is paused')
-        //     }else {
-        //       console.log(`Received bytes: ${item.getReceivedBytes()}`)
-        //     }
-        //   }
-        // })
         item.once("done", (event: any, state: any) => {
           if (state === "completed") {
             //  将下载进度写入本地文件
@@ -130,26 +116,9 @@ async function createWindow() {
   // 主进程监听渲染进程的消息
   // 保存目录
   ipcMain.on("save-data", (event, arg) => {
-    // const navContent = arg
-    // const file = './src/renderer/data.json';
-    // fs.access(file, fs.constants.W_OK, (err) => {
-    //     if(err){
-    //     event.sender.send('has-render-data', {
-    //       "status" : 0 ,
-    //       "msg"    : "该文件不可写"
-    //       });
-    //   }else{
-    //     event.sender.send('has-render-data', {
-    //       "status" : 0 ,
-    //       "msg"    : "该文件可写"
-    //       });
-    //   }
-    //   });
-    // console.log("content===",arg);
     const storage = require("electron-localstorage")
     var newFiles = storage.getItem("filesName")
     var navName = "D:\\" + newFiles + "NavData.json"
-
     fs.writeFile(navName, arg, (err) => {
       if (err) {
         console.log("navName=======", err)
@@ -220,59 +189,7 @@ async function createWindow() {
         })
       }
     })
-
-    // // 接受渲染进程的数据并存导本地
-    // fs.writeFile(path.join("./src/renderer/files.json"),arg, "utf8",(err)=>{
-    //   if(err){
-    //     //  event.sender.send('main-process-message', "下载文件写入失败"+err);
-    //   }else {
-    //     // event.sender.send('main-process-message', "下载文件写入成功");
-    //     const storage = require('electron-localstorage');
-    //     // 读本地文件目录并且下载
-    //     fs.readFile(path.join("./src/renderer/files.json"), "utf8",(error,data)=>{
-    //       if(error){
-    //         // 文件读取失败;
-    //       }else {
-    //         let fileList = JSON.parse(data)
-    //         let baseurl = "http://106.13.196.72:9000"
-    //         // 获取文件的安装地址
-    //         let homeDir =  path.dirname(app.getPath('exe'))
-    //         // let homeDir = "D:\\"
-    //         // console.log("set-------",homeDir);
-    //         let newFiles = storage.getItem("filesName")
-    //         // 创建对应地区的文件夹
-    //         let filesPath="";
-    //         fs.mkdir(path.join(homeDir, newFiles), (err) => {
-    //           if (err) {
-    //           // 该文件夹已经存在
-    //             if(err.code == "EEXIST"){
-    //               filesPath = err.path as string
-    //             }
-    //             console.log("creating is error ====",err);
-    //             // console.log("save path is =====",filesPath);
-    //             for(let i=0;i<fileList.length;i++){
-    //               filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
-    //             }
-    //           }else{
-    //             // 文件夹创建成功,讲下载的文件放入这个文件夹
-    //             console.log('Directory created successfully!');
-    //             // let homePath = homeDir.replace(/\\/g, "\\\\")
-    //             filesPath = homeDir+"\\"+newFiles
-    //             console.log("files down path is =====",filesPath);
-    //             for(let i=0;i<fileList.length;i++){
-    //               filesDown(win,baseurl+fileList[i].url,filesPath,fileList[i].version)
-    //             }
-    //           }
-    //           // 将文件下载的目录缓存
-    //           storage.setItem('filePath',filesPath)
-
-    //            // 遍历文件下载
-
-    //         });
-    //       }
-    //     })
-    //   }
-    // })
+   
   })
   // 登录页获取下载进度
   ipcMain.on("get-version", (event, arg) => {
@@ -281,7 +198,7 @@ async function createWindow() {
     var versionName = "D:\\" + newFiles + "Version.json"
 
     if (arg == "getVersion") {
-      console.log("999=======",versionName);
+      // console.log("999=======",versionName);
       
       fs.readFile(path.join(versionName), "utf8", (error, data) => {
         if (error) {
@@ -317,7 +234,6 @@ async function createWindow() {
     var navName = "D:\\" + newFiles + "NavData.json"
     fs.readFile(path.join(navName), "utf8", (error, data) => {
       if (error) {
-        //  event.sender.send('read-renda', "读取失败");
         event.sender.send("read-renda", {
           status: 0,
           msg: "目录数据存储失败",
@@ -331,12 +247,6 @@ async function createWindow() {
             event.sender.send("read-renda", dataList)
           }
         }
-        // for(let i=0;i<dataArr.length;i++){
-        //   if(dataArr[i].name==arg){
-        //     let dataList = JSON.stringify(dataArr[i].children)
-        //     event.sender.send('read-renda', dataList);
-        //   }
-        // }
       }
     })
   })
@@ -349,11 +259,16 @@ async function createWindow() {
     // console.log("zip=="+zipName);
     // 判断是否有这个解压的文件夹，如果没有就创建对应的文件夹 有就直接打开
     fs.exists( zipName,(exists)=>{
+      let msgObj = {status:0} 
       if(exists){
-          // console.log("exists");
+          msgObj.status = 1
+          let data = JSON.stringify(msgObj)
+          event.sender.send("has-file", data) 
       }
       else{
-          // console.log("not");
+          msgObj.status = 0
+          let data = JSON.stringify(msgObj)
+          event.sender.send("has-file", data) 
           fs.mkdirSync(zipName)
       }
   });

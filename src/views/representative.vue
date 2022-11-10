@@ -100,8 +100,10 @@ export default defineComponent({
       // type==7 文档文件夹
       // type==8 网页文件夹
       // type==9 视频文件夹
+      // console.log("文件类型===", info.type, info.name)
+
       let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
-      console.log(navArr)
+      // console.log(navArr)
       navArr.push(info.name)
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
 
@@ -111,7 +113,7 @@ export default defineComponent({
       } else if (info.type == 1 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
-        console.log(info.children)
+        // console.log(info.children)
         localStorage.setItem("npcinfo", JSON.stringify(info.children))
         router.push({
           path: "/npcInfo",
@@ -119,7 +121,19 @@ export default defineComponent({
             bgi: info.backgroundImage,
           },
         })
-      } else if (info.type == 7 && info.children.length != 0) {
+      } else if (info.type == 5) {
+        console.log(info)
+        router.push({
+          path: "/files",
+          query: {
+            pdfUrl: info.url,
+          },
+        })
+      } else if (
+        info.type == 7 &&
+        info.children.length != 0 &&
+        info.name != "代表履职风采"
+      ) {
         parentData.value = showData.value
         showData.value = info.children
         localStorage.setItem("fileData", JSON.stringify(info.children))
@@ -129,8 +143,15 @@ export default defineComponent({
             bgi: info.backgroundImage,
           },
         })
+      } else if (
+        info.type == 7 &&
+        info.children.length != 0 &&
+        info.name == "代表履职风采"
+      ) {
+        parentData.value = showData.value
+        showData.value = info.children
       } else if (info.type == 8 && info.children.length != 0) {
-        console.log("下级文件===8===", info)
+        // console.log("下级文件===8===", info)
         const storage = require("electron-localstorage")
         const ipcRenderer = require("electron").ipcRenderer
         // 加载地图网页
@@ -143,16 +164,35 @@ export default defineComponent({
         // 创建属于这个压缩包的文件夹
         storage.setItem("zipFiles", pathName)
         ipcRenderer.send("create-zipFile", "getVersion")
-
-        // 解压文件
-        zip.extractAllTo(path + "\\" + pathName, true)
-        let pageUrl = path + "\\" + pathName + "\\" + "index.html"
-        router.push({
-          path: "/infomation",
-          query: {
-            url: pageUrl,
-            bgi: info.backgroundImage,
-          },
+        ipcRenderer.on("has-file", (_event, data) => {
+          let hasFiles = JSON.parse(data)
+          if (hasFiles.status) {
+            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            // console.log(
+            //   "直接打开的地址===",
+            //   path + "\\" + pathName + "\\" + "index.html"
+            // )
+            router.push({
+              path: "/infomation",
+              query: {
+                url: pageUrl,
+                bgi: info.backgroundImage,
+              },
+            })
+          } else {
+            // console.log("没有这个文件夹")
+            // 解压文件
+            zip.extractAllTo(path + "\\" + pathName, true)
+            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            // 打开地图页面的iframe
+            router.push({
+              path: "/infomation",
+              query: {
+                url: pageUrl,
+                bgi: info.backgroundImage,
+              },
+            })
+          }
         })
 
         // parentData.value = showData.value
@@ -204,9 +244,7 @@ export default defineComponent({
           filesNum.value = 5
         }
 
-        // showObj.value.showData = JSON.parse(data)
-        // console.log("获取该页面的数据===", showData.value)
-        console.log("文件夹个数===", showData.value.length)
+        // console.log("文件夹个数===", showData.value.length)
       })
     })
     const toHome = () => {
@@ -215,8 +253,8 @@ export default defineComponent({
       })
     }
     const backPage = () => {
-      console.log(allData.value)
-      console.log(parentData)
+      // console.log(allData.value)
+      // console.log(parentData)
       // showData.value = allData.value
       router.back()
     }

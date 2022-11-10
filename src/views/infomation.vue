@@ -58,7 +58,7 @@ export default defineComponent({
 <style scoped>
 @import "../assets/glob.css";
 .iframe-box {
-  min-height: 900px;
+  min-height: 1100px;
 }
 .info-box {
   width: 1138px;

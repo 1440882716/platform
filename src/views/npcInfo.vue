@@ -149,7 +149,6 @@ export default defineComponent({
     const currentPage = ref()
     const activeName = ref("1")
     const npsData = ref()
-    // const activeName = ref(1)
     const dataInfo = ref()
     const rotateNpc = ref()
     const activeClass = ref()
@@ -174,12 +173,7 @@ export default defineComponent({
         })
       }
     }
-    const changePage = (val: any) => {
-      // console.log("当前页码===", val)
-      // console.log(rotateNpc.value[val - 1])
-      // localStorage.setItem("npcinfo", rotateNpc.value[val - 1])
-      // rotateNpc.value
-    }
+    const changePage = (val: any) => {}
 
     // 处理人员数组==>二维数组
     const handleArr = (array: any, size: number) => {
@@ -199,18 +193,14 @@ export default defineComponent({
     const handleClick = (tab: TabsPaneContext, event: Event) => {
       console.log(activeName.value)
       if (activeName.value == "2") {
-        console.log("默认列表")
-        // console.log(iframeRef)
-        // console.log("===", iframeRef.value)
-
-        // iframeWindow = iframeRef.value.contentWindow
-        // setTimeout(() => {
-        //   iframeWindow.postMessage(npsData.value, "*")
-        // }, 1000)
+        // 刷新是为了加载npc-page页面
+        window.location.reload()
+      } else {
       }
     }
 
     onMounted(() => {
+      // console.log("初始值==", activeName.value)
       npsData.value = localStorage.getItem("npcinfo") as string
       dataInfo.value = JSON.parse(npsData.value)
       const storage = require("electron-localstorage")

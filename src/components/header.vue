@@ -72,10 +72,115 @@ export default defineComponent({
     const time = ref() // 时分秒
     const weekday = ref() // 时分秒
     const update = () => {
-      window.location.reload()
-      // var ws = new WebSocket(
-      //   "wss://www.khdpro1.top/api/manager/display/websocket"
-      // )
+      let token = localStorage.getItem("token")
+      console.log("是否有token==", token)
+
+      if (token) {
+        const ipcRenderer = require("electron").ipcRenderer
+        let version = 0
+        ipcRenderer.send("get-version", "getVersion")
+        ipcRenderer.on("read-version", (_event, data) => {
+          version = JSON.parse(data).version
+          console.log("下载的进度是===", version)
+          var ws = new WebSocket(
+            "wss://www.khdpro1.top/api/manager/display/websocket?version=" +
+              version +
+              "&Authorization=" +
+              token
+          )
+          // 心跳检测
+          var heartCheck = {
+            timeout: 55000, // 9分钟发一次心跳，比server端设置的连接时间稍微小一点，在接近断开的情况下以通信的方式去重置连接时间。
+            serverTimeoutObj: 0,
+            reset: function () {
+              // clearTimeout(this.timeoutObj)
+              clearTimeout(this.serverTimeoutObj)
+              return this
+            },
+            start: function () {
+              var self = this
+              heartCheck.serverTimeoutObj = window.setInterval(() => {
+                if (ws.readyState == 1) {
+                  console.log("连接状态，发送消息保持连接")
+                  ws.send("ping")
+                  heartCheck.reset().start() // 如果获取到消息，说明连接是正常的，重置心跳检测
+                } else {
+                  console.log("断开状态，尝试重连")
+                  ws.onopen = function () {
+                    // 重置心跳检测
+                    heartCheck.reset().start()
+                  }
+                }
+              }, this.timeout)
+            },
+          }
+          ws.onerror = function () {}
+          ws.onopen = function () {
+            // 重置心跳检测
+            heartCheck.reset().start()
+          }
+          ws.onmessage = function (e) {
+            let files = JSON.parse(e.data)
+            // 需要判断fileList是否有内容
+
+            // if(files.fileList){
+            let fileList = JSON.stringify(files.fileList)
+            // }
+
+            let navList = JSON.stringify(files.nodeList)
+            // 设置背景图
+            // homeBgi = files.homeBackgroundImage
+            // localStorage.setItem(
+            //   "bgi",
+            //   JSON.stringify(files.homeBackgroundImage)
+            // )
+
+            if (files.fileList && files.fileList.length != 0) {
+              // 监听主进程过来的消息
+              ipcRenderer.on("has-render-data", (_event, ...args) => {
+                // console.log("接收主进程过来的消息===", ...args)
+              })
+              ipcRenderer.on("main-process-message", (_event, ...args) => {
+                // console.log("接收主进程过来的消息===", ...args)
+              })
+              // 向主进程发送消息，保存应用的目录
+              ipcRenderer.send("save-data", navList)
+              ipcRenderer.send("down-file-list", fileList)
+              ipcRenderer.on("down-over", (_event, data) => {
+                console.log("主进程的下载进度===", JSON.parse(data))
+                let downover = JSON.parse(data)
+                if (downover.state == "ok") {
+                  // loading.value = false
+                  router.push({
+                    path: "/",
+                  })
+                }
+              })
+            } else {
+              const ipcRenderer = require("electron").ipcRenderer
+              // 监听主进程过来的消息
+              // 向主进程发送消息，保存应用的目录
+              ipcRenderer.send("save-data", navList)
+              // loading.value = false
+              // router.push({
+              //   path: "/home",
+              // })
+            }
+            // localStorage.setItem(
+            //   "bgi",
+            //   JSON.stringify(files.homeBackgroundImage)
+            // )
+            // 重置心跳检测
+            heartCheck.reset().start()
+          }
+        })
+
+        // window.location.reload()
+      } else {
+        router.push({
+          path: "/login",
+        })
+      }
     }
     const goOut = () => {
       // 退出清空token，回到登录页面
@@ -94,11 +199,11 @@ export default defineComponent({
           var self = this
           heartCheck.serverTimeoutObj = window.setInterval(() => {
             if (ws.readyState == 1) {
-              console.log("连接状态，发送消息保持连接")
+              // console.log("连接状态，发送消息保持连接")
               ws.send("ping")
               heartCheck.reset().start() // 如果获取到消息，说明连接是正常的，重置心跳检测
             } else {
-              console.log("断开状态，尝试重连")
+              // console.log("断开状态，尝试重连")
               ws.onopen = function () {
                 // 重置心跳检测
                 heartCheck.reset().start()
@@ -114,7 +219,7 @@ export default defineComponent({
       localStorage.setItem("token", "")
       localStorage.setItem("location", "")
       router.push({
-        path: "/",
+        path: "/login",
       })
     }
     onMounted(() => {

@@ -16,7 +16,7 @@ export default defineComponent({
     const allData = ref()
     const toHome = () => {
       router.push({
-        path: "/home",
+        path: "/",
       })
     }
     const backPage = () => {

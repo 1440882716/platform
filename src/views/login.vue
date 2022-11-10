@@ -169,7 +169,7 @@ export default defineComponent({
             })
             loading.value = false
             router.push({
-              path: "/home",
+              path: "/",
               query: {
                 bgi: homeBgi,
               },
