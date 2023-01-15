@@ -36,7 +36,7 @@
             <img
               class="duty-img"
               v-for="item in dutyData.images"
-              :src="staticUrl + item"
+              :src="'https://www.yarenda.cn'+ item"
               alt=""
             />
           </div>

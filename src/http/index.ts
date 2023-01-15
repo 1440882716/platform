@@ -11,7 +11,8 @@ export  const request =(options:any)=> {
       // baseURL: process.env.BASE_API, // api 的 base_url
     //   baseURL: '/api',
       // baseURL:'http://192.168.1.116:9527/api/manager',
-      baseURL:"https://www.khdpro1.top/api/manager",
+      baseURL:"https://www.yarenda.cn/api/manager",
+      
       timeout: 6000, // request timeout
     })
  

@@ -59,6 +59,7 @@ export default defineComponent({
 @import "../assets/glob.css";
 .iframe-box {
   min-height: 1100px;
+  /* height: auto; */
 }
 .info-box {
   width: 1138px;

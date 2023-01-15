@@ -83,7 +83,7 @@ export default defineComponent({
           version = JSON.parse(data).version
           console.log("下载的进度是===", version)
           var ws = new WebSocket(
-            "wss://www.khdpro1.top/api/manager/display/websocket?version=" +
+            "wss://www.yarenda.cn/api/manager/display/websocket?version=" +
               version +
               "&Authorization=" +
               token
@@ -183,9 +183,13 @@ export default defineComponent({
       }
     }
     const goOut = () => {
+      // router.push({
+      //   path: "/login",
+      // })
+      // return
       // 退出清空token，回到登录页面
       var ws = new WebSocket(
-        "wss://www.khdpro1.top/api/manager/display/websocket"
+        "wss://www.yarenda.cn/api/manager/display/websocket"
       )
       var heartCheck = {
         timeout: 55000, // 9分钟发一次心跳，比server端设置的连接时间稍微小一点，在接近断开的情况下以通信的方式去重置连接时间。

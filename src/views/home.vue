@@ -119,7 +119,6 @@ export default defineComponent({
     // 设置定时器，展示屏保
     // 设置计时器方法
     const setTimer = () => {
-      console.log("调用了定时器")
       // clearTimeout(timer)
       timer = null
       timer = setTimeout(() => {
@@ -139,7 +138,7 @@ export default defineComponent({
       setTimer()
     }
     const nextPage = (info: any) => {
-      // console.log(info.name)
+      console.log(info)
 
       let navArr = []
       navArr.push(info.name)
@@ -199,28 +198,55 @@ export default defineComponent({
         const ipcRenderer = require("electron").ipcRenderer
         // 加载地图网页
         let zipPath = info.children[0].url
+        console.log(zipPath);
+        
         let path = storage.getItem("filePath")
         var admZip = require("adm-zip-iconv")
         let pathNameArr = zipPath.split(".")
         let pathName = pathNameArr[0]
-
+        console.log("解压文件的路径===",path + "\\" + zipPath);
+        
         var zip = new admZip(path + "\\" + zipPath, "GBK")
         // 解压文件
         // zip.extractAllTo(path)
         // 创建属于这个压缩包的文件夹
         storage.setItem("zipFiles", pathName)
         ipcRenderer.send("create-zipFile", "getVersion")
+        ipcRenderer.on("has-file", (_event, data) => {
+          let hasFiles = JSON.parse(data)
+          if (hasFiles.status) {
+            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            router.push({
+              path: "/infomation",
+              query: {
+                url: pageUrl,
+                bgi: info.backgroundImage,
+              },
+            })
+          } else {
+            // 解压文件
+            zip.extractAllTo(path + "\\" + pathName, true)
+            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            // 打开地图页面的iframe
+            router.push({
+              path: "/infomation",
+              query: {
+                url: pageUrl,
+                bgi: info.backgroundImage,
+              },
+            })
+          }
+        })
 
         // 解压文件
-        zip.extractAllTo(path + "\\" + pathName, true)
-        let pageUrl = path + "\\" + pathName + "\\" + "index.html"
-        // let pageUrl = path + "\\index.html"
-        router.push({
-          path: "/infomation",
-          query: {
-            url: pageUrl,
-          },
-        })
+        // zip.extractAllTo(path + "\\" + pathName, true)
+        // let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+        // router.push({
+        //   path: "/infomation",
+        //   query: {
+        //     url: pageUrl,
+        //   },
+        // })
       } else if (info.type == 9 && info.children.length != 0) {
         localStorage.setItem("fileData", JSON.stringify(info.children))
         router.push({
@@ -334,7 +360,7 @@ export default defineComponent({
 <style scoped>
 @import "../assets/glob.css";
 .background-page {
-  background: url(../assets/img/home-bgi.png);
+  /* background: url(../assets/img/home-bgi.png); */
   background-size: 100% 100%;
   width: 100%;
   height: 100%;

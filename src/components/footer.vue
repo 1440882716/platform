@@ -51,5 +51,6 @@ export default defineComponent({
   top: -57px;
   left: 50%;
   margin-left: -240px;
+  z-index: 99;
 }
 </style>

@@ -168,10 +168,6 @@ export default defineComponent({
           let hasFiles = JSON.parse(data)
           if (hasFiles.status) {
             let pageUrl = path + "\\" + pathName + "\\" + "index.html"
-            // console.log(
-            //   "直接打开的地址===",
-            //   path + "\\" + pathName + "\\" + "index.html"
-            // )
             router.push({
               path: "/infomation",
               query: {
@@ -180,7 +176,6 @@ export default defineComponent({
               },
             })
           } else {
-            // console.log("没有这个文件夹")
             // 解压文件
             zip.extractAllTo(path + "\\" + pathName, true)
             let pageUrl = path + "\\" + pathName + "\\" + "index.html"
@@ -350,7 +345,9 @@ export default defineComponent({
 }
 .slide-box {
   width: 329px;
+  /* padding-top: 10px; */
   /* height: 306px; */
+  
   text-align: center;
   flex: 1;
   /* background-color: antiquewhite; */
@@ -359,11 +356,16 @@ export default defineComponent({
 
 .files-name {
   margin: 0 auto;
+  padding-top: 40px;
+  /* padding-bottom: 40px; */
   /* margin-left: 32px; */
   width: 106px;
-  height: 363px;
+  height: 340px;
   text-align: center;
   writing-mode: vertical-lr;
+  white-space: nowrap; 
+ overflow: hidden;
+ text-overflow: ellipsis;
   padding-left: 62px;
   background: url(../assets/img/图标.png) center center no-repeat;
 }

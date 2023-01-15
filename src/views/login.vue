@@ -59,12 +59,21 @@ export default defineComponent({
             let homeBgi = ""
             const ipcRenderer = require("electron").ipcRenderer
             const storage = require("electron-localstorage")
-            console.log("地区文件夹名===", res.data.location)
+            console.log("请求到的地区文件夹名===", res.data.location)
 
             // 登录成功
             localStorage.setItem("location", res.data.locationName)
             localStorage.setItem("token", res.data.token)
-            storage.setItem("filesName", res.data.location)
+            storage.removeItem("filesName")
+            // 清除文件版本号的缓存再重新设置缓存
+            let versionName = storage.getItem("filesName")
+            console.log("本地已经存在的版本文件夹名字==", versionName)
+            if (versionName) {
+              storage.removeItem("filesName")
+            } else {
+              storage.setItem("filesName", res.data.location)
+            }
+
             // 设置本地资源的根目录
             localStorage.setItem("imgSrc", "D:\\" + res.data.location + "\\")
             storage.setItem("filePath", "D:\\" + res.data.location)
@@ -76,7 +85,7 @@ export default defineComponent({
               version = JSON.parse(data).version
               console.log("下载的进度是===", version)
               var ws = new WebSocket(
-                "wss://www.khdpro1.top/api/manager/display/websocket?version=" +
+                "wss://www.yarenda.cn/api/manager/display/websocket?version=" +
                   version +
                   "&Authorization=" +
                   res.data.token
@@ -115,7 +124,6 @@ export default defineComponent({
               ws.onmessage = function (e) {
                 let files = JSON.parse(e.data)
                 // 需要判断fileList是否有内容
-
                 // if(files.fileList){
                 let fileList = JSON.stringify(files.fileList)
                 // }
@@ -145,7 +153,7 @@ export default defineComponent({
                     if (downover.state == "ok") {
                       loading.value = false
                       router.push({
-                        path: "/home",
+                        path: "/",
                       })
                     }
                   })

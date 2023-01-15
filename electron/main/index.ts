@@ -41,7 +41,7 @@ const indexHtml = join(ROOT_PATH.dist, "index.html")
 async function createWindow() {
   win = new BrowserWindow({
     title: "Main window",
-    width: 1000,
+    width: 1800,
     height: 800,
     // fullscreen: true,//全屏模式
     // frame: false,//左上角菜单栏
@@ -51,6 +51,7 @@ async function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false,
+      devTools:true
     },
   })
 
@@ -195,10 +196,12 @@ async function createWindow() {
   ipcMain.on("get-version", (event, arg) => {
     const storage = require("electron-localstorage")
     var newFiles = storage.getItem("filesName")
+    console.log("versionFile=======",newFiles);
+    
     var versionName = "D:\\" + newFiles + "Version.json"
 
     if (arg == "getVersion") {
-      // console.log("999=======",versionName);
+      console.log("versionName=======",versionName);
       
       fs.readFile(path.join(versionName), "utf8", (error, data) => {
         if (error) {
@@ -256,8 +259,6 @@ async function createWindow() {
     var newFiles = storage.getItem("filesName")
     var zip_name = storage.getItem("zipFiles")
     let zipName = "D:\\" + newFiles+"\\" + zip_name
-    // console.log("zip=="+zipName);
-    // 判断是否有这个解压的文件夹，如果没有就创建对应的文件夹 有就直接打开
     fs.exists( zipName,(exists)=>{
       let msgObj = {status:0} 
       if(exists){
