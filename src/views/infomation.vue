@@ -35,7 +35,7 @@ export default defineComponent({
 
     onMounted(() => {
       pageUrl.value = route.query.url
-      console.log("网页文件地址===", pageUrl)
+      // console.log("网页文件地址===", pageUrl)
 
       // let pageData = localStorage.getItem("mapData") as string
       // let page = JSON.parse(pageData)

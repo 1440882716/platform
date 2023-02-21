@@ -38,11 +38,13 @@ const preload = join(__dirname, "../preload/index.js")
 const url = `http://${process.env["VITE_DEV_SERVER_HOST"]}:${process.env["VITE_DEV_SERVER_PORT"]}`
 const indexHtml = join(ROOT_PATH.dist, "index.html")
 
+
+
 async function createWindow() {
   win = new BrowserWindow({
     title: "Main window",
     width: 1800,
-    height: 800,
+    height: 1000,
     // fullscreen: true,//全屏模式
     // frame: false,//左上角菜单栏
     icon: join(ROOT_PATH.public, "favicon.ico"),
@@ -54,6 +56,12 @@ async function createWindow() {
       devTools:true
     },
   })
+// 引入electron-store
+const Store = require('electron-store')
+const db = new Store()
+  // 初始化store
+  Store.initRenderer();
+  // db.set("userUid",0)
 
   if (app.isPackaged) {
     win.loadFile(indexHtml)
@@ -83,6 +91,8 @@ async function createWindow() {
     filesCount: number
   ) => {
     win.webContents.downloadURL(downPath)
+    console.log("address=========",downPath);
+    
     win.webContents.session.on(
       "will-download",
       (event: any, item: any, webContents: any) => {
@@ -93,8 +103,9 @@ async function createWindow() {
             //  将下载进度写入本地文件
             let obj = { version: filesNum }
             let dataV = JSON.stringify(obj)
-            const storage = require("electron-localstorage")
-            var newFiles = storage.getItem("filesName")
+            // const storage = require("electron-localstorage")
+            // var newFiles = storage.getItem("filesName")
+            var newFiles = db.get("userUid")
             var versionName = "D:\\" + newFiles + "Version.json"
             // "D:\\version.json"
             fs.writeFile(versionName, dataV, (err) => {
@@ -117,8 +128,9 @@ async function createWindow() {
   // 主进程监听渲染进程的消息
   // 保存目录
   ipcMain.on("save-data", (event, arg) => {
-    const storage = require("electron-localstorage")
-    var newFiles = storage.getItem("filesName")
+    // const storage = require("electron-localstorage")
+    // var newFiles = storage.getItem("filesName")
+    var newFiles = db.get("userUid")
     var navName = "D:\\" + newFiles + "NavData.json"
     fs.writeFile(navName, arg, (err) => {
       if (err) {
@@ -130,24 +142,27 @@ async function createWindow() {
   })
   // 保存下载文件
   ipcMain.on("down-file-list", (event, arg) => {
-    const storage = require("electron-localstorage")
-    var newFiles = storage.getItem("filesName")
+    // const storage = require("electron-localstorage")
+    // var newFiles = storage.getItem("filesName")
+    var newFiles = db.get("userUid")
     var fileName = "D:\\" + newFiles + "FileData.json"
     fs.writeFile(fileName, arg, (err) => {
       if (err) {
         console.log(err)
       } else {
-        const storage = require("electron-localstorage")
+        // const storage = require("electron-localstorage")
         // 读本地文件目录并且下载
         fs.readFile(path.join(fileName), "utf8", (error, data) => {
           if (error) {
             // 文件读取失败;
           } else {
             let fileList = JSON.parse(data)
-            let baseurl = "https://www.khdpro1.top"
+            // let baseurl = "https://www.khdpro1.top"
+            let baseurl = "https://www.yarenda.cn"
             // 获取文件的安装地址
             let homeDir = "D:\\"
-            let newFiles = storage.getItem("filesName")
+            // let newFiles = storage.getItem("filesName")
+            var newFiles = db.get("userUid")
             // 创建对应地区的文件夹
             let filesPath = ""
             fs.mkdir(path.join(homeDir, newFiles), (err) => {
@@ -182,8 +197,8 @@ async function createWindow() {
                 }
               }
               // 将文件下载的目录缓存
-              storage.setItem("filePath", filesPath)
-
+              // storage.setItem("filePath", filesPath)
+              db.set("filePath", "D:\\" + filesPath)
               // 遍历文件下载
             })
           }
@@ -195,13 +210,16 @@ async function createWindow() {
   // 登录页获取下载进度
   ipcMain.on("get-version", (event, arg) => {
     const storage = require("electron-localstorage")
-    var newFiles = storage.getItem("filesName")
+    // var newFiles = storage.getItem("filesName")
+    var newFiles = db.get("userUid")
     console.log("versionFile=======",newFiles);
     
     var versionName = "D:\\" + newFiles + "Version.json"
 
     if (arg == "getVersion") {
       console.log("versionName=======",versionName);
+      console.log("store----versionName=======",db.get("userUid"));
+
       
       fs.readFile(path.join(versionName), "utf8", (error, data) => {
         if (error) {
@@ -216,8 +234,10 @@ async function createWindow() {
   })
   // 首页获取目录信息
   ipcMain.on("get-nav", (event, arg) => {
-    const storage = require("electron-localstorage")
-    var newFiles = storage.getItem("filesName")
+    // const storage = require("electron-localstorage")
+    // var newFiles = storage.getItem("filesName")
+    var newFiles = db.get("userUid")
+    // var zip_name = db.get("zipFiles")
     var navName = "D:\\" + newFiles + "NavData.json"
     if (arg == "getNav") {
       fs.readFile(path.join(navName), "utf8", (error, data) => {
@@ -233,8 +253,10 @@ async function createWindow() {
   ipcMain.on("get-data", (event, arg) => {
     // fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
     const storage = require("electron-localstorage")
-    var newFiles = storage.getItem("filesName")
+    // var newFiles = storage.getItem("filesName")
+    var newFiles = db.get("userUid")
     var navName = "D:\\" + newFiles + "NavData.json"
+    
     fs.readFile(path.join(navName), "utf8", (error, data) => {
       if (error) {
         event.sender.send("read-renda", {
@@ -255,9 +277,12 @@ async function createWindow() {
   })
   // 解压文件时，创建对应的文件夹
   ipcMain.on("create-zipFile", (event, arg) => {
-    const storage = require("electron-localstorage")
-    var newFiles = storage.getItem("filesName")
-    var zip_name = storage.getItem("zipFiles")
+    // const storage = require("electron-localstorage")
+    // var newFiles = storage.getItem("filesName")
+    // var zip_name = storage.getItem("zipFiles")
+    var newFiles = db.get("userUid")
+    var zip_name = db.get("zipFiles")
+    // var newFiles = db.get("userUid")
     let zipName = "D:\\" + newFiles+"\\" + zip_name
     fs.exists( zipName,(exists)=>{
       let msgObj = {status:0} 

@@ -193,29 +193,34 @@ export default defineComponent({
         })
       } else if (info.type == 8 && info.children.length != 0) {
         // console.log("下级文件===8===", info)
-
         const storage = require("electron-localstorage")
+        const Store = require("electron-store")
+        const db = new Store()
         const ipcRenderer = require("electron").ipcRenderer
         // 加载地图网页
         let zipPath = info.children[0].url
-        console.log(zipPath);
-        
-        let path = storage.getItem("filePath")
+        console.log(zipPath)
+        // let path = storage.getItem("filePath")
+        let path = db.get("userUid")
         var admZip = require("adm-zip-iconv")
         let pathNameArr = zipPath.split(".")
         let pathName = pathNameArr[0]
-        console.log("解压文件的路径===",path + "\\" + zipPath);
-        
-        var zip = new admZip(path + "\\" + zipPath, "GBK")
+        // D:\c4b743740d7c11eda5e70242ac130004\1@HTM@东升街道基本情况_1669873636768
+        console.log("解压文件的路径===", "D:\\" + path + "\\" + zipPath)
+        console.log("解压后的文件夹名===", pathName)
+
+        var zip = new admZip("D:\\" + path + "\\" + zipPath, "GBK")
         // 解压文件
         // zip.extractAllTo(path)
         // 创建属于这个压缩包的文件夹
-        storage.setItem("zipFiles", pathName)
+        // storage.setItem("zipFiles", pathName)
+        db.set("zipFiles", pathName)
         ipcRenderer.send("create-zipFile", "getVersion")
         ipcRenderer.on("has-file", (_event, data) => {
           let hasFiles = JSON.parse(data)
           if (hasFiles.status) {
-            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
+            console.log("网页文件地址===", pageUrl)
             router.push({
               path: "/infomation",
               query: {
@@ -226,7 +231,8 @@ export default defineComponent({
           } else {
             // 解压文件
             zip.extractAllTo(path + "\\" + pathName, true)
-            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
+            console.log("网页文件地址===", pageUrl)
             // 打开地图页面的iframe
             router.push({
               path: "/infomation",
@@ -308,8 +314,11 @@ export default defineComponent({
     onMounted(() => {
       // window.location.reload()
       setTimer()
-      const storage = require("electron-localstorage")
-      let path = storage.getItem("filePath")
+      // const storage = require("electron-localstorage")
+      // let path = storage.getItem("filePath")
+      const Store = require("electron-store")
+      const db = new Store()
+      let path = db.get("filePath")
       let url = path + "\\"
       staticUrl.value = url.replace(/\\/g, "/")
 

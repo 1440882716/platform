@@ -33,6 +33,7 @@ import { defineComponent, ref } from "vue"
 import { useRouter } from "vue-router"
 import { login } from "../http/api"
 import { ElMessage } from "element-plus"
+// import Store from "electron-store"
 export default defineComponent({
   setup() {
     const router = useRouter()
@@ -59,29 +60,37 @@ export default defineComponent({
             let homeBgi = ""
             const ipcRenderer = require("electron").ipcRenderer
             const storage = require("electron-localstorage")
+            // const store = new Store()
+            const Store = require("electron-store")
+            const db = new Store()
+            db.set("userUid", res.data.location)
+            console.log("使用store获取到的地区uid:", db.get("userUid"))
+
             console.log("请求到的地区文件夹名===", res.data.location)
 
             // 登录成功
             localStorage.setItem("location", res.data.locationName)
             localStorage.setItem("token", res.data.token)
-            storage.removeItem("filesName")
+            // storage.removeItem("filesName")
             // 清除文件版本号的缓存再重新设置缓存
-            let versionName = storage.getItem("filesName")
-            console.log("本地已经存在的版本文件夹名字==", versionName)
+            // let versionName = storage.getItem("filesName")
+            let versionName = db.get("userUid")
+            // console.log("本地已经存在的版本文件夹名字==", versionName)
             if (versionName) {
               storage.removeItem("filesName")
             } else {
               storage.setItem("filesName", res.data.location)
+              db.set("userUid", res.data.location)
             }
 
             // 设置本地资源的根目录
             localStorage.setItem("imgSrc", "D:\\" + res.data.location + "\\")
-            storage.setItem("filePath", "D:\\" + res.data.location)
+            // storage.setItem("filePath", "D:\\" + res.data.location)
+            db.set("filePath", "D:\\" + res.data.location)
             let version = 0
             ipcRenderer.send("get-version", "getVersion")
             ipcRenderer.on("read-version", (_event, data) => {
               console.log("获取版本的结果===", data)
-
               version = JSON.parse(data).version
               console.log("下载的进度是===", version)
               var ws = new WebSocket(
@@ -135,7 +144,7 @@ export default defineComponent({
                   "bgi",
                   JSON.stringify(files.homeBackgroundImage)
                 )
-
+                // 有更新的内容需要下载
                 if (files.fileList && files.fileList.length != 0) {
                   // 监听主进程过来的消息
                   ipcRenderer.on("has-render-data", (_event, ...args) => {

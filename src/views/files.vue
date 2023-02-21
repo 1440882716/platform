@@ -37,8 +37,11 @@ export default defineComponent({
     let iframeRef = ref<any>(null) // 和iframe标签的ref绑定
     let iframeWindow: any = null //iframe的window对象
     onMounted(() => {
-      const storage = require("electron-localstorage")
-      let path = storage.getItem("filePath")
+      // const storage = require("electron-localstorage")
+      // let path = storage.getItem("filePath")
+      const Store = require("electron-store")
+      const db = new Store()
+      let path = db.get("userUid")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")
       let bgImg = url + route.query.bgi
