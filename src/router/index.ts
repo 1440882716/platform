@@ -41,7 +41,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/representative',
         name: 'Representative',
         component: () => import(/* webpackChunkName: "about" */ '../views/representative.vue'),
-        meta: { title: "代表信息" },
+        meta: { title: "代表信息",keepAlive:true },
       },
       {
         path: '/npcInfo',

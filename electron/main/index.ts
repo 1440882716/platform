@@ -53,7 +53,7 @@ async function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false,
-      devTools:true
+      devTools:true,
     },
   })
 // 引入electron-store
@@ -87,7 +87,7 @@ const db = new Store()
     win: any,
     downPath: string,
     savePath: string,
-    filesNum: number,
+    filesNum: string,
     filesCount: number
   ) => {
     win.webContents.downloadURL(downPath)
@@ -159,13 +159,15 @@ const db = new Store()
             let fileList = JSON.parse(data)
             // let baseurl = "https://www.khdpro1.top"
             let baseurl = "https://www.yarenda.cn"
+            // let baseurl = "http://192.168.1.200:9527"
             // 获取文件的安装地址
             let homeDir = "D:\\"
             // let newFiles = storage.getItem("filesName")
-            var newFiles = db.get("userUid")
+            var newFiles = db.get("filePath")
             // 创建对应地区的文件夹
             let filesPath = ""
-            fs.mkdir(path.join(homeDir, newFiles), (err) => {
+            // fs.mkdir(path.join(homeDir, newFiles), (err) => {
+            fs.mkdir(path.join(newFiles), (err) => {
               if (err) {
                 // 该文件夹已经存在
                 if (err.code == "EEXIST") {
@@ -178,7 +180,7 @@ const db = new Store()
                     win,
                     baseurl + fileList[i].url,
                     filesPath,
-                    fileList[i].version,
+                    fileList[i].version.toString(),
                     filesCount
                   )
                 }
@@ -191,7 +193,7 @@ const db = new Store()
                     win,
                     baseurl + fileList[i].url,
                     filesPath,
-                    fileList[i].version,
+                    fileList[i].version.toString(),
                     filesCount
                   )
                 }
@@ -211,20 +213,22 @@ const db = new Store()
   ipcMain.on("get-version", (event, arg) => {
     const storage = require("electron-localstorage")
     // var newFiles = storage.getItem("filesName")
-    var newFiles = db.get("userUid")
+    var newFiles = db.get("filePath")
     console.log("versionFile=======",newFiles);
     
-    var versionName = "D:\\" + newFiles + "Version.json"
+    var versionName = newFiles + "Version.json"
 
     if (arg == "getVersion") {
       console.log("versionName=======",versionName);
-      console.log("store----versionName=======",db.get("userUid"));
-
-      
-      fs.readFile(path.join(versionName), "utf8", (error, data) => {
+      console.log("store----versionName=======",newFiles);
+      // fs.readFile(path.join(versionName), "utf8", (error, data) => {
+        fs.readFile(versionName, "utf8", (error, data) => {
+        console.log("11111111111111111111===============",data);
         if (error) {
           let obj = { version: 0 }
           let data = JSON.stringify(obj)
+          
+          
           event.sender.send("read-version", data)
         } else {
           event.sender.send("read-version", data)
@@ -236,9 +240,9 @@ const db = new Store()
   ipcMain.on("get-nav", (event, arg) => {
     // const storage = require("electron-localstorage")
     // var newFiles = storage.getItem("filesName")
-    var newFiles = db.get("userUid")
-    // var zip_name = db.get("zipFiles")
-    var navName = "D:\\" + newFiles + "NavData.json"
+    var newFiles = db.get("filePath")
+
+    var navName = newFiles + "NavData.json"
     if (arg == "getNav") {
       fs.readFile(path.join(navName), "utf8", (error, data) => {
         if (error) {
@@ -251,11 +255,9 @@ const db = new Store()
   })
   // 获取对应children里面的内容
   ipcMain.on("get-data", (event, arg) => {
-    // fs.readFile(path.join("./src/renderer/data.json"), "utf8",(error,data)=>{
     const storage = require("electron-localstorage")
-    // var newFiles = storage.getItem("filesName")
-    var newFiles = db.get("userUid")
-    var navName = "D:\\" + newFiles + "NavData.json"
+    var newFiles = db.get("filePath")
+    var navName = newFiles + "NavData.json"
     
     fs.readFile(path.join(navName), "utf8", (error, data) => {
       if (error) {
@@ -280,10 +282,10 @@ const db = new Store()
     // const storage = require("electron-localstorage")
     // var newFiles = storage.getItem("filesName")
     // var zip_name = storage.getItem("zipFiles")
-    var newFiles = db.get("userUid")
+    var newFiles = db.get("filePath")
     var zip_name = db.get("zipFiles")
     // var newFiles = db.get("userUid")
-    let zipName = "D:\\" + newFiles+"\\" + zip_name
+    let zipName = newFiles+"\\" + zip_name
     fs.exists( zipName,(exists)=>{
       let msgObj = {status:0} 
       if(exists){

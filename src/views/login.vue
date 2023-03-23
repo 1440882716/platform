@@ -58,16 +58,15 @@ export default defineComponent({
         login(account.value).then((res: any) => {
           if (res.status == "OK") {
             let homeBgi = ""
+            const filePath = "D:\\" + res.data.location
             const ipcRenderer = require("electron").ipcRenderer
             const storage = require("electron-localstorage")
             // const store = new Store()
             const Store = require("electron-store")
             const db = new Store()
             db.set("userUid", res.data.location)
-            console.log("使用store获取到的地区uid:", db.get("userUid"))
-
+            // console.log("使用store获取到的地区uid:", db.get("userUid"))
             console.log("请求到的地区文件夹名===", res.data.location)
-
             // 登录成功
             localStorage.setItem("location", res.data.locationName)
             localStorage.setItem("token", res.data.token)
@@ -84,17 +83,19 @@ export default defineComponent({
             }
 
             // 设置本地资源的根目录
-            localStorage.setItem("imgSrc", "D:\\" + res.data.location + "\\")
-            // storage.setItem("filePath", "D:\\" + res.data.location)
-            db.set("filePath", "D:\\" + res.data.location)
+            localStorage.setItem("imgSrc", filePath + "\\")
+            db.set("filePath", filePath)
             let version = 0
             ipcRenderer.send("get-version", "getVersion")
             ipcRenderer.on("read-version", (_event, data) => {
               console.log("获取版本的结果===", data)
               version = JSON.parse(data).version
+              version = Number(version)
               console.log("下载的进度是===", version)
+              let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
               var ws = new WebSocket(
-                "wss://www.yarenda.cn/api/manager/display/websocket?version=" +
+                wsUrl +
+                  "?version=" +
                   version +
                   "&Authorization=" +
                   res.data.token
@@ -163,6 +164,9 @@ export default defineComponent({
                       loading.value = false
                       router.push({
                         path: "/",
+                        query: {
+                          bgi: homeBgi,
+                        },
                       })
                     }
                   })

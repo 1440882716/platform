@@ -116,8 +116,15 @@ export default defineComponent({
       })
     }
     onMounted(() => {
-      const storage = require("electron-localstorage")
-      let path = storage.getItem("filePath")
+      console.log("/workSystem")
+      // const storage = require("electron-localstorage")
+      let pagedata = localStorage.getItem("nav_page_data") as string
+      console.log(JSON.parse(pagedata))
+
+      const Store = require("electron-store")
+      const db = new Store()
+      let path = db.get("userUid")
+      // let path = storage.getItem("filePath")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")
       let bgImg = url + route.query.bgi

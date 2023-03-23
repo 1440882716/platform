@@ -73,27 +73,23 @@ export default defineComponent({
     const weekday = ref() // 时分秒
     const update = () => {
       let token = localStorage.getItem("token")
-      console.log("是否有token==", token)
-
       if (token) {
         const ipcRenderer = require("electron").ipcRenderer
         let version = 0
         ipcRenderer.send("get-version", "getVersion")
         ipcRenderer.on("read-version", (_event, data) => {
+          console.log(data)
           version = JSON.parse(data).version
           console.log("下载的进度是===", version)
+          let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
           var ws = new WebSocket(
-            "wss://www.yarenda.cn/api/manager/display/websocket?version=" +
-              version +
-              "&Authorization=" +
-              token
+            wsUrl + "?version=" + version + "&Authorization=" + token
           )
           // 心跳检测
           var heartCheck = {
             timeout: 55000, // 9分钟发一次心跳，比server端设置的连接时间稍微小一点，在接近断开的情况下以通信的方式去重置连接时间。
             serverTimeoutObj: 0,
             reset: function () {
-              // clearTimeout(this.timeoutObj)
               clearTimeout(this.serverTimeoutObj)
               return this
             },
@@ -130,11 +126,10 @@ export default defineComponent({
             let navList = JSON.stringify(files.nodeList)
             // 设置背景图
             // homeBgi = files.homeBackgroundImage
-            // localStorage.setItem(
-            //   "bgi",
-            //   JSON.stringify(files.homeBackgroundImage)
-            // )
-
+            localStorage.setItem(
+              "bgi",
+              JSON.stringify(files.homeBackgroundImage)
+            )
             if (files.fileList && files.fileList.length != 0) {
               // 监听主进程过来的消息
               ipcRenderer.on("has-render-data", (_event, ...args) => {
@@ -161,18 +156,12 @@ export default defineComponent({
               // 监听主进程过来的消息
               // 向主进程发送消息，保存应用的目录
               ipcRenderer.send("save-data", navList)
-              // loading.value = false
-              // router.push({
-              //   path: "/home",
-              // })
             }
-            // localStorage.setItem(
-            //   "bgi",
-            //   JSON.stringify(files.homeBackgroundImage)
-            // )
             // 重置心跳检测
             heartCheck.reset().start()
           }
+          window.alert("刷新成功")
+          // this.$message('这是一条消息提示');
         })
 
         // window.location.reload()
@@ -188,9 +177,10 @@ export default defineComponent({
       // })
       // return
       // 退出清空token，回到登录页面
-      var ws = new WebSocket(
-        "wss://www.yarenda.cn/api/manager/display/websocket"
-      )
+      let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
+      // let wsUrl = "wss://www.khdpro1.top/api/manager/display/websocket"
+      // let wsUrl = "wss://192.168.1.200:9527/api/manager/display/websocket"
+      var ws = new WebSocket(wsUrl)
       var heartCheck = {
         timeout: 55000, // 9分钟发一次心跳，比server端设置的连接时间稍微小一点，在接近断开的情况下以通信的方式去重置连接时间。
         serverTimeoutObj: 0,

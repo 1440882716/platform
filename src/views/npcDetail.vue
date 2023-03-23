@@ -36,11 +36,15 @@
           </div>
         </div>
         <div class="flex-r flex-end m-t-16">
+          <!-- @current-change="handleCurrentChange" -->
           <el-pagination
             background
             layout="prev, pager, next"
-            :total="totalPages"
+            :page-count="totalPages"
             :page-size="12"
+            @current-change="handleCurrentChange"
+            @prev-click="prevPage"
+            @next-click="nextPage"
           />
         </div>
       </div>
@@ -51,7 +55,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, reactive, toRefs, ref, onMounted } from "vue"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 import { InitData } from "../types/representative"
@@ -64,27 +68,26 @@ export default defineComponent({
   setup() {
     const data = reactive(new InitData())
     const router = useRouter()
+    const route = useRoute()
     const staticUrl = ref()
     const npc_name = ref()
     const npc_des = ref()
     const npc_phone = ref()
     const npc_img = ref()
     const npc_uid = ref()
-    const totalPages = ref()
-    const page = ref()
-    const size = ref()
+    const totalPages = ref(1)
+    const page = ref(1)
+    const size = ref(12)
     // 获取代表的履职信息
     const getNpc = () => {
       let requestData = {
         uid: npc_uid.value,
-        page: page.value,
+        page: currentPage.value,
         size: size.value,
       }
       duties(requestData).then((res: any) => {
         if (res.status == "OK") {
           totalPages.value = res.data.totalPages
-          page.value = res.data.totalPages
-          size.value = res.data.totalPages
           data.resultList = res.data.content
         } else {
           // 履职信息获取失败
@@ -103,10 +106,32 @@ export default defineComponent({
         },
       })
     }
+    // const handleSizeChange =(val) => {
+    //   this.pageSize = val
+    //   getNpc()
+    // }
+    const currentPage = ref(1)
+    const handleCurrentChange = (val: number) => {
+      currentPage.value = val
+      getNpc()
+    }
+    const prevPage = (val: number) => {
+      currentPage.value = val
+      getNpc()
+    }
+
+    const nextPage = (val: number) => {
+      currentPage.value = val
+      getNpc()
+    }
     onMounted(() => {
+      // let npcType = route.query.npcType
       let npsData = localStorage.getItem("npcDetail") as string
       const storage = require("electron-localstorage")
-      let path = storage.getItem("filePath")
+      // let path = storage.getItem("filePath")
+      const Store = require("electron-store")
+      const db = new Store()
+      let path = db.get("filePath")
       let url = path + "\\"
       staticUrl.value = url.replace(/\\/g, "/")
       if (npsData != "" && npsData != undefined) {
@@ -131,6 +156,9 @@ export default defineComponent({
       size,
       getNpc,
       toDetail,
+      handleCurrentChange,
+      prevPage,
+      nextPage,
     }
   },
 })

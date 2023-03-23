@@ -49,7 +49,13 @@
       <div class="swiper-button-prev" style="color: #ffffff"></div>
       <div class="swiper-button-next" style="color: #ffffff"></div>
     </div>
-    <Footer style="position: fixed; bottom: 0"></Footer>
+    <!-- <Footer style="position: fixed; bottom: 0"></Footer> -->
+    <div class="footer-box" style="position: fixed; bottom: 0">
+      <div class="footer-icon flex-r">
+        <img @click="toHome" src="../assets/img/home-icon.png" alt="" />
+        <img @click="backPage" src="../assets/img/back-icon.png" alt="" />
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -72,6 +78,7 @@ import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/scrollbar"
+import { children } from "dom7"
 export default defineComponent({
   components: {
     Header,
@@ -101,15 +108,21 @@ export default defineComponent({
       // type==8 网页文件夹
       // type==9 视频文件夹
       // console.log("文件类型===", info.type, info.name)
-
+      console.log("父级uid===", info.parentUid)
       let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
-      // console.log(navArr)
       navArr.push(info.name)
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
 
       if (info.type == 0 && info.children.length != 0) {
+        // 更换当前页面数据，没有跳转
+        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
+        // 重置父级uid
         parentData.value = showData.value
         showData.value = info.children
+        currentUid.value = localStorage.getItem("current_uid") as string
+        localStorage.setItem("parent_uid", currentUid.value) //点击下一级后，当前目录就变成下级目录的父级
+        localStorage.setItem("current_uid", info.uid) //保存当前点击的目录uid
+        localStorage.setItem("back-data", JSON.stringify(showData.value))
       } else if (info.type == 1 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
@@ -134,6 +147,7 @@ export default defineComponent({
         info.children.length != 0 &&
         info.name != "代表履职风采"
       ) {
+        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
         parentData.value = showData.value
         showData.value = info.children
         localStorage.setItem("fileData", JSON.stringify(info.children))
@@ -148,26 +162,38 @@ export default defineComponent({
         info.children.length != 0 &&
         info.name == "代表履职风采"
       ) {
+        // 更换当前页面数据，没有跳转
         parentData.value = showData.value
         showData.value = info.children
+        console.log("77777777===", info.children)
+        currentUid.value = localStorage.getItem("current_uid") as string
+        localStorage.setItem("parent_uid", currentUid.value) //点击下一级后，当前目录就变成下级目录的父级
+        localStorage.setItem("current_uid", info.uid) //保存当前点击的目录uid
+        // localStorage.setItem("back-data", JSON.stringify(showData.value))
       } else if (info.type == 8 && info.children.length != 0) {
-        // console.log("下级文件===8===", info)
         const storage = require("electron-localstorage")
+        const Store = require("electron-store")
+        const db = new Store()
         const ipcRenderer = require("electron").ipcRenderer
         // 加载地图网页
         let zipPath = info.children[0].url
-        let path = storage.getItem("filePath")
+        console.log(zipPath)
+        // let path = storage.getItem("filePath")
+        let path = db.get("userUid")
         var admZip = require("adm-zip-iconv")
         let pathNameArr = zipPath.split(".")
         let pathName = pathNameArr[0]
-        var zip = new admZip(path + "\\" + zipPath, "GBK")
+        var zip = new admZip("D:\\" + path + "\\" + zipPath, "GBK")
+        // 解压文件
         // 创建属于这个压缩包的文件夹
-        storage.setItem("zipFiles", pathName)
+        // storage.setItem("zipFiles", pathName)
+        db.set("zipFiles", pathName)
         ipcRenderer.send("create-zipFile", "getVersion")
         ipcRenderer.on("has-file", (_event, data) => {
           let hasFiles = JSON.parse(data)
           if (hasFiles.status) {
-            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
+            // console.log("网页文件地址===", pageUrl)
             router.push({
               path: "/infomation",
               query: {
@@ -178,7 +204,7 @@ export default defineComponent({
           } else {
             // 解压文件
             zip.extractAllTo(path + "\\" + pathName, true)
-            let pageUrl = path + "\\" + pathName + "\\" + "index.html"
+            let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
             // 打开地图页面的iframe
             router.push({
               path: "/infomation",
@@ -189,16 +215,6 @@ export default defineComponent({
             })
           }
         })
-
-        // parentData.value = showData.value
-        // showData.value = info.children
-        // localStorage.setItem("mapData", JSON.stringify(info.children))
-        // router.push({
-        //   path: "/infomation",
-        //   query: {
-        //     bgi: info.backgroundImage,
-        //   },
-        // })
       } else if (info.type == 9 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
@@ -217,41 +233,121 @@ export default defineComponent({
         })
       }
     }
+
+    // 递归遍历目录取父级目录
+    //data 全目录
+    //uid 当前目录
+    let parentNav: any = []
+    const dataList = (data: any[], uid: string) => {
+      let arr: any = data
+      data.map((item: any) => {
+        if (uid === item.uid) {
+          parentNav = arr
+          localStorage.setItem("parent_uid", item.parentUid)
+          localStorage.setItem("current_node", JSON.stringify(item))
+        } else {
+          if (item.children) {
+            dataList(item.children, uid)
+          }
+        }
+      })
+    }
+    // 递归取子级目录
+    let currentNav: any = []
+    const childrenList = (data: any[], uid: string) => {
+      data.map((item: any) => {
+        if (uid === item.uid) {
+          currentNav = item.children
+        } else {
+          if (item.children) {
+            childrenList(item.children, uid)
+          }
+        }
+      })
+    }
+    const currentUid = ref()
+    const parentUid = ref()
+    let homeUid = localStorage.getItem("first_uid") as string
+    parentUid.value = localStorage.getItem("parent_uid") as string
+    currentUid.value = localStorage.getItem("current_uid") as string
+
     onMounted(() => {
-      let name = route.query.name
+      // let name = route.query.name
       const storage = require("electron-localstorage")
-      let path = storage.getItem("filePath")
+      const Store = require("electron-store")
+      const db = new Store()
+      let path = db.get("filePath")
+      // let path = storage.getItem("filePath")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")
       let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
+      console.log("背景图片===", imgUrl.value)
+
+      let navData = localStorage.getItem("navData") as string
+      let navDataArr = JSON.parse(navData) as any[]
+      let parentUid = localStorage.getItem("parent_uid") as string
+      let currentUid = localStorage.getItem("current_uid") as string
+
+      dataList(navDataArr, currentUid)
+      childrenList(navDataArr, currentUid)
+
+      // console.log("获取到的父级目录=======", parentNav)
+      // console.log("获取到的当前目录===", currentNav)
+      // 上级目录的uid 在这里需要判断是不是回到首页，如果不是回到首页则需要替换当前页面的数据
+      // console.log("父级uid===", currentUid)
+      // console.log("首页uid===", homeUid)
+      // if (parentUid === homeUid) {
+      //   toHome()
+      // } else {
+      showData.value = currentNav
+      // }
+      return
       const ipcRenderer = require("electron").ipcRenderer
       ipcRenderer.send("get-data", name)
       ipcRenderer.on("read-renda", (event, data) => {
         // 本页面所有的数据
         localStorage.setItem("allData", data)
         allData.value = JSON.parse(data)
-        showData.value = JSON.parse(data)
+        // showData.value = JSON.parse(data)
         let number = showData.value.length
         if (number < 5) {
           filesNum.value = number
         } else {
           filesNum.value = 5
         }
-
-        // console.log("文件夹个数===", showData.value.length)
       })
+      // }
     })
+
     const toHome = () => {
+      let str = localStorage.getItem("bgi") as string
+      // console.log(str)
       router.push({
-        path: "/home",
+        path: "/",
+        query: {
+          bgi: str,
+        },
       })
     }
     const backPage = () => {
-      // console.log(allData.value)
-      // console.log(parentData)
-      // showData.value = allData.value
-      router.back()
+      // router.back()
+      let navData = localStorage.getItem("navData") as string
+      let navDataArr = JSON.parse(navData) as any[]
+      let parentUid = localStorage.getItem("parent_uid") as string
+      let currentUid = parentUid
+      localStorage.setItem("current_uid", currentUid)
+      // 上级目录的uid 在这里需要判断是不是回到首页，如果不是回到首页则需要替换当前页面的数据
+      if (parentUid === homeUid) {
+        toHome()
+      }
+      // 遍历目录找到要返回的父级目录
+      dataList(navDataArr, currentUid)
+      childrenList(navDataArr, currentUid)
+      // childrenList(navDataArr, currentUid)
+      console.log("获取到的父级目录===", currentNav)
+
+      showData.value = currentNav
     }
     const onSwiper = (swiper: any) => {}
     const onSlideChange = () => {
@@ -347,7 +443,7 @@ export default defineComponent({
   width: 329px;
   /* padding-top: 10px; */
   /* height: 306px; */
-  
+
   text-align: center;
   flex: 1;
   /* background-color: antiquewhite; */
@@ -363,9 +459,9 @@ export default defineComponent({
   height: 340px;
   text-align: center;
   writing-mode: vertical-lr;
-  white-space: nowrap; 
- overflow: hidden;
- text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding-left: 62px;
   background: url(../assets/img/图标.png) center center no-repeat;
 }
@@ -406,6 +502,21 @@ export default defineComponent({
 }
 
 /* ==================底部 */
+.footer-box {
+  width: 100%;
+  height: 76px;
+  position: relative;
+  background-image: url(../assets/img/footer.png);
+}
+.footer-icon {
+  position: absolute;
+  width: 480px;
+  height: 140px;
+  top: -57px;
+  left: 50%;
+  margin-left: -240px;
+  z-index: 99;
+}
 .footer-fixed {
   width: 100%;
   position: fixed;

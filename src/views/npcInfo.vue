@@ -168,7 +168,7 @@ export default defineComponent({
         router.push({
           path: "/npcDetail",
           query: {
-            // npcInfo: npcdata,
+            npcType: activeName.value,
           },
         })
       }
@@ -192,6 +192,11 @@ export default defineComponent({
     }
     const handleClick = (tab: TabsPaneContext, event: Event) => {
       console.log(activeName.value)
+      console.log(tab.props.name)
+      let type = tab.props.name?.toString()
+      console.log(type)
+
+      if (type) localStorage.setItem("npcType", type)
       if (activeName.value == "2") {
         // 刷新是为了加载npc-page页面
         window.location.reload()
@@ -200,12 +205,25 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      // console.log("初始值==", activeName.value)
+      let npcType = localStorage.getItem("npcType") as string
+      if (npcType) {
+        console.log("缓存的类型值是===", npcType)
+        activeName.value = npcType
+        npsData.value = localStorage.getItem("npcinfo") as string
+        dataInfo.value = JSON.parse(npsData.value)
+      }
+      // else {
+      console.log("初始值==", activeName.value)
       npsData.value = localStorage.getItem("npcinfo") as string
       dataInfo.value = JSON.parse(npsData.value)
-      const storage = require("electron-localstorage")
-      let path = storage.getItem("filePath")
+      // const storage = require("electron-localstorage")
+
+      const Store = require("electron-store")
+      const db = new Store()
+      let path = db.get("filePath")
       let url = path + "\\"
+      // let path = storage.getItem("filePath")
+      // let url = path + "\\"
       url = url.replace(/\\/g, "/")
       staticUrl.value = url
       let bgImg = url + route.query.bgi
@@ -229,6 +247,7 @@ export default defineComponent({
           }
         }
       })
+      // }
     })
     return {
       ...toRefs(data),

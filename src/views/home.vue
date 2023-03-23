@@ -27,7 +27,10 @@
         @swiper="onSwiper"
         @slideChange="onSlideChange"
       >
-        <swiper-slide v-for="item in navList" @click="nextPage(item)">
+        <swiper-slide
+          v-for="(item, index) in navList"
+          @click="nextPage(item, index)"
+        >
           <div class="slide-box">
             <div class="text-center">
               <!-- <div v-if="item.icon">
@@ -48,6 +51,7 @@
       <div class="swiper-button-prev" style="color: #ffffff"></div>
       <div class="swiper-button-next" style="color: #ffffff"></div>
     </div>
+    <!-- <Footer style="position: fixed; bottom: 0"></Footer> -->
   </div>
 </template>
 <script lang="ts">
@@ -61,6 +65,7 @@ import {
 import { useRouter, useRoute } from "vue-router"
 import { ElMessage } from "element-plus"
 import Header from "../components/header.vue"
+import Footer from "../components/footer.vue"
 import Bannar from "../components/bannar.vue"
 import {
   Navigation,
@@ -82,6 +87,7 @@ import path from "path"
 export default defineComponent({
   components: {
     Header,
+    Footer,
     Bannar,
     Swiper,
     SwiperSlide,
@@ -137,34 +143,32 @@ export default defineComponent({
       state.time = 0
       setTimer()
     }
-    const nextPage = (info: any) => {
-      console.log(info)
+    const nextPage = (info: any, ind: number) => {
+      //存首页的uid ===> first_uid
+      localStorage.setItem("first_uid", info.parentUid)
+      // 当前点击的uid
+      localStorage.setItem("current_uid", info.uid)
+      //父级uid
+      localStorage.setItem("parent_uid", info.parentUid)
 
+      // return
       let navArr = []
       navArr.push(info.name)
-      // console.log(navArr)
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
       // return
       if (info.type == 0 && info.children.length != 0) {
         // console.log("下级文件===1===", info)
+        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
+        // navList.value = info.children
         router.push({
           path: "/representative",
           query: {
             name: info.name,
             bgi: info.backgroundImage,
+            num: ind,
           },
         })
-      }
-      // else if (info.type == 1 && info.children.length != 0) {
-      //   router.push({
-      //     path: "/representative",
-      //     query: {
-      //       name: info.name,
-      //       bgi: info.backgroundImage,
-      //     },
-      //   })
-      // }
-      else if (info.type == 1 && info.children.length != 0) {
+      } else if (info.type == 1 && info.children.length != 0) {
         // parentData.value = showData.value
         // showData.value = info.children
         console.log(info.children)
@@ -185,6 +189,7 @@ export default defineComponent({
         })
       } else if (info.type == 7 && info.children.length != 0) {
         localStorage.setItem("fileData", JSON.stringify(info.children))
+        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
         router.push({
           path: "/WorkSystem",
           query: {
@@ -205,13 +210,8 @@ export default defineComponent({
         var admZip = require("adm-zip-iconv")
         let pathNameArr = zipPath.split(".")
         let pathName = pathNameArr[0]
-        // D:\c4b743740d7c11eda5e70242ac130004\1@HTM@东升街道基本情况_1669873636768
-        console.log("解压文件的路径===", "D:\\" + path + "\\" + zipPath)
-        console.log("解压后的文件夹名===", pathName)
-
         var zip = new admZip("D:\\" + path + "\\" + zipPath, "GBK")
         // 解压文件
-        // zip.extractAllTo(path)
         // 创建属于这个压缩包的文件夹
         // storage.setItem("zipFiles", pathName)
         db.set("zipFiles", pathName)
@@ -220,7 +220,7 @@ export default defineComponent({
           let hasFiles = JSON.parse(data)
           if (hasFiles.status) {
             let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
-            console.log("网页文件地址===", pageUrl)
+            // console.log("网页文件地址===", pageUrl)
             router.push({
               path: "/infomation",
               query: {
@@ -232,7 +232,6 @@ export default defineComponent({
             // 解压文件
             zip.extractAllTo(path + "\\" + pathName, true)
             let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
-            console.log("网页文件地址===", pageUrl)
             // 打开地图页面的iframe
             router.push({
               path: "/infomation",
@@ -243,16 +242,6 @@ export default defineComponent({
             })
           }
         })
-
-        // 解压文件
-        // zip.extractAllTo(path + "\\" + pathName, true)
-        // let pageUrl = path + "\\" + pathName + "\\" + "index.html"
-        // router.push({
-        //   path: "/infomation",
-        //   query: {
-        //     url: pageUrl,
-        //   },
-        // })
       } else if (info.type == 9 && info.children.length != 0) {
         localStorage.setItem("fileData", JSON.stringify(info.children))
         router.push({
@@ -320,14 +309,15 @@ export default defineComponent({
       const db = new Store()
       let path = db.get("filePath")
       let url = path + "\\"
+
       staticUrl.value = url.replace(/\\/g, "/")
 
-      // 讲图片的根路径存下
-      localStorage.setItem("imgSrc", url)
       const ipcRenderer = require("electron").ipcRenderer
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
         navList.value = JSON.parse(data)
+        // localStorage.setItem("first_uid", navList.value[0].children.uid)
+        localStorage.setItem("navData", JSON.stringify(navList.value))
       })
       ipcRenderer.send("get-nav", "getNav")
       // 监听ws推送的消息
@@ -335,7 +325,10 @@ export default defineComponent({
       let str = localStorage.getItem("bgi") as string
       imgUrl.value = path + "\\" + str.replace(/"/g, "")
       imgUrl.value = imgUrl.value.replace(/\\/g, "/")
-      // console.log("背景图片====", imgUrl.value)
+      console.log("背景图片====", imgUrl.value)
+
+      // 讲图片的根路径存下
+      // localStorage.setItem("imgSrc", url)
     })
     return {
       tokenStr,
@@ -369,7 +362,7 @@ export default defineComponent({
 <style scoped>
 @import "../assets/glob.css";
 .background-page {
-  /* background: url(../assets/img/home-bgi.png); */
+  background: url(../assets/img/DSbgi.png);
   background-size: 100% 100%;
   width: 100%;
   height: 100%;

@@ -7,6 +7,7 @@
   </div>
 </template>
 <script lang="ts">
+import { json } from "stream/consumers"
 import { defineComponent, onMounted, ref } from "vue"
 import { useRouter, useRoute } from "vue-router"
 export default defineComponent({
@@ -15,19 +16,69 @@ export default defineComponent({
     const route = useRoute()
     const allData = ref()
     const toHome = () => {
+      let str = localStorage.getItem("bgi") as string
+      // console.log(str)
       router.push({
         path: "/",
+        query: {
+          bgi: str,
+        },
       })
     }
+
+    let parentNav: any = []
+    let parentType: Number
+    const dataList = (data: any[], uid: string) => {
+      let arr: any = data
+      data.map((item: any) => {
+        if (uid === item.uid) {
+          parentNav = arr
+          parentType = item.type
+        } else {
+          if (item.children) {
+            dataList(item.children, uid)
+          }
+        }
+      })
+    }
+
     const backPage = () => {
+      // console.log(route.path)
+      // let uid = localStorage.getItem("parent_uid") as string
+      // console.log(uid)
+      // let navData = localStorage.getItem("navData") as string
+      // let navDataArr = JSON.parse(navData) as any[]
+
+      // // 遍历目录找到要返回的父级目录
+      // dataList(navDataArr, uid)
+      // console.log(parentNav)
+      // console.log(parentType)
+      // if (route.path === "/npcDetail") {
+      //   // let npcType = localStorage.getItem("npcType")
+      //   router.back()
+      // }
+      // if (parentType === 0 || 1) {
+      //   localStorage.setItem("back_nav_uid", parentNav[0].parentUid)
+      //   localStorage.setItem("back_nav_data", JSON.stringify(parentNav))
+      //   router.push({
+      //     path: "/representative",
+      //     query: {
+      //       name: "back",
+      //       bgi: parentNav[0].backgroundImage,
+      //     },
+      //   })
+      // } else {
       let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
       navArr.pop()
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
       router.back()
+      // }
     }
     onMounted(() => {
       // 这个页面的所有数据
-      allData.value = localStorage.getItem("allData") as string
+      // allData.value = localStorage.getItem("allData") as string
+      allData.value = localStorage.getItem("nav_page_data") as string
+      // console.log(JSON.parse(allData.value))
     })
     return {
       allData,
