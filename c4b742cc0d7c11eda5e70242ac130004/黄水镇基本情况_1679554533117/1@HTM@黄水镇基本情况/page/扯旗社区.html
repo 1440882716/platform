@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: url("../img/map-pop2.png") no-repeat center/cover;
+			overflow: hidden;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.box {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.box img {
+			position: absolute;
+			object-fit: contain;
+		}
+
+		.box p {
+			position: absolute;
+			object-fit: contain;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+		}
+
+		.box .map {
+			height: 0;
+			width: 0;
+		}
+
+		.box .npc {
+			bottom: -30px;
+			background: url("../img/down.svg") no-repeat 40px -10px;
+			text-align: right;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .voter {
+			top: -30px;
+			background: url("../img/up.svg") no-repeat -120px 50px;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .introduction {
+			/*visibility: hidden;*/
+			position: absolute;
+			width: 40%;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+			left: 50%;
+			top: 20%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<img class="map" src="../img/扯旗社区.png">
+		<p class="voter">总人口3980余人</p>
+		<p class="npc">党员151人</p>
+		<p class="introduction">
+			扯旗社区位于黄水镇的西南方向,东与黄水场镇相连,西与文武社区相邻,南与高石社区和新津县接壤,北与楠柳社区相接,距双流县城5公里,距成都12公里。社区幅员面积3.9平方公里,拥有耕地3400余亩。社区总户数1418户，总人口3980余人。失独家庭7户，低保户25户，空巢老人5人，留守儿童1人，残疾人103人。下设9个居民小组(19个小社，一个移民点)和三个支部（新村支部、扯旗支部、保河支部）9个党小组（党员151名，预备党员2名，入党积极分子6名）。我社区两委成员9人，劳动协管员1人，网格员3名，社区监督委员会成员5人，社区议事会成员37人。
+</body>
+<script src="../js/jquery-1.12.4.min.js"></script>
+<script>
+	$(document)
+		.ready(function () {
+			var wValue = $(".box")
+				.width() / 2;
+			var hValue = $(".box")
+				.height() / 2;
+			$(".map")
+				.css("left", wValue);
+			$(".map")
+				.css("top", hValue);
+			$(".map")
+				.animate({
+					width: "40%",
+					height: "65%",
+					left: "6%",
+					top: "20%",
+				}, 500, function () {
+					$(".voter")
+						.animate({
+							width: "20%",
+							height: "20%",
+							top: "11%",
+							left: "12%",
+						}, 500, function () {
+							$(".npc")
+								.animate({
+									width: "20%",
+									height: "15%",
+									top: "77%",
+									left: "25%",
+								}, 500);
+						});
+				});
+		});
+</script>
+
+</html>

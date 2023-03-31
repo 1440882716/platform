@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: url("../img/map-pop2.png") no-repeat center/cover;
+			overflow: hidden;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.box {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.box img {
+			position: absolute;
+			object-fit: contain;
+		}
+
+		.box p {
+			position: absolute;
+			object-fit: contain;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+		}
+
+		.box .map {
+			height: 0;
+			width: 0;
+		}
+
+		.box .npc {
+			bottom: -30px;
+			background: url("../img/down.svg") no-repeat 40px -10px;
+			text-align: right;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .voter {
+			top: -30px;
+			background: url("../img/up.svg") no-repeat -120px 50px;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .introduction {
+			/*visibility: hidden;*/
+			position: absolute;
+			width: 40%;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+			left: 50%;
+			top: 20%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<img class="map" src="../img/文武社区.png">
+		<p class="voter">人口4055人</p>
+		<p class="npc">党员145人</p>
+		<p class="introduction">
+			社区党委成员5人，居委会成员5人，平均年龄40岁，高中1人，大专7人，本科2人。社区土地面积3.75平方公里，其中耕地3698亩，共有2个集中居住点(文武小区、移民点），安置人口1819人，其中移民点共15户63人。距离黄水政府2.5公里，有12条村组道路。文武社区现在共有8个组，全社区共1287户，人口4055人，18以上的有2865人，70岁以上有386人，在外务工2245人。我社区有8个党小组，下设4个党支部（牌坊党支部、文武小区党支部、田林党支部、莱邦党支部），共有党员145人，平均年龄56岁。失独家庭6户，低保户18户，空巢老人8人，留守儿童5人，残疾人136人。
+		</p>
+</body>
+<script src="../js/jquery-1.12.4.min.js"></script>
+<script>
+	$(document)
+		.ready(function () {
+			var wValue = $(".box")
+				.width() / 2;
+			var hValue = $(".box")
+				.height() / 2;
+			$(".map")
+				.css("left", wValue);
+			$(".map")
+				.css("top", hValue);
+			$(".map")
+				.animate({
+					width: "40%",
+					height: "65%",
+					left: "6%",
+					top: "20%",
+				}, 500, function () {
+					$(".voter")
+						.animate({
+							width: "20%",
+							height: "20%",
+							top: "11%",
+							left: "12%",
+						}, 500, function () {
+							$(".npc")
+								.animate({
+									width: "20%",
+									height: "15%",
+									top: "77%",
+									left: "25%",
+								}, 500);
+						});
+				});
+		});
+</script>
+
+</html>

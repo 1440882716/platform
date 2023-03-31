@@ -175,6 +175,7 @@ const db = new Store()
                 }
                 console.log("creating is error ====", err)
                 let filesCount = fileList[fileList.length - 1].version
+                // 遍历所有文件下载
                 for (let i = 0; i < fileList.length; i++) {
                   filesDown(
                     win,

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: url("../img/map-pop2.png") no-repeat center/cover;
+			overflow: hidden;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.box {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.box img {
+			position: absolute;
+			object-fit: contain;
+		}
+
+		.box p {
+			position: absolute;
+			object-fit: contain;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+		}
+
+		.box .map {
+			height: 0;
+			width: 0;
+		}
+
+		.box .npc {
+			bottom: -30px;
+			background: url("../img/down.svg") no-repeat 40px -10px;
+			text-align: right;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .voter {
+			top: -30px;
+			background: url("../img/up.svg") no-repeat -120px 50px;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .introduction {
+			/*visibility: hidden;*/
+			position: absolute;
+			width: 40%;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+			left: 50%;
+			top: 20%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<img class="map" src="../img/花龙村.png">
+		<p class="voter">总人口3485人</p>
+		<p class="npc">126名党员</p>
+		<p class="introduction">
+			花龙村地处牧马山腹心地带，是胜利镇最边缘典型的农业，距区城20公里，距镇政府8公里，幅员面积7平方公里，耕地4435亩，与黄甲镇、永安镇、公兴镇、新津县普兴镇接壤，成雅高速公路贯穿其中，成昆铁路经过花龙火车站。全村辖7个村民小组、花龙村党委下设3个支部、12个党小组、126名党员、场镇1个，1128户，总人口3485人，2016年全村人均可支配收入21685元。集体资产有：原村小两所面积2300平米，两所学校每年租金2万元，现有村办公房建设面积740平米。
+</body>
+<script src="../js/jquery-1.12.4.min.js"></script>
+<script>
+	$(document)
+		.ready(function () {
+			var wValue = $(".box")
+				.width() / 2;
+			var hValue = $(".box")
+				.height() / 2;
+			$(".map")
+				.css("left", wValue);
+			$(".map")
+				.css("top", hValue);
+			$(".map")
+				.animate({
+					width: "40%",
+					height: "65%",
+					left: "6%",
+					top: "20%",
+				}, 500, function () {
+					$(".voter")
+						.animate({
+							width: "20%",
+							height: "20%",
+							top: "11%",
+							left: "12%",
+						}, 500, function () {
+							$(".npc")
+								.animate({
+									width: "20%",
+									height: "15%",
+									top: "77%",
+									left: "25%",
+								}, 500);
+						});
+				});
+		});
+</script>
+
+</html>

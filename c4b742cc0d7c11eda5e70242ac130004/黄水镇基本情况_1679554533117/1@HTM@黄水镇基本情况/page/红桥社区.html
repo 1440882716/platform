@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: url("../img/map-pop2.png") no-repeat center/cover;
+			overflow: hidden;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.box {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.box img {
+			position: absolute;
+			object-fit: contain;
+		}
+
+		.box p {
+			position: absolute;
+			object-fit: contain;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+		}
+
+		.box .map {
+			height: 0;
+			width: 0;
+		}
+
+		.box .npc {
+			bottom: -30px;
+			background: url("../img/down.svg") no-repeat 40px -10px;
+			text-align: right;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .voter {
+			top: -30px;
+			background: url("../img/up.svg") no-repeat -120px 50px;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .introduction {
+			/*visibility: hidden;*/
+			position: absolute;
+			width: 40%;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+			left: 50%;
+			top: 20%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<img class="map" src="../img/红桥社区.png">
+		<p class="voter">户籍人口4795人</p>
+		<p class="npc">社区党员115人</p>
+		<p class="introduction">
+			红桥社区位于双流区黄水镇以东1.2公里，东与胜利相连，南与陶荚社区接壤，西与楠柳社区相连，北与长沟社区相连，白河、杨柳河穿流而过，地铁10号线、成绵乐铁路、大件路、川藏路横贯而过，交通便利，幅员总面积为4.53平方公里，辖区有9个居民小组，户籍人口4795人、1466户，耕地面积1800余亩，社区党员115人，其中女性35人、占30%，男性80人、占70%，党员平均年龄51岁，下设三个支部（红桥支部、关公支部、红柳支部），8个党小组。
+</body>
+<script src="../js/jquery-1.12.4.min.js"></script>
+<script>
+	$(document)
+		.ready(function () {
+			var wValue = $(".box")
+				.width() / 2;
+			var hValue = $(".box")
+				.height() / 2;
+			$(".map")
+				.css("left", wValue);
+			$(".map")
+				.css("top", hValue);
+			$(".map")
+				.animate({
+					width: "40%",
+					height: "65%",
+					left: "6%",
+					top: "20%",
+				}, 500, function () {
+					$(".voter")
+						.animate({
+							width: "20%",
+							height: "20%",
+							top: "11%",
+							left: "12%",
+						}, 500, function () {
+							$(".npc")
+								.animate({
+									width: "20%",
+									height: "15%",
+									top: "77%",
+									left: "25%",
+								}, 500);
+						});
+				});
+		});
+</script>
+
+</html>

@@ -33,12 +33,20 @@
         <div class="content-duty">
           {{ dutyData.content }}
           <div class="flex-r" v-if="dutyData.images.length != 0">
-            <img
+            <!-- <img
+              v-for="item in dutyData.images"
+              :src="'https://www.yarenda.cn' + item"
+            /> -->
+            <el-image
               class="duty-img"
               v-for="item in dutyData.images"
-              :src="'https://www.yarenda.cn'+ item"
-              alt=""
-            />
+              v-if="imgFlag"
+              :src="'https://www.yarenda.cn' + item"
+              :preview-src-list="bigImgList"
+              @error="imgError"
+              @load="imgSuccess"
+              alt="图片加载失败"
+            ></el-image>
           </div>
         </div>
       </div>
@@ -62,6 +70,7 @@ export default defineComponent({
     const route = useRoute()
     const name = ref()
     const staticUrl = ref()
+    const bigImgList = ref()
     onMounted(() => {
       const storage = require("electron-localstorage")
       let path = storage.getItem("filePath")
@@ -70,11 +79,29 @@ export default defineComponent({
       let npsData = localStorage.getItem("dutyDetail") as string
       name.value = route.query.name
       data.dutyData = JSON.parse(npsData)
+      let img_arr = data.dutyData.images
+      bigImgList.value = img_arr.map((item) => {
+        return "https://www.yarenda.cn" + item
+      })
+      // console.log(a)
+
+      // bigImgList.value = data.dutyData.images
     })
+    const imgFlag = ref(true)
+    const imgError = (e: Error) => {
+      imgFlag.value = false
+    }
+    const imgSuccess = (e: Event) => {
+      imgFlag.value = true
+    }
     return {
       ...toRefs(data),
+      imgFlag,
       name,
       staticUrl,
+      bigImgList,
+      imgError,
+      imgSuccess,
     }
   },
 })
@@ -114,8 +141,8 @@ export default defineComponent({
   width: calc(100% - 220px);
 }
 .duty-img {
-  width: 88px;
-  height: 88px;
+  width: 176px;
+  height: 176px;
   margin-right: 16px;
   margin-top: 22px;
 }

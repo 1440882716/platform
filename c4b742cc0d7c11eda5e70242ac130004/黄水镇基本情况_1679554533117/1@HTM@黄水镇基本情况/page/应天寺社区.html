@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: url("../img/map-pop2.png") no-repeat center/cover;
+			overflow: hidden;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.box {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.box img {
+			position: absolute;
+			object-fit: contain;
+		}
+
+		.box p {
+			position: absolute;
+			object-fit: contain;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+		}
+
+		.box .map {
+			height: 0;
+			width: 0;
+		}
+
+		.box .npc {
+			bottom: -30px;
+			background: url("../img/down.svg") no-repeat 40px -10px;
+			text-align: right;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .voter {
+			top: -30px;
+			background: url("../img/up.svg") no-repeat -120px 50px;
+			text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+		}
+
+		.box .introduction {
+			/*visibility: hidden;*/
+			position: absolute;
+			width: 40%;
+			font-family: '华文行楷';
+			font-size: 28px;
+			line-height: 120%;
+			color: #f00;
+			left: 50%;
+			top: 20%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<img class="map" src="../img/应天寺社区.png">
+		<p class="voter">总人口3427人</p>
+		<p class="npc">党员139人</p>
+		<p class="introduction">
+			应天寺社区位于胜利镇北部，与云华社区、白塔社区、东升街道、黄水镇相邻，幅员面积5.7平方公里，下设4个党支部,7个党小组，现有党员139人（其中预备党员1人）；辖7个居民小组，总户数1108户，总人口3427人。区域内有千年古刹应天寺，近年来蔚蓝卡地亚、萨尔茨堡、逸源香舍、半山卫城、易城、中航云岭、森宇等7个高端别墅群及中国民用航空西南民航管理局、四川高尔夫俱乐部纷纷落户该区域，叶毓山、王志纲、杨继瑞等名人也在此建立工作室。
+</body>
+<script src="../js/jquery-1.12.4.min.js"></script>
+<script>
+	$(document)
+		.ready(function () {
+			var wValue = $(".box")
+				.width() / 2;
+			var hValue = $(".box")
+				.height() / 2;
+			$(".map")
+				.css("left", wValue);
+			$(".map")
+				.css("top", hValue);
+			$(".map")
+				.animate({
+					width: "40%",
+					height: "65%",
+					left: "6%",
+					top: "20%",
+				}, 500, function () {
+					$(".voter")
+						.animate({
+							width: "20%",
+							height: "20%",
+							top: "11%",
+							left: "12%",
+						}, 500, function () {
+							$(".npc")
+								.animate({
+									width: "20%",
+									height: "15%",
+									top: "77%",
+									left: "25%",
+								}, 500);
+						});
+				});
+		});
+</script>
+
+</html>

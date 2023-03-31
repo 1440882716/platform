@@ -197,8 +197,10 @@ export default defineComponent({
           },
         })
       } else if (info.type == 8 && info.children.length != 0) {
+        console.log("压缩文件")
+
         // console.log("下级文件===8===", info)
-        const storage = require("electron-localstorage")
+        // const storage = require("electron-localstorage")
         const Store = require("electron-store")
         const db = new Store()
         const ipcRenderer = require("electron").ipcRenderer
@@ -210,6 +212,8 @@ export default defineComponent({
         var admZip = require("adm-zip-iconv")
         let pathNameArr = zipPath.split(".")
         let pathName = pathNameArr[0]
+        console.log("解压路径====" + "D:\\" + path + "\\" + zipPath)
+
         var zip = new admZip("D:\\" + path + "\\" + zipPath, "GBK")
         // 解压文件
         // 创建属于这个压缩包的文件夹
@@ -218,6 +222,7 @@ export default defineComponent({
         ipcRenderer.send("create-zipFile", "getVersion")
         ipcRenderer.on("has-file", (_event, data) => {
           let hasFiles = JSON.parse(data)
+          // debugger
           if (hasFiles.status) {
             let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
             // console.log("网页文件地址===", pageUrl)
@@ -230,7 +235,7 @@ export default defineComponent({
             })
           } else {
             // 解压文件
-            zip.extractAllTo(path + "\\" + pathName, true)
+            zip.extractAllTo("D:\\" + path + "\\" + pathName, true)
             let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
             // 打开地图页面的iframe
             router.push({
@@ -362,7 +367,7 @@ export default defineComponent({
 <style scoped>
 @import "../assets/glob.css";
 .background-page {
-  background: url(../assets/img/DSbgi.png);
+  /* background: url(../assets/img/DSbgi.png); */
   background-size: 100% 100%;
   width: 100%;
   height: 100%;
