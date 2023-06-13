@@ -81,7 +81,8 @@ export default defineComponent({
           console.log(data)
           version = JSON.parse(data).version
           console.log("下载的进度是===", version)
-          let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
+          // let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
+          let wsUrl = "wss://admin.slqrd.gov.cn/api/manager/display/websocket"
           var ws = new WebSocket(
             wsUrl + "?version=" + version + "&Authorization=" + token
           )
@@ -177,7 +178,7 @@ export default defineComponent({
       // })
       // return
       // 退出清空token，回到登录页面
-      let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
+      let wsUrl = "wss://admin.slqrd.gov.cn/api/manager/display/websocket"
       // let wsUrl = "wss://www.khdpro1.top/api/manager/display/websocket"
       // let wsUrl = "wss://192.168.1.200:9527/api/manager/display/websocket"
       var ws = new WebSocket(wsUrl)

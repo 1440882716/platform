@@ -55,11 +55,19 @@
   <Footer style="position: fixed; bottom: 0"></Footer>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, ref } from "vue"
+import {
+  defineComponent,
+  reactive,
+  toRefs,
+  onMounted,
+  ref,
+  onActivated,
+} from "vue"
 import { useRouter, useRoute } from "vue-router"
 import Header from "../components/header.vue"
 import Footer from "../components/footer.vue"
 import { InitData } from "../types/representative"
+import { watch } from "fs"
 export default defineComponent({
   components: {
     Header,
@@ -78,14 +86,27 @@ export default defineComponent({
       staticUrl.value = url.replace(/\\/g, "/")
       let npsData = localStorage.getItem("dutyDetail") as string
       name.value = route.query.name
+      // let info = route.query.info as string
+      // data.dutyData = JSON.parse(info)
       data.dutyData = JSON.parse(npsData)
       let img_arr = data.dutyData.images
       bigImgList.value = img_arr.map((item) => {
-        return "https://www.yarenda.cn" + item
+        return "https://admin.slqrd.gov.cn" + item
       })
       // console.log(a)
 
       // bigImgList.value = data.dutyData.images
+    })
+    watch: {
+      console.log(route.path)
+    }
+
+    // ctivated
+    onActivated(() => {
+      let npsData = localStorage.getItem("dutyDetail") as string
+      // console.log("进入页面后获取的缓存====", JSON.parse(npsData))
+      data.dutyData = JSON.parse(npsData)
+      // console.log("进入页面了")
     })
     const imgFlag = ref(true)
     const imgError = (e: Error) => {

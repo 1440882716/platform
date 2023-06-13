@@ -92,17 +92,19 @@ export default defineComponent({
         } else {
           // 履职信息获取失败
         }
-        console.log("请求到的履职信息===", data.resultList)
+        // console.log("请求到的履职信息===", data.resultList)
       })
     }
     const toDetail = (info: any) => {
-      console.log(info)
+      // console.log(info)
+      localStorage.removeItem("dutyDetail")
       localStorage.setItem("dutyDetail", JSON.stringify(info))
       // return
       router.push({
         path: "/dutiesDetail",
         query: {
           name: npc_name.value,
+          info: JSON.stringify(info),
         },
       })
     }

@@ -28,6 +28,7 @@
         @slideChange="onSlideChange"
       >
         <swiper-slide
+          class="swiper-slide-box"
           v-for="(item, index) in navList"
           @click="nextPage(item, index)"
         >
@@ -156,18 +157,29 @@ export default defineComponent({
       navArr.push(info.name)
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
       // return
-      if (info.type == 0 && info.children.length != 0) {
+      if (info.type == 0 || (info.type == 7 && info.children.length != 0)) {
+        // debugger
         // console.log("下级文件===1===", info)
-        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
-        // navList.value = info.children
-        router.push({
-          path: "/representative",
-          query: {
-            name: info.name,
-            bgi: info.backgroundImage,
-            num: ind,
-          },
-        })
+        if (info.children.length === 1) {
+          router.push({
+            path: "/files",
+            query: {
+              pdfUrl: info.children[0].url,
+            },
+          })
+        } else {
+          localStorage.setItem("fileData", JSON.stringify(info.children))
+          localStorage.setItem("nav_page_data", JSON.stringify(info.children))
+          // navList.value = info.children
+          router.push({
+            path: "/representative",
+            query: {
+              name: info.name,
+              bgi: info.backgroundImage,
+              num: ind,
+            },
+          })
+        }
       } else if (info.type == 1 && info.children.length != 0) {
         // parentData.value = showData.value
         // showData.value = info.children
@@ -188,14 +200,14 @@ export default defineComponent({
           },
         })
       } else if (info.type == 7 && info.children.length != 0) {
-        localStorage.setItem("fileData", JSON.stringify(info.children))
-        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
-        router.push({
-          path: "/WorkSystem",
-          query: {
-            bgi: info.backgroundImage,
-          },
-        })
+        // localStorage.setItem("fileData", JSON.stringify(info.children))
+        // localStorage.setItem("nav_page_data", JSON.stringify(info.children))
+        // router.push({
+        //   path: "/WorkSystem",
+        //   query: {
+        //     bgi: info.backgroundImage,
+        //   },
+        // })
       } else if (info.type == 8 && info.children.length != 0) {
         console.log("压缩文件")
 
@@ -306,6 +318,8 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      console.log("进入首页了======")
+
       // window.location.reload()
       setTimer()
       // const storage = require("electron-localstorage")
@@ -313,6 +327,7 @@ export default defineComponent({
       const Store = require("electron-store")
       const db = new Store()
       let path = db.get("filePath")
+      // let path = db.get("userUid")
       let url = path + "\\"
 
       staticUrl.value = url.replace(/\\/g, "/")
@@ -321,6 +336,8 @@ export default defineComponent({
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
         navList.value = JSON.parse(data)
+        console.log("首页的目录是===", navList.value)
+
         // localStorage.setItem("first_uid", navList.value[0].children.uid)
         localStorage.setItem("navData", JSON.stringify(navList.value))
       })
@@ -376,6 +393,9 @@ export default defineComponent({
 .swiper-box {
   /* width: 1688px;
   height: 650px; */
+}
+.swiper-slide-box {
+  width: 220px !important;
 }
 .slide-box {
   width: 329px;

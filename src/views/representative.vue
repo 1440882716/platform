@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-box" :style="{ backgroundImage: `url(${imgUrl})` }">
+  <div class="bg-box" :style="{ backgroundImage: `url('${imgUrl}')` }">
     <!-- <div class="bg-box"> -->
     <Header></Header>
     <!-- 滑动组件 -->
@@ -108,21 +108,33 @@ export default defineComponent({
       // type==8 网页文件夹
       // type==9 视频文件夹
       // console.log("文件类型===", info.type, info.name)
+      // debugger
       console.log("父级uid===", info.parentUid)
       let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
       navArr.push(info.name)
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
 
-      if (info.type == 0 && info.children.length != 0) {
-        // 更换当前页面数据，没有跳转
-        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
-        // 重置父级uid
-        parentData.value = showData.value
-        showData.value = info.children
-        currentUid.value = localStorage.getItem("current_uid") as string
-        localStorage.setItem("parent_uid", currentUid.value) //点击下一级后，当前目录就变成下级目录的父级
-        localStorage.setItem("current_uid", info.uid) //保存当前点击的目录uid
-        localStorage.setItem("back-data", JSON.stringify(showData.value))
+      if (info.type == 0 || (info.type == 7 && info.children.length != 0)) {
+        console.log(info.children.length)
+        if (info.children.length === 1) {
+          router.push({
+            path: "/files",
+            query: {
+              pdfUrl: info.children[0].url,
+            },
+          })
+        } else {
+          // console.log(info.children.length === 1)
+          // 更换当前页面数据，没有跳转
+          localStorage.setItem("nav_page_data", JSON.stringify(info.children))
+          // 重置父级uid
+          parentData.value = showData.value
+          showData.value = info.children
+          currentUid.value = localStorage.getItem("current_uid") as string
+          localStorage.setItem("parent_uid", currentUid.value) //点击下一级后，当前目录就变成下级目录的父级
+          localStorage.setItem("current_uid", info.uid) //保存当前点击的目录uid
+          localStorage.setItem("back-data", JSON.stringify(showData.value))
+        }
       } else if (info.type == 1 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
@@ -147,16 +159,16 @@ export default defineComponent({
         info.children.length != 0 &&
         info.name != "代表履职风采"
       ) {
-        localStorage.setItem("nav_page_data", JSON.stringify(info.children))
-        parentData.value = showData.value
-        showData.value = info.children
-        localStorage.setItem("fileData", JSON.stringify(info.children))
-        router.push({
-          path: "/WorkSystem",
-          query: {
-            bgi: info.backgroundImage,
-          },
-        })
+        // localStorage.setItem("nav_page_data", JSON.stringify(info.children))
+        // parentData.value = showData.value
+        // showData.value = info.children
+        // localStorage.setItem("fileData", JSON.stringify(info.children))
+        // router.push({
+        //   path: "/WorkSystem",
+        //   query: {
+        //     bgi: info.backgroundImage,
+        //   },
+        // })
       } else if (
         info.type == 7 &&
         info.children.length != 0 &&
@@ -282,7 +294,8 @@ export default defineComponent({
       url = url.replace(/\\/g, "/")
       let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
-      console.log("背景图片===", imgUrl.value)
+      console.log("二级目录背景图片111===", bgImg)
+      console.log("二级目录背景图片222===", imgUrl.value)
 
       let navData = localStorage.getItem("navData") as string
       let navDataArr = JSON.parse(navData) as any[]
@@ -332,6 +345,8 @@ export default defineComponent({
     }
     const backPage = () => {
       // router.back()
+      // debugger
+      // return
       let navData = localStorage.getItem("navData") as string
       let navDataArr = JSON.parse(navData) as any[]
       let parentUid = localStorage.getItem("parent_uid") as string
@@ -384,7 +399,7 @@ export default defineComponent({
 <style scoped>
 @import "../assets/glob.css";
 .bg-box {
-  background: url(../assets/img/file-bgi.png);
+  /* background: url(../assets/img/file-bgi.png); */
   background-size: 100% 100%;
   width: 100%;
   height: 100%;
@@ -440,7 +455,7 @@ export default defineComponent({
   align-items: center;
 }
 .slide-box {
-  width: 329px;
+  width: 200px;
   /* padding-top: 10px; */
   /* height: 306px; */
 

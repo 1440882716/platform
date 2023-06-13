@@ -85,6 +85,7 @@ export default defineComponent({
             // 设置本地资源的根目录
             localStorage.setItem("imgSrc", filePath + "\\")
             db.set("filePath", filePath)
+            // debugger
             let version = 0
             ipcRenderer.send("get-version", "getVersion")
             ipcRenderer.on("read-version", (_event, data) => {
@@ -92,7 +93,9 @@ export default defineComponent({
               version = JSON.parse(data).version
               version = Number(version)
               console.log("下载的进度是===", version)
-              let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
+              let wsUrl =
+                "wss://admin.slqrd.gov.cn/api/manager/display/websocket"
+              // let wsUrl = "wss://www.yarenda.cn/api/manager/display/websocket"
               var ws = new WebSocket(
                 wsUrl +
                   "?version=" +

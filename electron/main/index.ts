@@ -158,8 +158,8 @@ const db = new Store()
           } else {
             let fileList = JSON.parse(data)
             // let baseurl = "https://www.khdpro1.top"
-            let baseurl = "https://www.yarenda.cn"
-            // let baseurl = "http://192.168.1.200:9527"
+            // let baseurl = "https://www.yarenda.cn"
+            let baseurl = "https://admin.slqrd.gov.cn"
             // 获取文件的安装地址
             let homeDir = "D:\\"
             // let newFiles = storage.getItem("filesName")
