@@ -13,51 +13,6 @@
         </el-tabs>
       </div>
     </div>
-    <!-- 默认展示 -->
-    <!-- <el-carousel
-      indicator-position="outside"
-      :autoplay="false"
-      v-if="activeName == '1'"
-    >
-      <el-carousel-item
-        style="height: 800px"
-        v-for="(info, k) in rotateNpc"
-        :key="k"
-      >
-        <div class="box">
-          <div class="box1">
-            <div
-              v-for="(item, index) in info"
-              :class="[
-                index == 0 ? 'one' : '',
-                index == 1 ? 'two' : '',
-                index == 2 ? 'three' : '',
-                index == 3 ? 'four' : '',
-                index == 4 ? 'five' : '',
-                index == 5 ? 'six' : '',
-                index == 6 ? 'seven' : '',
-                index == 7 ? 'eight' : '',
-              ]"
-              @click="toDetail(item)"
-            >
-              <div class="npc-img flex-r">
-                <img
-                  class="npc-photo-test"
-                  src="../assets/img/peopel.png"
-                  alt=""
-                />
-                <div class="flex-c m-l-16 text-left test-right-text">
-                  <p class="font38">{{ item.npcMember.name }}</p>
-                  <p class="font20 m-t-20">{{ item.npcMember.introduction }}</p>
-                  <p class="font18 m-t-56">{{ item.npcMember.mobile }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-carousel-item>
-    </el-carousel> -->
-    <!-- src="src/static/npc-page/index.html" -->
     <iframe
       v-if="activeName == '1'"
       id="mainIframe"
@@ -70,7 +25,7 @@
     ></iframe>
 
     <!-- 列表展示 -->
-    <div class="list-box" v-if="activeName == '2'">
+    <!-- <div class="list-box" v-if="activeName == '2'">
       <swiper
         class="swiper-box"
         style="width: 1680px; height: 700px"
@@ -105,9 +60,6 @@
                 <p class="font20 m-t-20 three-line-text npc-des-box">
                   {{ item.npcMember.introduction }}
                 </p>
-                <!-- <p class="font20 m-t-20 three-line-text">
-                  四川天味食品集团股份有限公司四川天味食品集团股份有限公司四川天味食品集团股份有限公司
-                </p> -->
                 <p class="font18 m-t-56">{{ item.npcMember.mobile }}</p>
               </div>
             </div>
@@ -116,7 +68,59 @@
       </swiper>
       <div class="swiper-button-prev" style="color: #ffffff"></div>
       <div class="swiper-button-next" style="color: #ffffff"></div>
+    </div> -->
+    <div class="list-box" v-if="activeName == '2'">
+      <swiper
+        class="swiper-box"
+        style="width: 100%; height: 700px; margin: 0 auto"
+        :modules="modules"
+        :slidesPerView="1"
+        :navigation="{
+          nextEl: '.swiper-button-next', //前进后退按钮
+          prevEl: '.swiper-button-prev',
+        }"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
+      >
+        <swiper-slide
+          v-for="item in newNpcInfo"
+          class="swiper-slide-box flex-r"
+          style="
+            height: 100%;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+          "
+        >
+          <div class="grid-box">
+            <div
+              class="result-item flex-c"
+              style="display: flex; align-items: flex-start"
+              v-for="npc in item"
+            >
+              <div class="npc-img flex-r" @click="toDetail(npc)">
+                <img
+                  class="npc-photo"
+                  :src="staticUrl + npc.npcMember.avatar"
+                  alt=""
+                />
+                <div class="flex-c m-l-16 text-left">
+                  <p class="font38">{{ npc.npcMember.name }}</p>
+                  <p class="font20 m-t-20 three-line-text npc-des-box">
+                    {{ npc.npcMember.introduction }}
+                  </p>
+                  <p class="font18 m-t-56">{{ npc.npcMember.mobile }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </swiper-slide>
+      </swiper>
+      <div class="swiper-button-prev" style="color: #ffffff"></div>
+      <div class="swiper-button-next" style="color: #ffffff"></div>
     </div>
+
     <Footer class="footer-fixed"></Footer>
   </div>
 </template>
@@ -150,6 +154,7 @@ export default defineComponent({
     const activeName = ref("1")
     const npsData = ref()
     const dataInfo = ref()
+    const newNpcInfo = ref()
     const rotateNpc = ref()
     const activeClass = ref()
     let iframeRef = ref<any>(null) // 和iframe标签的ref绑定
@@ -191,11 +196,7 @@ export default defineComponent({
       return result
     }
     const handleClick = (tab: TabsPaneContext, event: Event) => {
-      console.log(activeName.value)
-      console.log(tab.props.name)
       let type = tab.props.name?.toString()
-      console.log(type)
-
       if (type) localStorage.setItem("npcType", type)
       if (activeName.value == "2") {
         // 刷新是为了加载npc-page页面
@@ -203,20 +204,45 @@ export default defineComponent({
       } else {
       }
     }
+    const arrTrans = (num: number, arr: any) => {
+      // 一维数组转换为二维数组
+      const iconsArr: any = [] // 声明数组
+      arr.forEach((item: any, index: number) => {
+        const page = Math.floor(index / num) // 计算该元素为第几个素组内
+        if (!iconsArr[page]) {
+          // 判断是否存在
+          iconsArr[page] = []
+        }
+        iconsArr[page].push(item)
+      })
+      return iconsArr
+    }
 
     onMounted(() => {
       let npcType = localStorage.getItem("npcType") as string
       if (npcType) {
-        console.log("缓存的类型值是===", npcType)
+        // console.log("缓存的类型值是===", npcType)
         activeName.value = npcType
         npsData.value = localStorage.getItem("npcinfo") as string
         dataInfo.value = JSON.parse(npsData.value)
       }
       // else {
-      console.log("初始值==", activeName.value)
+      // console.log("初始值==", activeName.value)
       npsData.value = localStorage.getItem("npcinfo") as string
       dataInfo.value = JSON.parse(npsData.value)
-      // const storage = require("electron-localstorage")
+      // console.log("代表数据=====", dataInfo.value)
+      // 处理代表数据 变二维数组
+      let numArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      newNpcInfo.value = arrTrans(8, dataInfo.value)
+      console.log(newNpcInfo.value)
+
+      // for (let i = 0; i < num.length; i++) {
+      //   if (i < 8) {
+      //     numItem.push(num[i])
+      //   }
+      //   newNum.push(numItem)
+      // }
+      // console.log(newNum)
 
       const Store = require("electron-store")
       const db = new Store()
@@ -261,7 +287,9 @@ export default defineComponent({
       iframeRef,
       iframeWindow,
       npsData,
+      newNpcInfo,
       handleClick,
+      arrTrans,
       onSwiper,
       onSlideChange,
       toDetail,
@@ -280,23 +308,25 @@ export default defineComponent({
   margin-top: 53px;
   display: flex;
   align-items: center;
-  /* background-color: cadetblue; */
 }
 .tab-box {
   width: 96px;
-  /* height: 40px; */
   flex: 1;
-  /* background-color: burlywood; */
 }
 .list-box {
   margin-top: 60px;
-  /* background-color: cadetblue; */
 }
-.result-item {
+/* .result-item {
   text-align: center;
   margin-left: 18px;
   margin-right: 18px;
-  /* background-color: cadetblue; */
+} */
+.result-item {
+  /* width: 22%; */
+  text-align: center;
+  margin-left: 18px;
+  margin-right: 18px;
+  margin: 0 auto;
 }
 .npc-img {
   width: 348px;
@@ -321,30 +351,14 @@ export default defineComponent({
 .npc-photo {
   width: 168px;
   height: 230px;
-  /* background-color: aquamarine; */
-  /* margin-left: 15px; */
 }
 
-/* ==================================================================旋转名片 */
-/* * {
-  margin: 0;
-  padding: 0;
-}
-
-
-body {
-  background: url(../image/7.jpg) no-repeat;
-  background-size: 100%;
-} */
 .el-carousel__container {
   height: 600px !important;
 }
 .el-carousel__indicators--outside {
   margin-top: 100px !important;
 }
-/* .el-carousel__indicators {
-  margin-top: 200px !important;
-} */
 
 .box {
   position: relative;
@@ -352,8 +366,6 @@ body {
   height: 400px;
   margin: 100px auto;
   transform-style: preserve-3d;
-  /* transform: rotate(30deg); */
-  /* animation: move 8s linear infinite; */
 }
 
 .box1 {
@@ -366,8 +378,6 @@ body {
 
 .box div {
   position: absolute;
-  /* width: 400px;
-  height: 400px; */
 }
 
 .box div img {
@@ -376,39 +386,6 @@ body {
 }
 .npc-des-box {
   height: 80px;
-  /* background-color: cadetblue; */
-}
-
-.one {
-  transform: translateZ(400px) rotateY(0deg);
-}
-
-.two {
-  transform: translateZ(200px) translateX(400px) rotateY(45deg);
-}
-
-.three {
-  transform: translateZ(200px) translateX(-400px) rotateY(-45deg);
-}
-
-.four {
-  transform: translateZ(-200px) translateX(400px) rotateY(90deg);
-}
-
-.five {
-  transform: translateZ(-200px) translateX(-400px) rotateY(-90deg);
-}
-.six {
-  transform: translateZ(-400px) translateX(400px) rotateY(135deg);
-  /* transform: rotateY(180deg); */
-}
-.seven {
-  transform: translateZ(-400px) translateX(-400px) rotateY(-135deg);
-  /* transform: rotateY(180deg); */
-}
-.eight {
-  transform: translateZ(-400px) rotateY(180deg);
-  /* transform: rotateY(180deg); */
 }
 
 @keyframes move {
@@ -451,35 +428,11 @@ body {
   align-items: center;
   justify-content: center;
 }
-/* .tab-box {
-  width: 230px;
-  height: 40px;
+.grid-box {
+  display: grid;
+  grid-template-columns: repeat(4, 380px);
+  grid-gap: 20px;
+  /* background-color: darkorchid; */
   margin: 0 auto;
-  margin-top: 24px;
 }
-.slide-bar {
-  width: 94px;
-  height: 2px;
-  background-color: #f31a1a;
-  margin-top: 10px;
-}
-.left-side {
-  animation: mymove 1s infinite;
-}
-@keyframes mymove {
-  from {
-    left: 837px;
-  }
-  to {
-    left: 967px;
-  }
-}
-@-webkit-keyframes mymove  {
-  from {
-    left: 837px;
-  }
-  to {
-    left: 967px;
-  }
-} */
 </style>
