@@ -159,7 +159,6 @@ export default defineComponent({
       // return
       if (info.type == 0 || (info.type == 7 && info.children.length != 0)) {
         // debugger
-        // console.log("下级文件===1===", info)
         if (info.children.length === 1) {
           router.push({
             path: "/files",
@@ -170,7 +169,6 @@ export default defineComponent({
         } else {
           localStorage.setItem("fileData", JSON.stringify(info.children))
           localStorage.setItem("nav_page_data", JSON.stringify(info.children))
-          // navList.value = info.children
           router.push({
             path: "/representative",
             query: {
@@ -183,7 +181,6 @@ export default defineComponent({
       } else if (info.type == 1 && info.children.length != 0) {
         // parentData.value = showData.value
         // showData.value = info.children
-        console.log(info.children)
         localStorage.setItem("npcinfo", JSON.stringify(info.children))
         router.push({
           path: "/npcInfo",
@@ -209,23 +206,17 @@ export default defineComponent({
         //   },
         // })
       } else if (info.type == 8 && info.children.length != 0) {
-        console.log("压缩文件")
-
-        // console.log("下级文件===8===", info)
-        // const storage = require("electron-localstorage")
         const Store = require("electron-store")
         const db = new Store()
         const ipcRenderer = require("electron").ipcRenderer
         // 加载地图网页
         let zipPath = info.children[0].url
-        console.log(zipPath)
         // let path = storage.getItem("filePath")
         let path = db.get("userUid")
         var admZip = require("adm-zip-iconv")
         let pathNameArr = zipPath.split(".")
         let pathName = pathNameArr[0]
         console.log("解压路径====" + "D:\\" + path + "\\" + zipPath)
-
         var zip = new admZip("D:\\" + path + "\\" + zipPath, "GBK")
         // 解压文件
         // 创建属于这个压缩包的文件夹
@@ -237,7 +228,6 @@ export default defineComponent({
           // debugger
           if (hasFiles.status) {
             let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
-            // console.log("网页文件地址===", pageUrl)
             router.push({
               path: "/infomation",
               query: {
@@ -282,11 +272,9 @@ export default defineComponent({
       let version = storage.getItem("version")
       if (!version) {
         version = 0
-        console.log("初始化进度===", version)
       } else {
         version = 1.71
         // storage.setItem("version", 1.71)
-        console.log("历史下载进度===", version)
       }
       var ws = new WebSocket(
         "ws://192.168.1.116:9527/api/manager/display/websocket?version=" +
@@ -299,9 +287,7 @@ export default defineComponent({
         let files = JSON.parse(e.data)
         let fileList = JSON.stringify(files.fileList)
         let navList = JSON.stringify(files.nodeList)
-        console.log(files)
         if (files.fileList.length == 0) {
-          console.log("没有更新文件")
         } else {
           localStorage.setItem("bgi", JSON.stringify(files.homeBackgroundImage))
           const ipcRenderer = require("electron").ipcRenderer
@@ -318,16 +304,10 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      console.log("进入首页了======")
-
-      // window.location.reload()
       setTimer()
-      // const storage = require("electron-localstorage")
-      // let path = storage.getItem("filePath")
       const Store = require("electron-store")
       const db = new Store()
       let path = db.get("filePath")
-      // let path = db.get("userUid")
       let url = path + "\\"
 
       staticUrl.value = url.replace(/\\/g, "/")
@@ -336,9 +316,6 @@ export default defineComponent({
       // 监听主进程过来的消息..
       ipcRenderer.on("read-nav", (_event, data) => {
         navList.value = JSON.parse(data)
-        console.log("首页的目录是===", navList.value)
-
-        // localStorage.setItem("first_uid", navList.value[0].children.uid)
         localStorage.setItem("navData", JSON.stringify(navList.value))
       })
       ipcRenderer.send("get-nav", "getNav")
@@ -347,7 +324,6 @@ export default defineComponent({
       let str = localStorage.getItem("bgi") as string
       imgUrl.value = path + "\\" + str.replace(/"/g, "")
       imgUrl.value = imgUrl.value.replace(/\\/g, "/")
-      console.log("背景图片====", imgUrl.value)
 
       // 讲图片的根路径存下
       // localStorage.setItem("imgSrc", url)

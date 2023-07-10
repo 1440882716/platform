@@ -109,13 +109,11 @@ export default defineComponent({
       // type==9 视频文件夹
       // console.log("文件类型===", info.type, info.name)
       // debugger
-      console.log("父级uid===", info.parentUid)
       let navArr = JSON.parse(localStorage.getItem("nav_arr") as string)
       navArr.push(info.name)
       localStorage.setItem("nav_arr", JSON.stringify(navArr))
 
       if (info.type == 0 || (info.type == 7 && info.children.length != 0)) {
-        console.log(info.children.length)
         if (info.children.length === 1) {
           router.push({
             path: "/files",
@@ -124,7 +122,6 @@ export default defineComponent({
             },
           })
         } else {
-          // console.log(info.children.length === 1)
           // 更换当前页面数据，没有跳转
           localStorage.setItem("nav_page_data", JSON.stringify(info.children))
           // 重置父级uid
@@ -138,7 +135,6 @@ export default defineComponent({
       } else if (info.type == 1 && info.children.length != 0) {
         parentData.value = showData.value
         showData.value = info.children
-        // console.log(info.children)
         localStorage.setItem("npcinfo", JSON.stringify(info.children))
         router.push({
           path: "/npcInfo",
@@ -147,7 +143,6 @@ export default defineComponent({
           },
         })
       } else if (info.type == 5) {
-        console.log(info)
         router.push({
           path: "/files",
           query: {
@@ -159,16 +154,6 @@ export default defineComponent({
         info.children.length != 0 &&
         info.name != "代表履职风采"
       ) {
-        // localStorage.setItem("nav_page_data", JSON.stringify(info.children))
-        // parentData.value = showData.value
-        // showData.value = info.children
-        // localStorage.setItem("fileData", JSON.stringify(info.children))
-        // router.push({
-        //   path: "/WorkSystem",
-        //   query: {
-        //     bgi: info.backgroundImage,
-        //   },
-        // })
       } else if (
         info.type == 7 &&
         info.children.length != 0 &&
@@ -177,11 +162,9 @@ export default defineComponent({
         // 更换当前页面数据，没有跳转
         parentData.value = showData.value
         showData.value = info.children
-        console.log("77777777===", info.children)
         currentUid.value = localStorage.getItem("current_uid") as string
         localStorage.setItem("parent_uid", currentUid.value) //点击下一级后，当前目录就变成下级目录的父级
         localStorage.setItem("current_uid", info.uid) //保存当前点击的目录uid
-        // localStorage.setItem("back-data", JSON.stringify(showData.value))
       } else if (info.type == 8 && info.children.length != 0) {
         const storage = require("electron-localstorage")
         const Store = require("electron-store")
@@ -189,8 +172,6 @@ export default defineComponent({
         const ipcRenderer = require("electron").ipcRenderer
         // 加载地图网页
         let zipPath = info.children[0].url
-        console.log(zipPath)
-        // let path = storage.getItem("filePath")
         let path = db.get("userUid")
         var admZip = require("adm-zip-iconv")
         let pathNameArr = zipPath.split(".")
@@ -198,14 +179,12 @@ export default defineComponent({
         var zip = new admZip("D:\\" + path + "\\" + zipPath, "GBK")
         // 解压文件
         // 创建属于这个压缩包的文件夹
-        // storage.setItem("zipFiles", pathName)
         db.set("zipFiles", pathName)
         ipcRenderer.send("create-zipFile", "getVersion")
         ipcRenderer.on("has-file", (_event, data) => {
           let hasFiles = JSON.parse(data)
           if (hasFiles.status) {
             let pageUrl = "D:\\" + path + "\\" + pathName + "\\" + "index.html"
-            // console.log("网页文件地址===", pageUrl)
             router.push({
               path: "/infomation",
               query: {
@@ -238,7 +217,6 @@ export default defineComponent({
           },
         })
       } else {
-        // console.log("文件没有内容")
         ElMessage({
           message: "该文件夹没有内容",
           type: "warning",
@@ -282,60 +260,26 @@ export default defineComponent({
     let homeUid = localStorage.getItem("first_uid") as string
     parentUid.value = localStorage.getItem("parent_uid") as string
     currentUid.value = localStorage.getItem("current_uid") as string
-
     onMounted(() => {
-      // let name = route.query.name
       const storage = require("electron-localstorage")
       const Store = require("electron-store")
       const db = new Store()
       let path = db.get("filePath")
-      // let path = storage.getItem("filePath")
       let url = path + "\\"
       url = url.replace(/\\/g, "/")
       let bgImg = url + route.query.bgi
       imgUrl.value = bgImg
-      console.log("二级目录背景图片111===", bgImg)
-      console.log("二级目录背景图片222===", imgUrl.value)
-
       let navData = localStorage.getItem("navData") as string
       let navDataArr = JSON.parse(navData) as any[]
       let parentUid = localStorage.getItem("parent_uid") as string
       let currentUid = localStorage.getItem("current_uid") as string
-
       dataList(navDataArr, currentUid)
       childrenList(navDataArr, currentUid)
-
-      // console.log("获取到的父级目录=======", parentNav)
-      // console.log("获取到的当前目录===", currentNav)
-      // 上级目录的uid 在这里需要判断是不是回到首页，如果不是回到首页则需要替换当前页面的数据
-      // console.log("父级uid===", currentUid)
-      // console.log("首页uid===", homeUid)
-      // if (parentUid === homeUid) {
-      //   toHome()
-      // } else {
       showData.value = currentNav
-      // }
-      return
-      const ipcRenderer = require("electron").ipcRenderer
-      ipcRenderer.send("get-data", name)
-      ipcRenderer.on("read-renda", (event, data) => {
-        // 本页面所有的数据
-        localStorage.setItem("allData", data)
-        allData.value = JSON.parse(data)
-        // showData.value = JSON.parse(data)
-        let number = showData.value.length
-        if (number < 5) {
-          filesNum.value = number
-        } else {
-          filesNum.value = 5
-        }
-      })
-      // }
     })
 
     const toHome = () => {
       let str = localStorage.getItem("bgi") as string
-      // console.log(str)
       router.push({
         path: "/",
         query: {
@@ -344,9 +288,6 @@ export default defineComponent({
       })
     }
     const backPage = () => {
-      // router.back()
-      // debugger
-      // return
       let navData = localStorage.getItem("navData") as string
       let navDataArr = JSON.parse(navData) as any[]
       let parentUid = localStorage.getItem("parent_uid") as string
@@ -359,15 +300,10 @@ export default defineComponent({
       // 遍历目录找到要返回的父级目录
       dataList(navDataArr, currentUid)
       childrenList(navDataArr, currentUid)
-      // childrenList(navDataArr, currentUid)
-      console.log("获取到的父级目录===", currentNav)
-
       showData.value = currentNav
     }
     const onSwiper = (swiper: any) => {}
-    const onSlideChange = () => {
-      // console.log('slide change');
-    }
+    const onSlideChange = () => {}
     return {
       allData,
       parentData,

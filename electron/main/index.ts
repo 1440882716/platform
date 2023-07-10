@@ -91,8 +91,6 @@ const db = new Store()
     filesCount: number
   ) => {
     win.webContents.downloadURL(downPath)
-    console.log("address=========",downPath);
-    
     win.webContents.session.on(
       "will-download",
       (event: any, item: any, webContents: any) => {
@@ -103,19 +101,11 @@ const db = new Store()
             //  将下载进度写入本地文件
             let obj = { version: filesNum }
             let dataV = JSON.stringify(obj)
-            // const storage = require("electron-localstorage")
-            // var newFiles = storage.getItem("filesName")
             var newFiles = db.get("userUid")
             var versionName = "D:\\" + newFiles + "Version.json"
-            // "D:\\version.json"
             fs.writeFile(versionName, dataV, (err) => {
               if (err) {
               } else {
-                // if(filesCount == filesNum){
-                //   let obj = {state:"ok"}
-                //   let data = JSON.stringify(obj)
-                //   win.webContents.send('down-over', data);
-                // }
               }
             })
           } else {
@@ -128,52 +118,39 @@ const db = new Store()
   // 主进程监听渲染进程的消息
   // 保存目录
   ipcMain.on("save-data", (event, arg) => {
-    // const storage = require("electron-localstorage")
-    // var newFiles = storage.getItem("filesName")
     var newFiles = db.get("userUid")
     var navName = "D:\\" + newFiles + "NavData.json"
     fs.writeFile(navName, arg, (err) => {
       if (err) {
-        console.log("navName=======", err)
       } else {
-        console.log("navName=======success")
       }
     })
   })
   // 保存下载文件
   ipcMain.on("down-file-list", (event, arg) => {
-    // const storage = require("electron-localstorage")
-    // var newFiles = storage.getItem("filesName")
     var newFiles = db.get("userUid")
     var fileName = "D:\\" + newFiles + "FileData.json"
     fs.writeFile(fileName, arg, (err) => {
       if (err) {
-        console.log(err)
       } else {
-        // const storage = require("electron-localstorage")
         // 读本地文件目录并且下载
         fs.readFile(path.join(fileName), "utf8", (error, data) => {
           if (error) {
             // 文件读取失败;
           } else {
             let fileList = JSON.parse(data)
-            // let baseurl = "https://www.khdpro1.top"
-            // let baseurl = "https://www.yarenda.cn"
             let baseurl = "https://admin.slqrd.gov.cn"
             // 获取文件的安装地址
             let homeDir = "D:\\"
-            // let newFiles = storage.getItem("filesName")
             var newFiles = db.get("filePath")
             // 创建对应地区的文件夹
             let filesPath = ""
-            // fs.mkdir(path.join(homeDir, newFiles), (err) => {
             fs.mkdir(path.join(newFiles), (err) => {
               if (err) {
                 // 该文件夹已经存在
                 if (err.code == "EEXIST") {
                   filesPath = err.path as string
                 }
-                console.log("creating is error ====", err)
                 let filesCount = fileList[fileList.length - 1].version
                 // 遍历所有文件下载
                 for (let i = 0; i < fileList.length; i++) {
@@ -200,7 +177,6 @@ const db = new Store()
                 }
               }
               // 将文件下载的目录缓存
-              // storage.setItem("filePath", filesPath)
               db.set("filePath", "D:\\" + filesPath)
               // 遍历文件下载
             })
@@ -213,23 +189,15 @@ const db = new Store()
   // 登录页获取下载进度
   ipcMain.on("get-version", (event, arg) => {
     const storage = require("electron-localstorage")
-    // var newFiles = storage.getItem("filesName")
     var newFiles = db.get("filePath")
-    console.log("versionFile=======",newFiles);
     
     var versionName = newFiles + "Version.json"
 
     if (arg == "getVersion") {
-      console.log("versionName=======",versionName);
-      console.log("store----versionName=======",newFiles);
-      // fs.readFile(path.join(versionName), "utf8", (error, data) => {
         fs.readFile(versionName, "utf8", (error, data) => {
-        console.log("11111111111111111111===============",data);
         if (error) {
           let obj = { version: 0 }
           let data = JSON.stringify(obj)
-          
-          
           event.sender.send("read-version", data)
         } else {
           event.sender.send("read-version", data)

@@ -70,11 +70,8 @@ export default defineComponent({
             // 登录成功
             localStorage.setItem("location", res.data.locationName)
             localStorage.setItem("token", res.data.token)
-            // storage.removeItem("filesName")
             // 清除文件版本号的缓存再重新设置缓存
-            // let versionName = storage.getItem("filesName")
             let versionName = db.get("userUid")
-            // console.log("本地已经存在的版本文件夹名字==", versionName)
             if (versionName) {
               storage.removeItem("filesName")
             } else {
@@ -116,11 +113,9 @@ export default defineComponent({
                   var self = this
                   heartCheck.serverTimeoutObj = window.setInterval(() => {
                     if (ws.readyState == 1) {
-                      console.log("连接状态，发送消息保持连接")
                       ws.send("ping")
                       heartCheck.reset().start() // 如果获取到消息，说明连接是正常的，重置心跳检测
-                    } else {
-                      console.log("断开状态，尝试重连")
+                      // } else {
                       ws.onopen = function () {
                         // 重置心跳检测
                         heartCheck.reset().start()
@@ -142,7 +137,6 @@ export default defineComponent({
                 // }
 
                 let navList = JSON.stringify(files.nodeList)
-                console.log(files)
                 homeBgi = files.homeBackgroundImage
                 localStorage.setItem(
                   "bgi",
@@ -151,12 +145,11 @@ export default defineComponent({
                 // 有更新的内容需要下载
                 if (files.fileList && files.fileList.length != 0) {
                   // 监听主进程过来的消息
-                  ipcRenderer.on("has-render-data", (_event, ...args) => {
-                    // console.log("接收主进程过来的消息===", ...args)
-                  })
-                  ipcRenderer.on("main-process-message", (_event, ...args) => {
-                    // console.log("接收主进程过来的消息===", ...args)
-                  })
+                  ipcRenderer.on("has-render-data", (_event, ...args) => {})
+                  ipcRenderer.on(
+                    "main-process-message",
+                    (_event, ...args) => {}
+                  )
                   // 向主进程发送消息，保存应用的目录
                   ipcRenderer.send("save-data", navList)
                   ipcRenderer.send("down-file-list", fileList)
@@ -178,16 +171,7 @@ export default defineComponent({
                   // 监听主进程过来的消息
                   // 向主进程发送消息，保存应用的目录
                   ipcRenderer.send("save-data", navList)
-                  // loading.value = false
-                  // router.push({
-                  //   path: "/home",
-                  // })
                 }
-                // localStorage.setItem(
-                //   "bgi",
-                //   JSON.stringify(files.homeBackgroundImage)
-                // )
-                // 重置心跳检测
                 heartCheck.reset().start()
               }
             })

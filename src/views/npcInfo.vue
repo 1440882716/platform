@@ -221,35 +221,18 @@ export default defineComponent({
     onMounted(() => {
       let npcType = localStorage.getItem("npcType") as string
       if (npcType) {
-        // console.log("缓存的类型值是===", npcType)
         activeName.value = npcType
         npsData.value = localStorage.getItem("npcinfo") as string
         dataInfo.value = JSON.parse(npsData.value)
       }
-      // else {
-      // console.log("初始值==", activeName.value)
       npsData.value = localStorage.getItem("npcinfo") as string
       dataInfo.value = JSON.parse(npsData.value)
-      // console.log("代表数据=====", dataInfo.value)
       // 处理代表数据 变二维数组
-      let numArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
       newNpcInfo.value = arrTrans(8, dataInfo.value)
-      console.log(newNpcInfo.value)
-
-      // for (let i = 0; i < num.length; i++) {
-      //   if (i < 8) {
-      //     numItem.push(num[i])
-      //   }
-      //   newNum.push(numItem)
-      // }
-      // console.log(newNum)
-
       const Store = require("electron-store")
       const db = new Store()
       let path = db.get("filePath")
       let url = path + "\\"
-      // let path = storage.getItem("filePath")
-      // let url = path + "\\"
       url = url.replace(/\\/g, "/")
       staticUrl.value = url
       let bgImg = url + route.query.bgi
